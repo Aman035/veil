@@ -1,0 +1,8 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>unlink helper</title>
+<!-- No CSP: the browser harness builds its null-origin iframe with srcdoc + an
+     inline bootstrap script, which needs script-src 'unsafe-inline' on this
+     page (see @anon-rpc/browser-harness README). page.js is the esbuild bundle
+     of page-entry.mjs, written by helper.mjs at startup. -->
+<script type="module" src="/page.js"></script>
