@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="popup.css" />
+  <title>Unlink</title>
+</head>
+<body>
+  <main id="app" class="app" data-state="off">
+    <header class="top">
+      <div class="brand">
+        <span class="mark" aria-hidden="true"></span>
+        <span class="name">Unlink</span>
+      </div>
+      <button id="toggle" class="switch" role="switch" aria-checked="false" aria-label="Toggle protection">
+        <span class="knob"></span>
+      </button>
+    </header>
+
+    <section class="status">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="statusText" class="status-text">Off</span>
+      <span id="statusSub" class="status-sub"></span>
+    </section>
+
+    <section id="tabCard" class="card tab-card">
+      <div class="card-label">This tab</div>
+      <div id="tabOrigin" class="tab-origin">—</div>
+      <ul class="facts">
+        <li><b id="tabProtected">0</b> requests protected</li>
+        <li id="tabRoutes" class="muted">waiting for activity…</li>
+        <li id="tabReroute" class="reroute hidden">Provider blocks Tor → re-routed (safe)</li>
+      </ul>
+    </section>
+
+    <section class="card today">
+      <div class="today-row">
+        <span>Today</span>
+        <span><b id="todayReq">0</b> requests · <b id="todaySites">0</b> sites</span>
+      </div>
+      <div class="notcovered">
+        Not covered: your wallet's own traffic
+        <span class="soon">desktop helper — coming in phase 2</span>
+      </div>
+    </section>
+
+    <footer class="honesty">
+      Still visible to providers: <b>the addresses you look up</b>.
+    </footer>
+  </main>
+  <script src="popup.js"></script>
+</body>
+</html>

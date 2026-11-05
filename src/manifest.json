@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Unlink",
+  "version": "0.1.0",
+  "description": "Private by default for the wallets and dapps you already use. Routes crypto traffic through Tor, one route per account.",
+
+  "background": { "service_worker": "background.js", "type": "module" },
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Unlink",
+    "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "128": "icons/icon-128.png" }
+  },
+  "icons": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "128": "icons/icon-128.png" },
+
+  "permissions": ["offscreen", "storage", "tabs"],
+
+  "//host_permissions": "For the OFFSCREEN document's fetch + hash-verify of the tor-js worker bundle from its on-chain resolver. The worker's own fetches run at a null origin and do NOT use these. Narrow once the resolver host is pinned.",
+  "host_permissions": ["<all_urls>"],
+
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["inject.js"],
+      "run_at": "document_start",
+      "world": "MAIN",
+      "all_frames": true
+    },
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start",
+      "world": "ISOLATED",
+      "all_frames": true
+    }
+  ],
+
+  "sandbox": { "pages": ["anon-rpc/*/sandbox.html"] },
+
+  "content_security_policy": {
+    "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; child-src 'self' blob:; worker-src 'self' blob:; connect-src *;"
+  }
+}

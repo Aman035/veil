@@ -17,3 +17,7 @@ pnpm-lock.yaml
 
 # kt-account-map capture output
 experiments/kt-account-map/captured.json
+
+# test artifacts
+tests/popup.png
+_probe.mjs

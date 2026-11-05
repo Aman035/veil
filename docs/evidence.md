@@ -96,5 +96,15 @@ Captured 63 JSON-RPC requests (82 calls after expanding batches) from 6 dapps br
 
 Caveats: account-naming sample is modest (9/82) for the same reason E2 undercounts — headless connect flows are partial. The critical property (no false links, calldata matching) is shown on real traffic; the miss *rate* needs a fully connected session (real wallet, currently sandbox-blocked) to measure well.
 
+## E11. Extension MVP Phase 1a — interception → per-account routing → harness → response (6 Nov 2026) (`src/`, `tests/e2e.mjs`)
+The real built extension (`dist/`) loaded in Chromium, a page issuing three `fetch` JSON-RPC calls. All e2e checks pass:
+- Page's `fetch` intercepted (MAIN-world wrapper) and answered from the harness; 3/3 protected, 0 direct.
+- Connected account learned from the wrapped `window.ethereum` (`eth_accounts`); a second account learned from an `eth_getBalance` param.
+- **Three distinct routes assigned**: `acct:28c6…`, `neutral` (eth_blockNumber), `acct:d8da…` — one route per account + neutral for account-agnostic reads.
+- JSON-RPC ids blinded and restored (page saw its original 101/102/103).
+- Popup renders live status + today counts.
+
+**Run with the passthrough specifier** (`0x4fd77be3…`, no gateway) because **the EF demo gateway `152.236.3.22:12298` is currently unreachable** (TCP closed; publicnode fine at 200/0.3 s) — PRD §11's "demo gateway goes away" risk, live. The tor-js transport itself is proven in E8 (earlier the same day, gateway up). Passthrough validates the whole extension pipeline deterministically; real-Tor re-confirmation is pending gateway availability. Specifier/gateways are build-configurable (`UNLINK_SPECIFIER` / `UNLINK_GATEWAYS`).
+
 ## E10. Chrome Web Store remote-code policy (Phase 0 KT#4) — 6 Nov 2026
 Confirmed against Chrome's current "Improving security in Manifest V3" guidance (developer.chrome.com): MV3 bans remotely hosted code ("all of your extension's logic must be part of the extension package"), **but** "Remotely hosted code is supported in sandboxed iframes" — with the caveat it "does not work if the code requires access to the embedding page's DOM." anon-rpc's §6 worker runs at a null origin with no DOM access, so it lands in the carve-out by construction; the on-chain hash-pin (§4) is a stronger integrity claim than bundling. The `content_security_policy.sandbox` key carries no new extension-page restrictions, so our relaxed sandbox CSP is allowed. **Firefox/AMO has no equivalent carve-out** — expect manual review (the isolation + hash-pin is the argument), or ship the bundle inside. Re-confirm before store submission; policy moves faster than specs.
