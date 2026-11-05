@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| Status | Approved, 6 Nov 2026. Building Phase 0 (kill tests), then Phase 1 (extension MVP) |
+| Status | Approved & building, 6 Nov 2026. Phase 0 ✅, Phase 1 (extension MVP) ✅, Phase 2 (helper) skeleton ✅ (D1+D3). Validated on passthrough; real-Tor demo blocked on the EF gateway outage (self-host path in `gateway-notes.md`). |
 | Owner | Aman |
 | Built on | EF anon-rpc (sandboxed, hash-pinned network clients) and tor-js |
 | Evidence | Every claim marked *(measured)* is in [`evidence.md`](evidence.md) |
