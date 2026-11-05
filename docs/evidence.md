@@ -72,3 +72,17 @@ Earlier direct-vs-Tor replay of captured requests (`replay.mjs`): Lido 3/3 and E
 - Free public RPCs over Tor (3 rounds, 24 endpoints, 4 Nov 2026): 10 serve Tor, 1 unreliable (Tenderly), 2 need keys, 11 down for everyone.
 - tor-js via anon-rpc (2 Nov): requests ~1.4 s; isolation keys give different exits. Nym (4 Nov): works, ~1 s warm, **drops custom headers and ignores isolation keys**.
 - viem numbers every JSON-RPC request with one process-wide counter (`viem/utils/rpc/id.ts`), which links requests across routes unless ids are blinded.
+
+## E8. EF extension harness + tor-js inside *our* MV3 extension (Phase 0 KT#1) — 6 Nov 2026 (`experiments/kt-ext-harness`)
+A minimal MV3 extension built around `@anon-rpc/browser-extension-harness` 0.4.0: service worker constructs `AnonRpcWorker` with the tor-js specifier `0x700dA3…659e`, EF demo gateway, `publicnode` as the one preExisting provider; offscreen + sandbox static assets (`anon-rpc/0.4.0-73a0ec42/`) copied in by the build. Driven by Playwright 1.64.1 (headless Chromium) via `serviceWorker.evaluate`.
+
+| Check | Result |
+|---|---|
+| `worker.ready` (harness + tor-js boot, first run) | ✅ 20–28 s across runs |
+| `eth_blockNumber` over tor-js | ✅ 2.5–5.3 s, status 200 |
+| `eth_getBalance` (vitalik) over tor-js | ✅ 0.9–3.6 s, correct balance |
+| Two isolation keys → two Tor exit IPs | ✅ e.g. `171.25.193.78` vs `45.9.168.92`; `185.220.101.98` vs `192.42.116.54` |
+
+=> The whole MVP transport (EF extension harness + tor-js + per-account isolation keys → distinct circuits/exits) works **inside our own extension**, not just the standalone harness. Ready is ~8 s slower than the standalone browser harness (E5: 15–19 s), the offscreen-document hop on first boot.
+
+**Coexistence:** loaded alongside a MetaMask-shaped **stand-in** (our own code: its own offscreen document + sandboxed iframe + MAIN-world `window.ethereum`). Both service workers booted; our harness still reached ready (20.5 s) and fetched; different exits held. => Two offscreen-using MV3 extensions coexist (the offscreen-doc singleton is per-extension; sandboxed iframes don't collide). **Not yet tested against the real MetaMask binary** — the sandbox blocked launching Chromium with downloaded third-party extension code; architectural risk cleared via the stand-in, MetaMask-specific run pending approval.

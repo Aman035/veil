@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "coexistence stand-in (MetaMask-shaped)",
+  "version": "0.0.1",
+  "description": "Mimics a wallet's browser footprint (offscreen document + sandboxed iframe + MAIN-world injected provider) to test that two offscreen-using MV3 extensions coexist. Our own code; not MetaMask.",
+  "background": { "service_worker": "sw.js", "type": "module" },
+  "permissions": ["offscreen"],
+  "content_scripts": [
+    { "matches": ["<all_urls>"], "js": ["inject.js"], "run_at": "document_start", "world": "MAIN" }
+  ],
+  "sandbox": { "pages": ["sandbox.html"] },
+  "content_security_policy": {
+    "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-inline'; connect-src *;"
+  }
+}

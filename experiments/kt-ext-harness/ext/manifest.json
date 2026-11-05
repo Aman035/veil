@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "unlink kt-ext-harness",
+  "version": "0.0.1",
+  "description": "Phase 0 kill test: EF extension harness + tor-js inside our own MV3 extension.",
+
+  "background": { "service_worker": "background.js", "type": "module" },
+
+  "permissions": ["offscreen"],
+
+  "//host_permissions": "For the OFFSCREEN document's fetch + hash-verify of the worker bundle from the resolver. Broad here because the tor-js resolver host is embedded on-chain and not known up front; the product narrows this once the resolver host is pinned.",
+  "host_permissions": ["<all_urls>"],
+
+  "sandbox": { "pages": ["anon-rpc/*/sandbox.html"] },
+
+  "content_security_policy": {
+    "sandbox": "sandbox allow-scripts; script-src 'self' 'unsafe-inline' 'unsafe-eval' blob:; child-src 'self' blob:; worker-src 'self' blob:; connect-src *;"
+  }
+}

@@ -322,11 +322,18 @@ gantt
 
 ---
 
-## 12. Open questions
+## 12. Open questions — resolved 6 Nov 2026
 
-1. Name.
-2. Default site policy when re-routing isn't possible: ask, or block?
-3. Which Tor-friendly providers to ship with, and how users can add their own.
-4. Ship Nym as an option in MVP, given it ignores isolation keys *(measured)*?
-5. Firefox in MVP or later?
-6. Should the helper fan out wallet APIs that take many accounts (e.g. MetaMask's multi-account balances) into one request per account? It's fragile, but the only way to unlink those.
+1. **Name:** keep **Unlink** for now.
+2. **Default site policy when re-routing isn't possible:** **ask** (one clear choice per site; never silent).
+3. **Tor-friendly providers to ship with:** ship the 10 measured-good public RPCs (see `evidence.md` E7); users can add their own in settings.
+4. **Nym in MVP:** **skip.** It ignores isolation keys *(measured)*, so it can't give per-account routes. tor-js only in MVP; keep anon-rpc swappable for later.
+5. **Firefox:** **later.** MVP targets Chrome/Brave (Chromium MV3). Firefox is a fast follow (harness supports it; no Web Store remote-code carve-out — see §9 KT4).
+6. **Helper fanning out multi-account wallet APIs** (e.g. MetaMask balances) into one request per account: make it a **setting**, off by default (fragile; advanced/experimental).
+
+## 13. Demo & UX bar
+
+A live demo will be given. **Demo-grade UX is a P0 requirement, not polish.** Every phase ships something demoable:
+- The toggle, the "connecting privately" state, the per-tab popup, and the re-route/blocked moments (§6.3) must look and feel finished.
+- No raw errors, dead-ends, or jank in any path a demo could hit. Fail states are designed (§6.3).
+- Build phase by phase; each phase is tested and demoable before the next begins.
