@@ -288,11 +288,11 @@ gantt
     Hardening, store review, docs   :9, 12
 ```
 
-**Phase 0: remaining kill tests (week 1)**
-1. The EF extension harness inside *our* extension, with tor-js: ready time, and that it coexists with MetaMask.
-2. Fallback logic against Aave, Uniswap and 1inch in a real browser with a real wallet.
-3. The account-mapping heuristic against recorded traffic from 10 dapps (false links and missed links).
-4. Chrome Web Store policy check for remotely loaded, hash-pinned code. The EF extension harness README argues it's allowed; confirm.
+**Phase 0: remaining kill tests (week 1)** — status 6 Nov 2026
+1. ✅ **PASS.** EF extension harness + tor-js inside *our* MV3 extension: `worker.ready` 20–28 s, RPC reads work, two isolation keys → two Tor exits. Coexists with a MetaMask-shaped stand-in (two offscreen-using extensions don't conflict). *Real MetaMask binary run pending* (sandbox blocks loading downloaded third-party extension code). Evidence E8.
+2. ⚠️ **Core validated, real-wallet increment pending.** Reroute-after-block fixed Aave (0/16 → 3/3) and blind reroute broke Uniswap (0/33) with an injected wallet (E4). The *real-wallet* run is blocked by the same external-code guardrail as #1.
+3. ✅ **PASS.** Account-mapping heuristic on real traffic from 6 dapps: 0 false links, calldata-embedded addresses matched correctly; learning must come from the wallet, not from reads. Evidence E9.
+4. ✅ **PASS.** Chrome's MV3 sandboxed-iframe carve-out confirmed in current docs; Firefox has none. Evidence E10.
 
 ---
 
