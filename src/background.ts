@@ -3,6 +3,7 @@
 // keeps the stats the popup shows.
 import { AnonRpcWorker } from "@anon-rpc/browser-extension-harness";
 import { KnownAccounts, routeKeyForBody, NEUTRAL } from "./shared/routing";
+import { classifyEndpoint, torFriendlyFor } from "./shared/providers";
 import type { TabStats, GlobalStats } from "./shared/protocol";
 
 // Network is configurable (PRD §11: swappable gateways / specifiers). Defaults
@@ -107,6 +108,27 @@ function blind(body: any): { sent: any; restore: (resp: any) => any } {
   return { sent: { ...body, id: nid }, restore: (resp) => (resp && typeof resp === "object" ? { ...resp, id: origId } : resp) };
 }
 
+// Send a (blinded) body through the harness to one endpoint; classify the
+// outcome. A JSON-RPC-level error is still a valid answer (not a transport
+// block); a non-2xx or non-JSON (bot-check) body is a block.
+type SendResult = { ok: true; json: unknown } | { ok: false; reason: string };
+async function sendVia(target: string, sentBody: unknown, key: string): Promise<SendResult> {
+  try {
+    const res = await getWorker().fetch(target, {
+      method: "POST",
+      headers: { "content-type": "application/json" }, // identifying headers intentionally omitted
+      body: JSON.stringify(sentBody),
+      anonOptions: { isolationKey: key },
+    } as RequestInit);
+    if (!res.ok) return { ok: false, reason: `status ${res.status}` };
+    const text = await res.text();
+    try { return { ok: true, json: JSON.parse(text) }; }
+    catch { return { ok: false, reason: "non-JSON response (bot check?)" }; }
+  } catch (e) {
+    return { ok: false, reason: (e as Error)?.message ?? String(e) };
+  }
+}
+
 // ---- the route ----
 async function routeRpc(url: string, body: unknown, origin: string, tabId: number) {
   const known = knownFor(origin);
@@ -116,25 +138,30 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
 
   const s = statsFor(tabId, origin);
   s.isProtected = true; s.total++; bumpToday(origin);
+  const addRoute = () => { if (!s.routes.includes(key)) s.routes.push(key); };
 
   keepAlive(true);
   try {
-    const res = await getWorker().fetch(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" }, // identifying headers intentionally omitted
-      body: JSON.stringify(sent),
-      anonOptions: { isolationKey: key },
-    } as RequestInit);
+    // Attempt 1: the dapp's own endpoint, over Tor.
+    const first = await sendVia(url, sent, key);
+    if (first.ok) { s.protectedCount++; addRoute(); return { ok: true, status: 200, body: restore(first.json), routeKey: key }; }
 
-    if (!res.ok) { s.blocked++; return { ok: false, status: res.status, blocked: true, error: `provider returned ${res.status}`, routeKey: key }; }
+    // Blocked. Re-route only for a known single-chain standard RPC (E4/E5).
+    const cls = classifyEndpoint(url);
+    if ("chainId" in cls) {
+      const here = (() => { try { return new URL(url).hostname; } catch { return ""; } })();
+      for (const p of torFriendlyFor(cls.chainId)) {
+        if (new URL(p).hostname === here) continue;
+        const rr = await sendVia(p, sent, key);
+        if (rr.ok) { s.rerouted++; s.protectedCount++; addRoute(); return { ok: true, status: 200, body: restore(rr.json), routeKey: key, rerouted: true }; }
+      }
+      s.blocked++;
+      return { ok: false, blocked: true, error: "unlink: provider blocked anonymous access and re-routing failed", routeKey: key };
+    }
 
-    const json = await res.json();
-    s.protectedCount++;
-    if (!s.routes.includes(key)) s.routes.push(key);
-    return { ok: true, status: 200, body: restore(json), routeKey: key };
-  } catch (e) {
+    // Not safely re-routable (multichain gateway / custom backend) -> site policy (Phase 1c).
     s.blocked++;
-    return { ok: false, blocked: true, error: "unlink: " + ((e as Error)?.message ?? String(e)), routeKey: key };
+    return { ok: false, blocked: true, needsPolicy: true, error: "unlink: this site's provider blocks anonymous access", routeKey: key };
   } finally {
     keepAlive(false);
   }
