@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="onboarding.css" />
+  <title>Unlink — private by default</title>
+</head>
+<body>
+  <main id="app" class="wrap" data-state="off">
+    <header class="hero">
+      <div class="brand">
+        <span class="mark" aria-hidden="true"></span>
+        <span class="name">Unlink</span>
+      </div>
+      <h1 class="headline">Private by default for the wallets and dapps you already use.</h1>
+      <p class="how">
+        One route per account over Tor, so the providers your apps talk to can't see your IP
+        or tell your accounts apart. When a provider blocks Tor, Unlink re-routes around it —
+        and never falls back to a direct connection without asking you.
+      </p>
+    </header>
+
+    <section class="panel toggle-panel">
+      <div class="toggle-copy">
+        <div class="toggle-title" id="toggleTitle">Protection is on</div>
+        <div class="toggle-sub" id="toggleSub">Dapp reads leave through Tor, one route per account.</div>
+      </div>
+      <button id="toggle" class="switch" role="switch" aria-checked="true" aria-label="Toggle protection">
+        <span class="knob"></span>
+      </button>
+    </section>
+
+    <section class="honesty-block">
+      <h2 class="section-title">What this hides — and what it doesn't</h2>
+      <p class="section-note">We keep this honest. Privacy you don't actually have is worse than none.</p>
+      <div class="cols">
+        <div class="col col-hidden">
+          <div class="col-head"><span class="pill pill-good">Hidden from providers</span></div>
+          <ul>
+            <li><b>Your IP address</b><span>on every dapp read (and wallet traffic too, with the desktop helper).</span></li>
+            <li><b>That your accounts belong together</b><span>for RPC traffic — each account gets its own route, so providers see strangers.</span></li>
+          </ul>
+        </div>
+        <div class="col col-visible">
+          <div class="col-head"><span class="pill pill-warn">Still visible</span></div>
+          <ul>
+            <li><b>Which addresses you look up</b><span>providers still see the addresses you query (that needs PIR — a different project).</span></li>
+            <li><b>Your wallet's own multi-account APIs</b><span>e.g. MetaMask's balance service still takes all your accounts in one request.</span></li>
+            <li><b>That you use Tor</b><span>the Tor gateway sees you use it — not what for.</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span>No accounts. No telemetry. Network code is sandboxed and hash-pinned.</span>
+      <span class="status-line"><span class="dot" aria-hidden="true"></span><span id="footState">Protection is on</span></span>
+    </footer>
+  </main>
+  <script src="onboarding.js"></script>
+</body>
+</html>

@@ -79,7 +79,10 @@ import { TAG, type PageToContent, type ContentToPage } from "./shared/protocol";
               headers: { "content-type": "application/json" },
             });
           }
-          // Not ok and not allowed direct: fail closed (never silently direct).
+          // User chose "allow direct" for this site: perform the real native
+          // request. This is the ONLY sanctioned direct path (PRD §5.3).
+          if (res.allowDirect) return nativeFetch(input as any, init);
+          // Otherwise fail closed (never silently direct).
           throw new Error(res.error || "unlink: request blocked (not private)");
         }
       }
@@ -106,6 +109,8 @@ import { TAG, type PageToContent, type ContentToPage } from "./shared/protocol";
       shouldIntercept().then((yes) => {
         if (!yes) return send.apply(xhr, [body]);
         route(info.url, JSON.parse(bodyText)).then((res) => {
+          // User chose "allow direct" for this site: do the real native send.
+          if (!res.ok && res.allowDirect) return send.apply(xhr, [body]);
           const text = res.ok ? (typeof res.body === "string" ? res.body : JSON.stringify(res.body)) : "";
           Object.defineProperty(xhr, "readyState", { value: 4, configurable: true });
           Object.defineProperty(xhr, "status", { value: res.ok ? (res.status ?? 200) : 0, configurable: true });

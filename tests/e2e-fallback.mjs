@@ -43,6 +43,11 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let sw = ctx.serviceWorkers().find((w) => w.url().includes("background.js"));
 for (let i = 0; i < 60 && !sw; i++) { await sleep(250); sw = ctx.serviceWorkers().find((w) => w.url().includes("background.js")); }
 
+// Phase 1c: a non-reroutable block consults the site policy. Pin this origin to
+// "block" so the multichain gateway fails closed deterministically (no dialog,
+// which is driven separately in e2e-policy.mjs).
+await sw.evaluate(([o]) => chrome.storage.local.set({ sitePolicies: { [o]: "block" } }), [origin]);
+
 const page = await ctx.newPage();
 await page.goto(origin, { waitUntil: "domcontentloaded" });
 let r = null;

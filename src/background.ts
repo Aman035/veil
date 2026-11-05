@@ -4,7 +4,7 @@
 import { AnonRpcWorker } from "@anon-rpc/browser-extension-harness";
 import { KnownAccounts, routeKeyForBody, NEUTRAL } from "./shared/routing";
 import { classifyEndpoint, torFriendlyFor } from "./shared/providers";
-import type { TabStats, GlobalStats } from "./shared/protocol";
+import type { TabStats, GlobalStats, SitePolicy } from "./shared/protocol";
 
 // Network is configurable (PRD §11: swappable gateways / specifiers). Defaults
 // to tor-js on mainnet + the EF demo gateway; build with UNLINK_SPECIFIER /
@@ -27,6 +27,25 @@ async function getExcluded(): Promise<string[]> {
 async function isProtected(origin: string): Promise<boolean> {
   if (!(await getEnabled())) return false;
   return !(await getExcluded()).includes(origin);
+}
+
+// ---- per-site policy (PRD §5.3): origin -> "ask" | "block" | "allow-direct" ----
+// Only consulted when a provider blocks anonymous access AND the request can't
+// be safely re-routed. Default "ask". "allow-direct" is the only sanctioned
+// path to a direct (non-private) connection, and it is per-site and explicit.
+async function getPolicies(): Promise<Record<string, SitePolicy>> {
+  const r = await chrome.storage.local.get({ sitePolicies: {} });
+  return (r.sitePolicies || {}) as Record<string, SitePolicy>;
+}
+async function getPolicy(origin: string): Promise<SitePolicy> {
+  const p = (await getPolicies())[origin];
+  return p === "block" || p === "allow-direct" ? p : "ask";
+}
+async function setPolicy(origin: string, policy: SitePolicy): Promise<void> {
+  const all = await getPolicies();
+  if (policy === "ask") delete all[origin];
+  else all[origin] = policy;
+  await chrome.storage.local.set({ sitePolicies: all });
 }
 
 // ---- keep the MV3 service worker alive during boot / in-flight work ----
@@ -71,6 +90,16 @@ function getWorker(): AnonRpcWorker {
 }
 // Boot early when enabled so the first request isn't the one that waits.
 getEnabled().then((e) => { if (e) getWorker(); });
+
+// Rebuild the harness after an error (popup "tap to retry"). Only meaningful
+// once the previous attempt has settled into "error".
+function rebootWorker() {
+  if (harness === "booting") return;
+  worker = undefined;
+  harness = "idle";
+  harnessMs = undefined;
+  getWorker();
+}
 
 // ---- per-origin accounts + per-tab stats ----
 const accountsByOrigin = new Map<string, KnownAccounts>();
@@ -137,8 +166,16 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
   const { sent, restore } = blind(body);
 
   const s = statsFor(tabId, origin);
-  s.isProtected = true; s.total++; bumpToday(origin);
+  s.isProtected = true;
   const addRoute = () => { if (!s.routes.includes(key)) s.routes.push(key); };
+
+  // Harness down (not a provider block): fail closed, never go direct, never
+  // ask to allow-direct. Matches the popup's "Paused: not private" (PRD §6.3).
+  if (harness === "error") {
+    return { ok: false, error: "unlink: paused — the anonymizing network is unavailable (not private)", routeKey: key };
+  }
+
+  s.total++; bumpToday(origin);
 
   keepAlive(true);
   try {
@@ -159,8 +196,20 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
       return { ok: false, blocked: true, error: "unlink: provider blocked anonymous access and re-routing failed", routeKey: key };
     }
 
-    // Not safely re-routable (multichain gateway / custom backend) -> site policy (Phase 1c).
-    s.blocked++;
+    // Not safely re-routable (multichain gateway / custom backend) -> site policy.
+    const policy = await getPolicy(origin);
+    if (policy === "allow-direct") {
+      // The user explicitly allowed a direct (non-private) connection for this
+      // site. The page performs the real native request itself (inject.ts).
+      s.direct++;
+      return { ok: false, allowDirect: true, error: "unlink: allowed direct for this site (not private)", routeKey: key };
+    }
+    if (policy === "block") {
+      s.blocked++;
+      return { ok: false, blocked: true, error: "unlink: this site's provider blocks anonymous access — kept blocked", routeKey: key };
+    }
+    // "ask" (default): tell the page to show the one-time dialog; don't count it
+    // as blocked yet — the retry after the user's choice records the outcome.
     return { ok: false, blocked: true, needsPolicy: true, error: "unlink: this site's provider blocks anonymous access", routeKey: key };
   } finally {
     keepAlive(false);
@@ -209,7 +258,7 @@ chrome.runtime.onMessage.addListener((msg, sender, respond) => {
   if (msg?.type === "popup:toggle") {
     (async () => {
       await chrome.storage.local.set({ enabled: !!msg.enabled });
-      if (msg.enabled) getWorker();
+      if (msg.enabled) { if (harness === "error") rebootWorker(); else getWorker(); }
       // tell content scripts to re-pull state
       const tabs = await chrome.tabs.query({});
       for (const t of tabs) if (t.id != null) chrome.tabs.sendMessage(t.id, { type: "state-changed" }).catch(() => {});
@@ -217,7 +266,27 @@ chrome.runtime.onMessage.addListener((msg, sender, respond) => {
     })();
     return true;
   }
+  if (msg?.type === "popup:retry") {
+    rebootWorker();
+    respond({ ok: true });
+    return true;
+  }
+  if (msg?.type === "get-policy") {
+    (async () => respond({ policy: await getPolicy(origin) }))();
+    return true;
+  }
+  if (msg?.type === "set-policy") {
+    (async () => { await setPolicy(origin, msg.policy); respond({ ok: true }); })();
+    return true;
+  }
   return false;
+});
+
+// First run: open the onboarding page (what's hidden, what isn't, one toggle).
+chrome.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("onboarding/onboarding.html") }).catch(() => {});
+  }
 });
 
 // Small debug surface (handy in devtools and e2e; no page can reach it).
@@ -228,4 +297,7 @@ chrome.runtime.onMessage.addListener((msg, sender, respond) => {
   tabs: () => [...tabStats.entries()],
   today: () => ({ ...today, sites: [...today.sites] }),
   accounts: (o: string) => [...(accountsByOrigin.get(o)?.set ?? [])],
+  policy: (o: string) => getPolicy(o),
+  setPolicy: (o: string, p: SitePolicy) => setPolicy(o, p),
+  reboot: () => rebootWorker(),
 };

@@ -1,6 +1,7 @@
 // ISOLATED-world content script (document_start). The only side that can reach
 // chrome.runtime. Relays page RPC to the background and pushes state back.
 import { TAG, type PageToContent, type ContentToPage, type RpcResponse, type StateResponse } from "./shared/protocol";
+import { showPolicyDialog } from "./shared/dialog";
 
 const origin = location.origin;
 
@@ -29,10 +30,17 @@ window.addEventListener("message", async (ev: MessageEvent) => {
     let res: RpcResponse;
     try {
       res = await chrome.runtime.sendMessage({ type: "rpc", url: d.url, body: d.body, origin });
+      // Non-reroutable block, site policy is "ask": ask the user, in-page, once.
+      if (res && res.needsPolicy) {
+        const choice = await showPolicyDialog(location.host);
+        try { await chrome.runtime.sendMessage({ type: "set-policy", origin, policy: choice }); } catch {}
+        // Re-run the request now that a policy is stored (fail closed / allow-direct).
+        res = await chrome.runtime.sendMessage({ type: "rpc", url: d.url, body: d.body, origin });
+      }
     } catch (e) {
       res = { ok: false, error: "unlink: background unavailable" };
     }
-    toPage({ tag: TAG, dir: "c2p", kind: "rpc-result", id: d.id, ok: res.ok, status: res.status, body: res.body, error: res.error });
+    toPage({ tag: TAG, dir: "c2p", kind: "rpc-result", id: d.id, ok: res.ok, status: res.status, body: res.body, error: res.error, allowDirect: res.allowDirect });
   }
 });
 

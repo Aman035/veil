@@ -60,6 +60,7 @@ body { width: 340px; background: var(--bg); color: var(--text); -webkit-font-smo
 .app[data-state="connecting"] .dot { background: var(--amber); animation: pulse 1.1s ease-in-out infinite; }
 .app[data-state="error"] .dot { background: var(--amber); }
 @keyframes pulse { 0%,100% { opacity: .35; } 50% { opacity: 1; } }
+.app[data-state="error"] .status { cursor: pointer; }
 .status-text { font-size: 14px; font-weight: 600; }
 .status-sub { font-size: 12px; color: var(--muted); margin-left: auto; }
 
@@ -72,7 +73,26 @@ body { width: 340px; background: var(--bg); color: var(--text); -webkit-font-smo
 .muted { color: var(--muted); }
 .reroute { color: var(--accent); font-size: 12.5px; }
 .reroute::before { content: "↻ "; }
+.blocked { color: var(--amber); font-size: 12.5px; }
+.blocked::before { content: "⨯ "; }
+.direct { color: var(--muted); font-size: 12.5px; }
+.direct::before { content: "→ "; }
+.facts .blocked b, .facts .direct b { color: inherit; }
 .hidden { display: none; }
+
+/* per-site policy control */
+.policy { margin-top: 11px; padding-top: 11px; border-top: 1px solid var(--line); }
+.policy-label { font-size: 11px; color: var(--faint); margin-bottom: 7px; }
+.seg { display: flex; gap: 4px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 9px; padding: 3px; }
+.seg-btn {
+  flex: 1; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer;
+  color: var(--muted); background: transparent; border: 0; border-radius: 6px; padding: 6px 4px;
+  transition: background .15s ease, color .15s ease;
+}
+.seg-btn:hover { color: var(--text); }
+.seg-btn[aria-checked="true"] { background: var(--panel); color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.3); }
+.seg-btn[data-policy="allow-direct"][aria-checked="true"] { color: var(--amber); }
+.seg-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 
 .today .today-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); }
 .today .today-row b { color: var(--text); font-variant-numeric: tabular-nums; }

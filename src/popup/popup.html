@@ -31,7 +31,18 @@
         <li><b id="tabProtected">0</b> requests protected</li>
         <li id="tabRoutes" class="muted">waiting for activity…</li>
         <li id="tabReroute" class="reroute hidden">Provider blocks Tor → re-routed (safe)</li>
+        <li id="tabBlocked" class="blocked hidden"><b>0</b> blocked (kept private)</li>
+        <li id="tabDirect" class="direct hidden"><b>0</b> sent direct (you allowed it)</li>
       </ul>
+
+      <div class="policy">
+        <div class="policy-label">If this site's provider blocks Tor</div>
+        <div id="policySeg" class="seg" role="radiogroup" aria-label="Site policy">
+          <button class="seg-btn" data-policy="ask" role="radio" aria-checked="false">Ask</button>
+          <button class="seg-btn" data-policy="block" role="radio" aria-checked="false">Block</button>
+          <button class="seg-btn" data-policy="allow-direct" role="radio" aria-checked="false">Allow direct</button>
+        </div>
+      </div>
     </section>
 
     <section class="card today">

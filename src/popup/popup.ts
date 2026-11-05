@@ -1,17 +1,23 @@
-import type { GlobalStats, TabStats } from "../shared/protocol";
+import type { GlobalStats, TabStats, SitePolicy } from "../shared/protocol";
 
 const app = document.getElementById("app")!;
 const toggle = document.getElementById("toggle")!;
+const statusSection = document.querySelector(".status")!;
 const statusText = document.getElementById("statusText")!;
 const statusSub = document.getElementById("statusSub")!;
 const tabOrigin = document.getElementById("tabOrigin")!;
 const tabProtected = document.getElementById("tabProtected")!;
 const tabRoutes = document.getElementById("tabRoutes")!;
 const tabReroute = document.getElementById("tabReroute")!;
+const tabBlocked = document.getElementById("tabBlocked")!;
+const tabDirect = document.getElementById("tabDirect")!;
+const policySeg = document.getElementById("policySeg")!;
 const todayReq = document.getElementById("todayReq")!;
 const todaySites = document.getElementById("todaySites")!;
 
 let activeTabId = -1;
+let activeOrigin: string | null = null;
+let currentPolicy: SitePolicy = "ask";
 
 async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -44,9 +50,17 @@ function render(g: GlobalStats, t: TabStats | null, tabUrl?: string) {
   // tab card
   let origin = t?.origin;
   if (!origin && tabUrl) { try { origin = new URL(tabUrl).origin; } catch {} }
+  activeOrigin = origin ?? null;
   tabOrigin.textContent = origin ? origin.replace(/^https?:\/\//, "") : "no page";
   const protectedCount = t?.protectedCount ?? 0;
   tabProtected.textContent = String(protectedCount);
+
+  const blocked = t?.blocked ?? 0;
+  const direct = t?.direct ?? 0;
+  tabBlocked.classList.toggle("hidden", blocked === 0);
+  tabBlocked.querySelector("b")!.textContent = String(blocked);
+  tabDirect.classList.toggle("hidden", direct === 0);
+  tabDirect.querySelector("b")!.textContent = String(direct);
 
   const accountRoutes = (t?.routes ?? []).filter((r) => r.startsWith("acct:")).length;
   const hasNeutral = (t?.routes ?? []).includes("neutral");
@@ -63,14 +77,28 @@ function render(g: GlobalStats, t: TabStats | null, tabUrl?: string) {
   todaySites.textContent = String(g.todaySites);
 }
 
+function renderPolicy() {
+  const origin = activeOrigin;
+  for (const b of policySeg.querySelectorAll<HTMLButtonElement>(".seg-btn")) {
+    const on = !!origin && b.dataset.policy === currentPolicy;
+    b.setAttribute("aria-checked", on ? "true" : "false");
+    b.disabled = !origin;
+  }
+  (policySeg.closest(".policy") as HTMLElement).style.opacity = origin ? "1" : ".45";
+}
+
 async function refresh() {
   const tab = await getActiveTab();
   activeTabId = tab?.id ?? -1;
-  const [g, t] = await Promise.all([
+  if (tab?.url) { try { activeOrigin = new URL(tab.url).origin; } catch { activeOrigin = null; } }
+  const [g, t, pol] = await Promise.all([
     chrome.runtime.sendMessage({ type: "popup:get" }) as Promise<GlobalStats>,
     activeTabId >= 0 ? (chrome.runtime.sendMessage({ type: "popup:tab-stats", tabId: activeTabId }) as Promise<TabStats | null>) : Promise.resolve(null),
+    activeOrigin ? (chrome.runtime.sendMessage({ type: "get-policy", origin: activeOrigin }) as Promise<{ policy: SitePolicy }>) : Promise.resolve(null),
   ]);
+  if (pol?.policy) currentPolicy = pol.policy;
   render(g, t, tab?.url);
+  renderPolicy();
 }
 
 toggle.addEventListener("click", async () => {
@@ -79,6 +107,23 @@ toggle.addEventListener("click", async () => {
   if (enabled) setState("connecting");
   await chrome.runtime.sendMessage({ type: "popup:toggle", enabled });
   refresh();
+});
+
+// In the "Paused: not private" error state, the status line retries the harness.
+statusSection.addEventListener("click", async () => {
+  if (app.getAttribute("data-state") !== "error") return;
+  setState("connecting");
+  statusText.textContent = "Connecting privately…";
+  await chrome.runtime.sendMessage({ type: "popup:retry" });
+  refresh();
+});
+
+policySeg.addEventListener("click", async (e) => {
+  const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".seg-btn");
+  if (!btn || !activeOrigin || btn.disabled) return;
+  currentPolicy = btn.dataset.policy as SitePolicy;
+  renderPolicy();
+  await chrome.runtime.sendMessage({ type: "set-policy", origin: activeOrigin, policy: currentPolicy });
 });
 
 refresh();
