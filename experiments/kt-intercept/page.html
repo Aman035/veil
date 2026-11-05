@@ -1,0 +1,17 @@
+<!doctype html><meta charset="utf-8"><body>
+<script type="module">
+  const RPC = "http://rpc.example.test:18911/";
+  const out = (window.__done = {});
+  try { const { createPublicClient, http } = await import("https://esm.sh/viem@2.21.0");
+        await createPublicClient({ transport: http(RPC) }).getBlockNumber(); out.viem = "ok"; } catch (e) { out.viem = "err " + e.message.slice(0, 60); }
+  try { const { JsonRpcProvider } = await import("https://esm.sh/ethers@6.13.2");
+        await new JsonRpcProvider(RPC, 1, { staticNetwork: true }).getBlockNumber(); out.ethers6 = "ok"; } catch (e) { out.ethers6 = "err " + e.message.slice(0, 60); }
+  try { const { ethers } = await import("https://esm.sh/ethers@5.7.2");
+        await new ethers.providers.StaticJsonRpcProvider(RPC, 1).getBlockNumber(); out.ethers5 = "ok"; } catch (e) { out.ethers5 = "err " + e.message.slice(0, 60); }
+  try { const x = new XMLHttpRequest(); x.open("POST", RPC); x.setRequestHeader("content-type", "application/json");
+        await new Promise((r) => { x.onloadend = r; x.send('{"jsonrpc":"2.0","id":1,"method":"eth_chainId","params":[]}'); }); out.xhr = "ok"; } catch (e) { out.xhr = "err"; }
+  try { const w = new Worker(URL.createObjectURL(new Blob([`fetch("${RPC}",{method:"POST",body:'{"jsonrpc":"2.0","id":1,"method":"eth_chainId","params":[]}'}).then(()=>postMessage("ok"),()=>postMessage("err"))`], { type: "text/javascript" })));
+        out.worker = await new Promise((r) => { w.onmessage = (e) => r(e.data); }); } catch (e) { out.worker = "err"; }
+  try { const ws = new WebSocket("ws://rpc.example.test:18911/"); out.websocket = await new Promise((r) => { ws.onopen = () => r("opened"); ws.onerror = () => r("error"); setTimeout(() => r("timeout"), 3000); }); } catch (e) { out.websocket = "err"; }
+  out.finished = true;
+</script>

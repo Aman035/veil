@@ -1,0 +1,157 @@
+[
+  {
+    "url": "https://app.uniswap.org",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": false,
+    "total": 19,
+    "ok": 12,
+    "failed": 7,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {
+      "entry-gateway.backend-prod.api.uniswap.org": {
+        "ok": 12,
+        "failed": 7
+      }
+    }
+  },
+  {
+    "url": "https://app.aave.com",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": false,
+    "total": 16,
+    "ok": 0,
+    "failed": 16,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {
+      "mainnet.gateway.tenderly.co": {
+        "ok": 0,
+        "failed": 16
+      }
+    }
+  },
+  {
+    "url": "https://app.compound.finance",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": false,
+    "total": 6,
+    "ok": 6,
+    "failed": 0,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {
+      "node-provider-v3-app.compound.xyz": {
+        "ok": 6,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "url": "https://stake.lido.fi",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": false,
+    "total": 5,
+    "ok": 5,
+    "failed": 0,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {
+      "stake.lido.fi": {
+        "ok": 5,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "url": "https://app.ens.domains",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": false,
+    "total": 31,
+    "ok": 31,
+    "failed": 0,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {
+      "lb.drpc.live": {
+        "ok": 31,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "url": "https://app.morpho.org",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": false,
+    "total": 3,
+    "ok": 3,
+    "failed": 0,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {
+      "app.morpho.org": {
+        "ok": 3,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "url": "https://app.1inch.io",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": true,
+    "total": 0,
+    "ok": 0,
+    "failed": 0,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {}
+  },
+  {
+    "url": "https://app.safe.global",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": false,
+    "total": 0,
+    "ok": 0,
+    "failed": 0,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {}
+  },
+  {
+    "url": "https://app.spark.fi",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": false,
+    "total": 32,
+    "ok": 32,
+    "failed": 0,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {
+      "eth-mainnet.g.alchemy.com": {
+        "ok": 32,
+        "failed": 0
+      }
+    }
+  },
+  {
+    "url": "https://app.euler.finance",
+    "mode": "tor",
+    "loaded": "ok",
+    "blockedPage": true,
+    "total": 0,
+    "ok": 0,
+    "failed": 0,
+    "rerouted": 0,
+    "rerouteFailed": 0,
+    "hosts": {}
+  }
+]
