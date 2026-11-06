@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 876" width="900" height="876" role="img" aria-label="The full read path on a real app (ENS). Without Veil, the RPC provider drpc logs your IP and every address, linking all your accounts and joining them across every dapp that uses drpc. With Veil, each account's read is intercepted in the page, routed on its own Tor circuit through a blind KPS gateway to drpc, so the provider sees a different exit per account and no IP. It still sees the addresses queried.">
+  <defs><style>
+    .t{font-family:-apple-system,"Segoe UI",Roboto,sans-serif}
+    .m{font-family:ui-monospace,"SF Mono",Menlo,monospace}
+    .box{fill:#16181c;stroke:#2a2e35}
+    .out{fill:#101316;stroke:#3a3f47}
+    .acc{fill:#101316;stroke:#4b5059}
+    .lbl{fill:#ededee;font-weight:600}
+    .sub{fill:#9a9ea4}
+    .hdr{fill:#ededee;font-weight:700}
+    .tag{fill:#5f636a}
+    .num{fill:#0b0d11;font-weight:700}
+    .badge{fill:#ededee}
+    .ar{stroke:#454b54;fill:none}
+    .arl{fill:#6a6f77}
+    .mono{fill:#c7ccd3}
+  </style></defs>
+  <rect width="900" height="876" rx="18" fill="#0b0d11"/>
+  <rect x="0.5" y="0.5" width="899" height="875" rx="17.5" fill="none" stroke="#23262b"/>
+
+  <text class="t hdr" x="30" y="40" font-size="17">The full read path on a real app (ENS)</text>
+  <text class="t sub" x="30" y="60" font-size="12">app.ens.domains reads through drpc, an independent RPC provider that also serves many other dapps.</text>
+
+  <!-- ===================== WITHOUT VEIL ===================== -->
+  <g class="t">
+    <rect class="out" x="30" y="78" width="840" height="60" rx="11"/>
+    <circle cx="56" cy="108" r="12" class="badge"/>
+    <text class="t num" x="56" y="112" font-size="12" text-anchor="middle">0</text>
+    <text class="lbl" x="80" y="102" font-size="12.5">Without Veil</text>
+    <text class="sub" x="80" y="119" font-size="10.5">app.ens.domains  ->  fetch(POST, eth_call)  ->  lb.drpc.live. drpc logs your IP and every address you</text>
+    <text class="sub" x="80" y="132" font-size="10.5">read, links all your accounts to one person, and joins that with every other dapp that uses drpc.</text>
+  </g>
+
+  <line x1="24" y1="156" x2="876" y2="156" stroke="#23262b"/>
+  <text class="t hdr" x="30" y="182" font-size="14">With Veil: one read, one account, one circuit</text>
+
+  <!-- ===================== PIPELINE ===================== -->
+  <!-- rows: x=30 w=840 h=62, pitch=76, first top=198 -->
+  <g class="t">
+    <!-- row 1 -->
+    <rect class="box" x="30" y="198" width="840" height="62" rx="11"/>
+    <circle cx="58" cy="229" r="13" class="badge"/><text class="num" x="58" y="233" font-size="12" text-anchor="middle">1</text>
+    <text class="lbl" x="84" y="221" font-size="12.5">Page issues the read</text>
+    <text class="sub" x="84" y="238" font-size="10.5">app.ens.domains calls <tspan class="mono m">fetch(POST, eth_call)</tspan> to its RPC provider, lb.drpc.live.</text>
+    <text class="sub" x="84" y="251" font-size="10.5">Dapps read straight from the page, so this never goes through the wallet.</text>
+
+    <!-- row 2 -->
+    <rect class="box" x="30" y="274" width="840" height="62" rx="11"/>
+    <circle cx="58" cy="305" r="13" class="badge"/><text class="num" x="58" y="309" font-size="12" text-anchor="middle">2</text>
+    <text class="lbl" x="84" y="297" font-size="12.5">Veil intercepts it in the page</text>
+    <text class="sub" x="84" y="314" font-size="10.5">A MAIN-world script at <tspan class="mono m">document_start</tspan> wraps <tspan class="mono m">window.fetch</tspan> and <tspan class="mono m">XMLHttpRequest</tspan>.</text>
+    <text class="sub" x="84" y="327" font-size="10.5">Known gap, stated honestly: Web Worker fetch and WebSockets are not caught yet.</text>
+
+    <!-- row 3 -->
+    <rect class="box" x="30" y="350" width="840" height="62" rx="11"/>
+    <circle cx="58" cy="381" r="13" class="badge"/><text class="num" x="58" y="385" font-size="12" text-anchor="middle">3</text>
+    <text class="lbl" x="84" y="373" font-size="12.5">Route per account, blind the id</text>
+    <text class="sub" x="84" y="390" font-size="10.5">Reads the account from params and <tspan class="mono m">eth_call</tspan> calldata (ignores 0x0), picks that account's isolation key.</text>
+    <text class="sub" x="84" y="403" font-size="10.5">Blinds the JSON-RPC id so viem's one global counter cannot stitch the routes back together.</text>
+
+    <!-- row 4 -->
+    <rect class="box" x="30" y="426" width="840" height="62" rx="11"/>
+    <circle cx="58" cy="457" r="13" class="badge"/><text class="num" x="58" y="461" font-size="12" text-anchor="middle">4</text>
+    <text class="lbl" x="84" y="449" font-size="12.5">Hand off through the extension</text>
+    <text class="sub" x="84" y="466" font-size="10.5">ISOLATED-world relay  ->  background service worker  ->  offscreen document.</text>
+    <text class="sub" x="84" y="479" font-size="10.5">The offscreen document is what lets an MV3 extension host the worker at all.</text>
+
+    <!-- row 5 -->
+    <rect class="acc" x="30" y="502" width="840" height="62" rx="11"/>
+    <circle cx="58" cy="533" r="13" class="badge"/><text class="num" x="58" y="537" font-size="12" text-anchor="middle">5</text>
+    <text class="lbl" x="84" y="525" font-size="12.5">anon-rpc worker runs the read</text>
+    <text class="sub" x="84" y="542" font-size="10.5">A sandboxed null-origin iframe runs hash-pinned tor-js (Tor in WebAssembly), on-chain specifier <tspan class="mono m">0x700dA3...659e</tspan>.</text>
+    <text class="sub" x="84" y="555" font-size="10.5">It has no access to your keys, DOM or cookies. This is where anon-rpc sits.</text>
+
+    <!-- row 6 -->
+    <rect class="acc" x="30" y="578" width="840" height="62" rx="11"/>
+    <circle cx="58" cy="609" r="13" class="badge"/><text class="num" x="58" y="613" font-size="12" text-anchor="middle">6</text>
+    <text class="lbl" x="84" y="601" font-size="12.5">Over Tor via a blind KPS gateway</text>
+    <text class="sub" x="84" y="618" font-size="10.5">The isolation key maps to a Tor circuit dedicated to this account. The gateway (UDP 12298) relays encrypted</text>
+    <text class="sub" x="84" y="631" font-size="10.5">bytes only, never sees your traffic or destination: 3 hops  ->  a per-account exit node  ->  lb.drpc.live.</text>
+
+    <!-- row 7 -->
+    <rect class="box" x="30" y="654" width="840" height="62" rx="11"/>
+    <circle cx="58" cy="685" r="13" class="badge"/><text class="num" x="58" y="689" font-size="12" text-anchor="middle">7</text>
+    <text class="lbl" x="84" y="677" font-size="12.5">What drpc learns now, and what it still learns</text>
+    <text class="sub" x="84" y="694" font-size="10.5">Removed: your IP, and the link between accounts (a different exit each, so they look like strangers, on ENS and</text>
+    <text class="sub" x="84" y="707" font-size="10.5">on every other dapp). Still visible: the addresses you query. The reply returns up the same path, id restored.</text>
+  </g>
+
+  <!-- down arrows between rows (under the badge, x=58) -->
+  <g class="ar"><path d="M58 260 v14"/><path d="M58 336 v14"/><path d="M58 412 v14"/><path d="M58 488 v14"/><path d="M58 564 v14"/><path d="M58 640 v14"/></g>
+  <g class="arl"><path d="M54 270 l4 6 4 -6 z"/><path d="M54 346 l4 6 4 -6 z"/><path d="M54 422 l4 6 4 -6 z"/><path d="M54 498 l4 6 4 -6 z"/><path d="M54 574 l4 6 4 -6 z"/><path d="M54 650 l4 6 4 -6 z"/></g>
+
+  <!-- ===================== BRANCH ===================== -->
+  <g class="t">
+    <rect class="out" x="30" y="732" width="840" height="64" rx="11"/>
+    <text class="lbl" x="48" y="754" font-size="11.5">If a provider blocks Tor (HTTP 403)</text>
+    <text class="sub" x="48" y="771" font-size="10.5">Known single-chain RPC: re-route to a Tor-friendly RPC on the same chain (e.g. ethereum-rpc.publicnode.com),</text>
+    <text class="sub" x="48" y="784" font-size="10.5">still over Tor, only after a real block. Multichain or unknown gateway: your per-site choice (Ask / Block). Never a silent direct connection.</text>
+  </g>
+
+  <!-- ===================== FOOTER ===================== -->
+  <text class="t tag" x="450" y="824" font-size="11" text-anchor="middle">Measured over Tor: ENS 13 of 14 reads. Tor's cost: a one-time cold start of about 20 s, then about 1.5 to 3.4 s per read.</text>
+  <text class="t tag" x="450" y="842" font-size="11" text-anchor="middle">3 accounts map to 3 distinct exits. Veil routes reads only, it never touches your keys and your wallet still signs.</text>
+</svg>

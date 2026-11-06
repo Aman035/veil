@@ -108,13 +108,17 @@ split per account). The extension's `chrome.proxy` hook for this is built but st
 until one of those lands, so nothing is ever silently sent in the clear.
 
 <details>
-<summary><b>See the full flow on a real app (Aave), with and without Veil</b></summary>
+<summary><b>See the full read path on a real app (ENS), with and without Veil</b></summary>
 
 <br/>
 
 <p align="center">
-  <img src="assets/aave-flow.svg" alt="Opening Aave with and without Veil: without Veil, Tenderly sees your IP and links all your accounts; with Veil, reads go per-account over Tor, re-route around Tenderly's Tor block, and the provider sees three strangers with no IP" width="900">
+  <img src="assets/ens-flow.svg" alt="The full read path on ENS. Without Veil, drpc (an independent RPC provider) logs your IP and every address, links all your accounts to one person, and joins them across every dapp that uses drpc. With Veil, each account's read is intercepted in the page, routed on its own Tor circuit through a blind KPS gateway to drpc, so the provider sees a different exit per account and no IP; it still sees the addresses queried. Measured: ENS 13 of 14 reads over Tor." width="880">
 </p>
+
+ENS reads through an independent RPC provider (drpc), which also serves many other dapps, so it is a clean
+example of the cross-dapp linkage Veil breaks. The diagram is honest about the limit: the provider still
+sees the addresses you query, only your IP and the link between your accounts are removed.
 
 </details>
 
