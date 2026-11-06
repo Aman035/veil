@@ -133,5 +133,8 @@ body { width: 340px; background: var(--bg); color: var(--text); -webkit-font-smo
 /* honesty footer */
 .honesty { font-size: 11.5px; color: var(--faint); line-height: 1.45; padding: 4px 2px 0; }
 .honesty b { color: var(--muted); font-weight: 600; }
+.settings-link { display: block; margin-top: 8px; background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--muted); font-size: 11.5px; text-decoration: underline; text-underline-offset: 2px; }
+.settings-link:hover { color: var(--text); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

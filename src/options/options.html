@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="options.css" />
+  <title>Veil - Network</title>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top">
+      <span class="mark" aria-hidden="true"></span>
+      <span class="name">Veil</span>
+      <span class="crumb">Network</span>
+    </header>
+
+    <p class="lede">
+      Veil routes your reads through an anon-rpc gateway over Tor. The default is a public demo gateway,
+      which can be down. Point Veil at your own self-hosted gateway here, it reconnects on save, no reinstall.
+    </p>
+
+    <div class="status" id="status">checking…</div>
+
+    <label class="field">
+      <span class="lbl">Gateways</span>
+      <span class="help">One per line, as <code>host:port:certhash</code>. A self-hosted gateway prints its certhash on startup.</span>
+      <textarea id="gateways" rows="3" spellcheck="false"></textarea>
+    </label>
+
+    <details class="adv">
+      <summary>Advanced: worker specifier</summary>
+      <label class="field">
+        <span class="help">The on-chain anon-rpc worker address. Leave blank for the default (tor-js) unless you need a different network.</span>
+        <input id="specifier" type="text" spellcheck="false" />
+      </label>
+    </details>
+
+    <div class="actions">
+      <button id="save" class="btn btn-primary">Save &amp; reconnect</button>
+      <button id="reset" class="btn btn-ghost">Reset to default</button>
+    </div>
+    <p class="note" id="note"></p>
+
+    <p class="fine">
+      Veil never silently connects directly. If a gateway is unreachable, reads fail or ask you, they are
+      never sent in the clear. Your settings stay on this device.
+    </p>
+  </main>
+  <script src="options.js"></script>
+</body>
+</html>

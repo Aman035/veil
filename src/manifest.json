@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Veil",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Private by default for the wallets and dapps you already use. Routes crypto traffic through Tor, one route per account.",
 
   "background": { "service_worker": "background.js", "type": "module" },
@@ -11,6 +11,7 @@
     "default_title": "Veil",
     "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "128": "icons/icon-128.png" }
   },
+  "options_page": "options/options.html",
   "icons": { "16": "icons/icon-16.png", "32": "icons/icon-32.png", "128": "icons/icon-128.png" },
 
   "permissions": ["offscreen", "storage", "tabs", "proxy"],

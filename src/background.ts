@@ -11,8 +11,21 @@ import type { TabStats, GlobalStats, SitePolicy } from "./shared/protocol";
 // VEIL_GATEWAYS to point elsewhere (e.g. the passthrough specifier for tests).
 declare const __VEIL_SPECIFIER__: string;
 declare const __VEIL_GATEWAYS__: string;
-const SPECIFIER = __VEIL_SPECIFIER__;
-const GATEWAYS: string[] = JSON.parse(__VEIL_GATEWAYS__);
+const DEFAULT_SPECIFIER = __VEIL_SPECIFIER__;
+const DEFAULT_GATEWAYS: string[] = JSON.parse(__VEIL_GATEWAYS__);
+// Effective network. Overridable at runtime from chrome.storage.local (the
+// options page) so a gateway can be swapped without rebuilding. Empty values
+// fall back to the build defaults.
+let SPECIFIER = DEFAULT_SPECIFIER;
+let GATEWAYS: string[] = DEFAULT_GATEWAYS;
+async function loadNetwork() {
+  try {
+    const { netSpecifier, netGateways } = await chrome.storage.local.get(["netSpecifier", "netGateways"]);
+    SPECIFIER = typeof netSpecifier === "string" && netSpecifier.trim() ? netSpecifier.trim() : DEFAULT_SPECIFIER;
+    const gw = Array.isArray(netGateways) ? netGateways.filter((g) => typeof g === "string" && g.trim()).map((g) => g.trim()) : [];
+    GATEWAYS = gw.length ? gw : DEFAULT_GATEWAYS;
+  } catch { SPECIFIER = DEFAULT_SPECIFIER; GATEWAYS = DEFAULT_GATEWAYS; }
+}
 const BOOT_RPC = "https://ethereum-rpc.publicnode.com";
 
 // ---- settings ----
@@ -189,31 +202,40 @@ const rpcProvider = {
     return j.result;
   },
 };
+let gen = 0; // invalidates an in-flight boot when the network is swapped
 function getWorker(): AnonRpcWorker {
   if (!worker) {
+    const myGen = ++gen;
     harness = "booting";
     keepAlive(true);
     const t0 = Date.now();
     worker = new AnonRpcWorker({ address: SPECIFIER, config: GATEWAYS.length ? { gateways: GATEWAYS } : {}, preExisting: { rpcProvider } });
     worker.ready.then(
-      () => { harness = "ready"; harnessMs = Date.now() - t0; keepAlive(false); },
-      () => { harness = "error"; keepAlive(false); },
+      () => { if (myGen === gen) { harness = "ready"; harnessMs = Date.now() - t0; keepAlive(false); } },
+      () => { if (myGen === gen) { harness = "error"; keepAlive(false); } },
     );
   }
   return worker;
 }
 // Boot early when enabled so the first request isn't the one that waits.
-getEnabled().then((e) => { if (e) getWorker(); });
+loadNetwork().then(() => getEnabled().then((e) => { if (e) getWorker(); }));
 
 // Rebuild the harness after an error (popup "tap to retry"). Only meaningful
 // once the previous attempt has settled into "error".
-function rebootWorker() {
-  if (harness === "booting") return;
+function rebootWorker(force = false) {
+  if (harness === "booting" && !force) return;
   worker = undefined;
   harness = "idle";
   harnessMs = undefined;
   getWorker();
 }
+// Swap the network at runtime: the options page writes these keys, so reload the
+// config and force a reboot even if a previous boot is wedged on a dead gateway.
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area === "local" && (changes.netSpecifier || changes.netGateways)) {
+    loadNetwork().then(() => rebootWorker(true));
+  }
+});
 
 // ---- per-origin accounts + per-tab stats ----
 const accountsByOrigin = new Map<string, KnownAccounts>();

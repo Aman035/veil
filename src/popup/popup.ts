@@ -186,5 +186,7 @@ routeWallet.addEventListener("click", async () => {
   refresh();
 });
 
+document.getElementById("openSettings")?.addEventListener("click", () => chrome.runtime.openOptionsPage());
+
 refresh();
 setInterval(refresh, 1000);
