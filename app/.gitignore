@@ -2,4 +2,5 @@
 src-tauri/target/
 src-tauri/Cargo.lock
 src-tauri/gen/
-# (ui-preview*.png are kept on purpose: they are the UI render evidence)
+# dev render screenshots — not product
+ui-preview*.png
