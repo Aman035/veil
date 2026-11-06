@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Veil - live demo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b0d11; --panel:#16181c; --panel2:#101316; --line:#262d38;
+      --text:#e6edf3; --muted:#9a9ea4; --faint:#5c6775;
+      --accent:#ededee; --amber:#D9674E;
+      --ff:"Hanken Grotesk",-apple-system,system-ui,sans-serif;
+      --ff-head:"Fraunces",Georgia,serif;
+      --ff-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0}
+    body{background:var(--bg);color:var(--text);font-family:var(--ff);line-height:1.55;
+      -webkit-font-smoothing:antialiased;padding:40px 16px 72px}
+    .wrap{max-width:720px;margin:0 auto}
+    .eyebrow{font-family:var(--ff-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+    h1{font-family:var(--ff-head);font-weight:600;font-size:34px;line-height:1.1;margin:10px 0 10px}
+    .lede{color:var(--muted);font-size:15.5px;max-width:60ch;margin:0 0 28px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:6px 18px}
+    .row{display:flex;align-items:center;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}
+    .row:last-child{border-bottom:0}
+    .row .k{flex:none;width:168px}
+    .row .k b{display:block;font-size:13.5px;font-weight:600}
+    .row .k span{display:block;font-size:11.5px;color:var(--faint)}
+    .row .v{font-family:var(--ff-mono);font-size:15px;color:var(--muted);word-break:break-all}
+    .row[data-kind="direct"] .v.set{color:var(--amber)}
+    .row[data-kind="veil"] .v.set{color:var(--accent);font-weight:500}
+    .dot{width:9px;height:9px;border-radius:50%;background:var(--faint);flex:none}
+    .row[data-kind="direct"].set .dot{background:var(--amber)}
+    .row[data-kind="veil"].set .dot{background:var(--accent)}
+    .controls{display:flex;align-items:center;gap:14px;margin:22px 0 10px}
+    button{font-family:var(--ff);font-size:14.5px;font-weight:600;color:var(--bg);background:var(--accent);
+      border:0;border-radius:9px;padding:11px 18px;cursor:pointer}
+    button:disabled{opacity:.5;cursor:default}
+    .verdict{font-size:14px;min-height:22px}
+    .verdict.on{color:var(--accent)} .verdict.off{color:var(--amber)}
+    .fine{color:var(--faint);font-size:12.5px;margin-top:26px;line-height:1.65}
+    .fine code{font-family:var(--ff-mono);color:var(--muted)}
+    a{color:var(--text)}
+    @media (max-width:520px){ .row{flex-wrap:wrap} .row .k{width:auto} h1{font-size:28px} }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <div class="eyebrow">Veil &middot; live</div>
+    <h1>Watch your IP disappear</h1>
+    <p class="lede">
+      This page makes the same kind of read a dapp makes: a JSON-RPC request to a server that
+      reports back the IP it saw. Done directly, the server sees your real IP. With Veil on, each of
+      your accounts goes out on its own Tor circuit, so the server sees unrelated strangers, and never you.
+    </p>
+
+    <div class="card">
+      <div class="row" data-kind="direct" id="rDirect">
+        <span class="dot"></span>
+        <div class="k"><b>Direct read</b><span>no Veil, what any dapp does</span></div>
+        <div class="v" id="vDirect">&mdash;</div>
+      </div>
+      <div class="row" data-kind="veil" id="rA">
+        <span class="dot"></span>
+        <div class="k"><b>Through Veil</b><span>account A</span></div>
+        <div class="v" id="vA">&mdash;</div>
+      </div>
+      <div class="row" data-kind="veil" id="rB">
+        <span class="dot"></span>
+        <div class="k"><b>Through Veil</b><span>account B</span></div>
+        <div class="v" id="vB">&mdash;</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="run">Run the reads</button>
+      <span class="verdict" id="verdict"></span>
+    </div>
+
+    <p class="fine">
+      Needs the Veil extension installed and on (and, on this build, your local gateway running). With
+      Veil off or not installed, all three rows show the same real IP, that is the leak Veil removes.
+      The reads go to a public IP echo (<code>httpbin.org/anything</code>); swap <code>ECHO</code> in this
+      page for your own endpoint if you prefer. Addresses queried are still visible to providers by design;
+      Veil removes your IP and the link between your accounts, not the addresses.
+      &nbsp;<a href="./">Back to Veil</a>
+    </p>
+  </main>
+
+  <script>
+    // A server that echoes the caller's IP. The extension routes any POST whose
+    // body is JSON-RPC, so these POSTs go over Tor; the GET does not, so it
+    // shows your real IP.
+    // For a reliable live demo, deploy demo-echo/worker.js (a tiny free
+    // Cloudflare Worker you own, which never blocks Tor) and put its URL in
+    // WORKER below. Until then it falls back to a public echo, which can be slow.
+    const WORKER = "REPLACE_WITH_YOUR_WORKER_URL"; // e.g. https://veil-echo.<you>.workers.dev/
+    const FALLBACK = "https://httpbin.org/anything";
+    const ECHO = /^https:\/\//.test(WORKER) && !WORKER.includes("REPLACE_WITH") ? WORKER : FALLBACK;
+    const ACCT_A = "0xd8da6bf26964af9d7eed9e03e53415d37aa96045";
+    const ACCT_B = "0xab5801a7d398351b8be11c439e05c5b3259aec9b";
+
+    const $ = (id) => document.getElementById(id);
+    const originFrom = (j) => (j && (j.ip || j.origin || j.result)) || null;
+
+    async function directIp() {
+      const r = await fetch(ECHO, { cache: "no-store" });
+      return originFrom(await r.json());
+    }
+    async function veilIp(addr) {
+      const r = await fetch(ECHO, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_getBalance", params: [addr, "latest"] }),
+      });
+      return originFrom(await r.json());
+    }
+
+    function setRow(rowId, valId, ip) {
+      $(valId).textContent = ip || "no response";
+      $(valId).classList.toggle("set", !!ip);
+      $(rowId).classList.toggle("set", !!ip);
+    }
+
+    // Warm the harness on load so the first click is fast (no cold-start wait on
+    // stage). Harmless if Veil is off (just a direct POST that we ignore).
+    veilIp(ACCT_A).catch(() => {});
+
+    $("run").addEventListener("click", async () => {
+      const btn = $("run"), verdict = $("verdict");
+      btn.disabled = true; verdict.className = "verdict"; verdict.textContent = "reading (first read over Tor can take ~20s)…";
+      for (const v of ["vDirect", "vA", "vB"]) { $(v).textContent = "…"; $(v).classList.remove("set"); }
+      try {
+        const direct = await directIp();
+        setRow("rDirect", "vDirect", direct);
+        const a = await veilIp(ACCT_A);
+        setRow("rA", "vA", a);
+        const b = await veilIp(ACCT_B);
+        setRow("rB", "vB", b);
+
+        const hidden = a && b && a !== direct && b !== direct;
+        const perAccount = a && b && a !== b;
+        if (hidden && perAccount) {
+          verdict.className = "verdict on";
+          verdict.textContent = "Veil is on. Your real IP never left, and each account exited somewhere different.";
+        } else if (hidden) {
+          verdict.className = "verdict on";
+          verdict.textContent = "Veil is on. Your real IP never left.";
+        } else {
+          verdict.className = "verdict off";
+          verdict.textContent = "Not protected: the server saw your real IP. Install Veil, turn it on, and run again.";
+        }
+      } catch (e) {
+        verdict.className = "verdict off";
+        verdict.textContent = "The IP echo did not respond. Check your connection, or swap ECHO for another endpoint.";
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
