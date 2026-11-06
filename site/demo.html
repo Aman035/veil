@@ -126,7 +126,7 @@
     // POST whose body is JSON-RPC, so POSTs go over Tor; a GET does not, so it
     // reveals your real IP. Deploy demo-echo/worker.js and set WORKER for a
     // reliable demo; or pass ?echo=<url> (e.g. from demo-echo/serve-local.mjs).
-    const WORKER = "REPLACE_WITH_YOUR_WORKER_URL";
+    const WORKER = "https://greg-relatives-modify-fires.trycloudflare.com"; // temporary live echo (tunnel)
     const FALLBACK = "https://httpbin.org/anything";
     const OVERRIDE = new URLSearchParams(location.search).get("echo");
     const ECHO = OVERRIDE || (/^https:\/\//.test(WORKER) && !WORKER.includes("REPLACE_WITH") ? WORKER : FALLBACK);
