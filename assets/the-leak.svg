@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 820 300" width="820" height="300" role="img" aria-label="Today every account looks like one person: all accounts share one exit.">
+  <defs>
+    <style>.t{font-family:-apple-system,"Segoe UI",Roboto,sans-serif}.m{font-family:ui-monospace,"SF Mono",Menlo,monospace}.card{fill:#121820;stroke:#242c38}</style>
+  </defs>
+  <rect width="820" height="300" rx="18" fill="#06090d"/>
+  <rect x="0.5" y="0.5" width="819" height="299" rx="17.5" fill="none" stroke="#1b2531"/>
+
+  <text class="t" x="34" y="40" font-size="20" font-weight="700" fill="#eef3f8">Today: every account looks like one person</text>
+  <text class="t" x="34" y="62" font-size="13" fill="#9aa7b7">A VPN or Tor Browser gives every account the same exit.</text>
+
+  <!-- converging routes (all merge to one) -->
+  <path id="lA" d="M210,120 C 360,120 470,168 598,168" fill="none" stroke="#e8a13a" stroke-width="2" stroke-opacity="0.4"/>
+  <path id="lB" d="M210,172 C 360,172 470,172 598,172" fill="none" stroke="#e8a13a" stroke-width="2" stroke-opacity="0.4"/>
+  <path id="lC" d="M210,224 C 360,224 470,176 598,176" fill="none" stroke="#e8a13a" stroke-width="2" stroke-opacity="0.4"/>
+  <g><circle r="4" fill="#f0ad4a"/><animateMotion dur="2.2s" repeatCount="indefinite"><mpath xlink:href="#lA"/></animateMotion></g>
+  <g><circle r="4" fill="#f0ad4a"/><animateMotion dur="2.2s" begin="-0.7s" repeatCount="indefinite"><mpath xlink:href="#lB"/></animateMotion></g>
+  <g><circle r="4" fill="#f0ad4a"/><animateMotion dur="2.2s" begin="-1.4s" repeatCount="indefinite"><mpath xlink:href="#lC"/></animateMotion></g>
+
+  <!-- accounts -->
+  <g class="t">
+    <rect class="card" x="34" y="100" width="176" height="40" rx="10"/>
+    <circle cx="58" cy="120" r="9" fill="#36e39a"/><text x="76" y="125" font-size="13" fill="#eef3f8">Main</text>
+    <rect class="card" x="34" y="152" width="176" height="40" rx="10"/>
+    <circle cx="58" cy="172" r="9" fill="#4fd6e8"/><text x="76" y="177" font-size="13" fill="#eef3f8">Trading</text>
+    <rect class="card" x="34" y="204" width="176" height="40" rx="10"/>
+    <circle cx="58" cy="224" r="9" fill="#9a7cf0"/><text x="76" y="229" font-size="13" fill="#eef3f8">Airdrops</text>
+  </g>
+
+  <!-- single shared exit -->
+  <rect class="card" x="598" y="150" width="188" height="44" rx="11"/>
+  <circle cx="620" cy="172" r="6" fill="#e8a13a"><animate attributeName="opacity" values="0.4;1;0.4" dur="1.8s" repeatCount="indefinite"/></circle>
+  <text class="m" x="636" y="168" font-size="12.5" fill="#f0ad4a">203.0.113.7</text>
+  <text class="t" x="636" y="184" font-size="9.5" fill="#63707f">your IP, one exit</text>
+
+  <text class="t" x="410" y="282" font-size="12.5" fill="#63707f" text-anchor="middle">A provider ties your wallets together, and to where you are.</text>
+</svg>

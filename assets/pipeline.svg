@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 860 240" width="860" height="240" role="img" aria-label="How a read stays private: dapp read, Veil routes by account, over Tor, provider answers, with re-route on a block.">
+  <defs>
+    <style>.t{font-family:-apple-system,"Segoe UI",Roboto,sans-serif}.m{font-family:ui-monospace,"SF Mono",Menlo,monospace}.box{fill:#121820;stroke:#2a3647}.lbl{fill:#eef3f8}.sub{fill:#9aa7b7}</style>
+  </defs>
+  <rect width="860" height="240" rx="18" fill="#06090d"/>
+  <rect x="0.5" y="0.5" width="859" height="239" rx="17.5" fill="none" stroke="#1b2531"/>
+  <text class="t" x="34" y="40" font-size="20" font-weight="700" fill="#eef3f8">How a read stays private</text>
+
+  <!-- connector path the packet travels -->
+  <path id="flow" d="M60 110 H 800" fill="none" stroke="#2a3647" stroke-width="2"/>
+  <g>
+    <circle r="9" fill="#36e39a" opacity="0.25"/><circle r="4.5" fill="#5cf0b0"/>
+    <animateMotion dur="3.4s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#flow"/></animateMotion>
+  </g>
+
+  <!-- stages -->
+  <g class="t">
+    <rect class="box" x="40" y="86" width="150" height="48" rx="11"/>
+    <text class="lbl" x="115" y="108" font-size="13" text-anchor="middle" font-weight="600">dapp page</text>
+    <text class="sub" x="115" y="124" font-size="10.5" text-anchor="middle">sends a read</text>
+
+    <rect class="box" x="236" y="86" width="196" height="48" rx="11"/>
+    <text class="lbl" x="334" y="108" font-size="13" text-anchor="middle" font-weight="600">Veil</text>
+    <text class="sub" x="334" y="124" font-size="10.5" text-anchor="middle">route by account · blind the id</text>
+
+    <rect class="box" x="478" y="86" width="150" height="48" rx="11"/>
+    <text x="553" y="108" font-size="13" text-anchor="middle" font-weight="600" fill="#36e39a">Tor</text>
+    <text class="sub" x="553" y="124" font-size="10.5" text-anchor="middle">anon-rpc harness</text>
+
+    <rect class="box" x="674" y="86" width="150" height="48" rx="11"/>
+    <text class="lbl" x="749" y="108" font-size="13" text-anchor="middle" font-weight="600">provider</text>
+    <text class="sub" x="749" y="124" font-size="10.5" text-anchor="middle">answers</text>
+  </g>
+
+  <!-- arrows -->
+  <g fill="#3a4757">
+    <path d="M190 110 l12 0 M198 106 l6 4 -6 4"/>
+    <path d="M432 110 l12 0 M440 106 l6 4 -6 4"/>
+    <path d="M628 110 l12 0 M636 106 l6 4 -6 4"/>
+  </g>
+
+  <!-- fallback note -->
+  <path d="M749 134 V 176 H 334 V 150" fill="none" stroke="#2a3647" stroke-width="1.6" stroke-dasharray="4 5"/>
+  <text class="t" x="541" y="198" font-size="12" text-anchor="middle" fill="#9aa7b7">blocked? <tspan fill="#36e39a">re-route to a Tor-friendly provider</tspan>, same chain, only after a real block</text>
+  <text class="t" x="541" y="218" font-size="11" text-anchor="middle" fill="#63707f">cannot re-route? Veil asks you, per site. Never silently direct.</text>
+</svg>

@@ -1,21 +1,15 @@
-<div align="center">
-
-# 🕶️ Veil
-
-### Private by default for the wallets and dapps you already use.
-
-Your crypto traffic leaves through **Tor** with **one route per account**, so the providers
-your wallet and dapps talk to can't see your IP or tell your accounts apart. And when a
-provider blocks Tor, Veil re-routes so your apps keep working.
-
-Built on the Ethereum Foundation's **[anon-rpc](https://github.com/ethereum/anon-rpc)** and **[tor-js](https://github.com/ethereum/tor-js)**.
-
-**🌐 [aman035.github.io/veil](https://aman035.github.io/veil/)** · _status: active development_
-
-</div>
+<p align="center">
+  <img src="assets/banner.svg" alt="Veil - private by default for the wallets and dapps you already use" width="100%">
+</p>
 
 <p align="center">
-  <img src="assets/one-route-per-account.svg" alt="One route per account: each account's traffic flows through its own Tor circuit to a different exit" width="820">
+  Your crypto traffic leaves through <b>Tor</b> with <b>one route per account</b>, so the providers
+  your wallet and dapps talk to can't see your IP or tell your accounts apart, and when a provider
+  blocks Tor, Veil re-routes so your apps keep working.
+  <br/><br/>
+  Built on the Ethereum Foundation's <a href="https://github.com/ethereum/anon-rpc">anon-rpc</a> and <a href="https://github.com/ethereum/tor-js">tor-js</a>.
+  <br/>
+  <b>🌐 <a href="https://aman035.github.io/veil/">aman035.github.io/veil</a></b> &nbsp;·&nbsp; <i>status: active development</i>
 </p>
 
 ---
@@ -33,24 +27,17 @@ The usual fixes don't solve it:
 - **Tor Browser** gives the whole session one circuit, so accounts are still linked, and many
   providers block Tor outright (Aave's rejected 0 of 16 reads in our tests).
 
-```mermaid
-flowchart LR
-  subgraph one["VPN / Tor Browser: one exit"]
-    a1["account A"] --> T(("one circuit"))
-    b1["account B"] --> T
-    c1["account C"] --> T
-    T --> P1["provider sees<br/>A, B, C as one person"]
-  end
-  subgraph veil["Veil: one route per account"]
-    a2["account A"] --> X1(("route A")) --> P2["provider sees<br/>three strangers"]
-    b2["account B"] --> X2(("route B")) --> P2
-    c2["account C"] --> X3(("route C")) --> P2
-  end
-```
+<p align="center">
+  <img src="assets/the-leak.svg" alt="Today, every account shares one exit, so a provider sees one person" width="820">
+</p>
 
 ## 2. The solution
 
 Veil makes the wallets and dapps you **already use** private, with no change to them.
+
+<p align="center">
+  <img src="assets/one-route-per-account.svg" alt="One route per account: each account's traffic flows through its own Tor circuit to a different exit" width="820">
+</p>
 
 - **One route per account.** Each account gets its own Tor circuit and exit (an anon-rpc
   isolation key), so a provider sees unrelated strangers instead of one person.
@@ -78,36 +65,11 @@ through the anon-rpc harness, and returns the answer. The anon-client code runs 
 and sandboxed** (anon-rpc) with no access to your keys, DOM or cookies. The desktop app runs the
 same harness for the wallet's own traffic and for local tools.
 
-```mermaid
-flowchart TB
-  subgraph browser["Your browser (wallet and dapps unchanged)"]
-    D["dapp page"] --> I["Veil extension<br/>interceptor · per-account routing · site policy"]
-    I --> H["anon-rpc harness<br/>(sandboxed, hash-pinned worker)"]
-    W["wallet (MetaMask / Rabby)"]
-  end
-  subgraph desktop["Veil desktop app + helper (optional)"]
-    LP["local proxy + RPC<br/>127.0.0.1:18545"]
-    H2["anon-rpc harness"]
-  end
-  W -->|"wallet's own traffic"| LP --> H2
-  H --> N(["Tor via anon-rpc / tor-js"])
-  H2 --> N
-  N -->|"one route per account"| R["RPC providers"]
-```
+<p align="center">
+  <img src="assets/pipeline.svg" alt="How a read stays private: dapp page, Veil routes by account, over Tor, provider answers, with re-route on a block" width="860">
+</p>
 
 Three rules shape every request:
-
-```mermaid
-flowchart TD
-  A["page sends a JSON-RPC read"] --> B{"protected?"}
-  B -- "off / excluded" --> Z["your explicit choice only"]
-  B -- yes --> C["route by account<br/>(even from call data) · blind the id"]
-  C --> E["send via anon-rpc over Tor"]
-  E --> F{"provider blocked it?"}
-  F -- no --> OK["return to the page"]
-  F -- "yes · known single-chain RPC" --> G["re-route to a<br/>Tor-friendly provider, same chain"] --> OK
-  F -- "yes · cannot re-route" --> ASK["ask, per site:<br/>allow direct, or keep blocked"]
-```
 
 1. **One route per account.** The account is read from the request, even inside `eth_call` call
    data, and request ids are blinded so a counter can't stitch routes back together.
