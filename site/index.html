@@ -466,6 +466,27 @@
         <p>Turn it on once. Every wallet and dapp you already use is private, per account, with zero changes from them.</p>
       </div>
     </div>
+
+    <div class="compare-intro">
+      <h3>Why a VPN or Tor Browser isn't enough</h3>
+      <p>A <b>VPN</b> gives all your accounts one IP, so they still look like one person. <b>Tor Browser</b> isolates by site, not by account, so two wallets on the same dapp share an exit, and many providers block it outright. Veil gives <b>each account its own circuit</b>.</p>
+    </div>
+    <div class="routes-grid" style="margin-top:16px">
+      <div class="rbox bad">
+        <h4>VPN / Tor Browser <span class="tag">one exit</span></h4>
+        <div class="acct-row"><span>account A</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
+        <div class="acct-row"><span>account B</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
+        <div class="acct-row"><span>account C</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
+        <div class="acct-row verdict">A, B, C → one person</div>
+      </div>
+      <div class="rbox good">
+        <h4>Veil <span class="tag">a circuit per account</span></h4>
+        <div class="acct-row"><span>acct:0x28c6…</span><span class="arrow">→</span><span class="exit">171.25.193.78</span></div>
+        <div class="acct-row"><span>acct:0xd8dA…</span><span class="arrow">→</span><span class="exit">45.9.168.92</span></div>
+        <div class="acct-row"><span class="mut">neutral</span><span class="arrow">→</span><span class="exit">185.220.101.98</span></div>
+        <div class="acct-row verdict">three strangers</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -608,27 +629,6 @@
         </div>
       </li>
     </ol>
-
-    <div class="compare-intro">
-      <h3>Why a VPN or Tor Browser isn't enough</h3>
-      <p>A <b>VPN</b> gives all your accounts one IP, so they still look like one person. <b>Tor Browser</b> isolates by site, not by account, so two wallets on the same dapp share an exit, and many providers block it outright. Veil gives <b>each account its own circuit</b>.</p>
-    </div>
-    <div class="routes-grid" style="margin-top:16px">
-      <div class="rbox bad">
-        <h4>VPN / Tor Browser <span class="tag">one exit</span></h4>
-        <div class="acct-row"><span>account A</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
-        <div class="acct-row"><span>account B</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
-        <div class="acct-row"><span>account C</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
-        <div class="acct-row verdict">A, B, C → one person</div>
-      </div>
-      <div class="rbox good">
-        <h4>Veil <span class="tag">a circuit per account</span></h4>
-        <div class="acct-row"><span>acct:0x28c6…</span><span class="arrow">→</span><span class="exit">171.25.193.78</span></div>
-        <div class="acct-row"><span>acct:0xd8dA…</span><span class="arrow">→</span><span class="exit">45.9.168.92</span></div>
-        <div class="acct-row"><span class="mut">neutral</span><span class="arrow">→</span><span class="exit">185.220.101.98</span></div>
-        <div class="acct-row verdict">three strangers</div>
-      </div>
-    </div>
   </div>
 </section>
 
