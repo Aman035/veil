@@ -72,6 +72,8 @@
     .logline .ip{font-weight:500}
     .log.exposed .logline .ip{color:var(--amber)}.log.safe .logline .ip{color:var(--accent)}
     .logline .mth{color:var(--muted)}.logline .ad{color:var(--faint)}
+    .logline .bal{margin-left:auto;color:var(--muted)}
+    .node .prov{display:block;font-size:10.5px;color:var(--faint);font-family:var(--ff-mono);margin-top:1px}
     .log .note{padding:11px 14px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--muted)}
     .log.exposed .note b{color:var(--amber)}.log.safe .note b{color:var(--accent)}
     .compare{font-size:12.5px;color:var(--faint);margin:14px 0 0}
@@ -113,7 +115,7 @@
         <span class="arrow">&rarr;</span><span class="node mid">Tor, a circuit per account</span>
       </span>
       <span class="arrow">&rarr;</span>
-      <span class="node ends">RPC provider</span>
+      <span class="node ends">RPC provider<span class="prov">publicnode</span></span>
     </div>
     <div class="carry" id="carry"></div>
 
@@ -151,12 +153,16 @@
     $("adA").textContent = short(ACCT_A); $("adB").textContent = short(ACCT_B);
     const originFrom = (j) => (j && (j.ip || j.origin || j.result)) || null;
 
-    // One kind of read. It is routed over Tor only when Veil is on; otherwise it
-    // goes out directly, exactly as the page would without the extension.
+    const fmtEth = (hex) => { try { return (Number(BigInt(hex)) / 1e18).toLocaleString(undefined, { maximumFractionDigits: 3 }) + " ETH"; } catch { return ""; } };
+
+    // One real read (eth_getBalance against a real RPC, publicnode). It is routed
+    // over Tor only when Veil is on; otherwise it goes out directly, exactly as
+    // the page would without the extension. The echo reports the exit IP it saw.
     async function readFor(addr) {
       const r = await fetch(ECHO, { method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_getBalance", params: [addr, "latest"] }) });
-      return originFrom(await r.json());
+      const j = await r.json();
+      return { ip: originFrom(j), bal: j.result };
     }
 
     // --- Veil state: none | off | on -------------------------------------------
@@ -200,9 +206,10 @@
       $("logBody").innerHTML = '<span class="ph">run the reads to see what the provider logs</span>';
       $("logNote").style.display = "none"; $("hint").textContent = "";
     }
-    function logLine(ip, addr, i) {
+    function logLine(ip, addr, bal, i) {
       const d = document.createElement("div"); d.className = "logline";
-      d.innerHTML = `<span class="ip">${ip}</span> <span class="mth">eth_getBalance</span> <span class="ad">${short(addr)}</span>`;
+      const b = bal ? ` <span class="bal">${fmtEth(bal)}</span>` : "";
+      d.innerHTML = `<span class="ip">${ip}</span> <span class="mth">eth_getBalance</span> <span class="ad">${short(addr)}</span>${b}`;
       $("logBody").appendChild(d); setTimeout(() => d.classList.add("in"), 60 + i * 200);
     }
 
@@ -216,20 +223,20 @@
       try {
         const a = await readFor(ACCT_A);
         const b = await readFor(ACCT_B);
-        if (!a || !b) { $("hint").textContent = on ? "The reads did not route. Is the gateway running, and the echo Tor-friendly?" : "The IP echo did not respond."; return; }
+        if (!a.ip || !b.ip) { $("hint").textContent = on ? "The reads did not route. Is the gateway running, and the echo Tor-friendly?" : "The IP echo did not respond."; return; }
 
         $("logBody").innerHTML = "";
-        logLine(a, ACCT_A, 0); logLine(b, ACCT_B, 1);
+        logLine(a.ip, ACCT_A, a.bal, 0); logLine(b.ip, ACCT_B, b.bal, 1);
         const note = $("logNote"); note.style.display = ""; $("hint").textContent = "";
 
         if (!on) {
           note.innerHTML = "<b>Same IP on both.</b> The provider ties account A and account B to one person, and to where you are.";
-        } else if (!isV4(a) || !isV4(b)) {
+        } else if (!isV4(a.ip) || !isV4(b.ip)) {
           // Over Tor you get IPv4 exits; your real IP here is IPv6. A non-IPv4 means it did not route.
           $("log").classList.remove("safe"); $("log").classList.add("exposed");
           note.innerHTML = "<b>This did not go over Tor.</b> The echo refused Tor (or a direct connection was allowed), so your real IP showed. Use a Tor-friendly echo.";
           $("hint").textContent = "This echo blocks Tor.";
-        } else if (a !== b) {
+        } else if (a.ip !== b.ip) {
           note.innerHTML = "<b>A different Tor exit each.</b> The provider sees two unrelated strangers, and never your IP.";
         } else {
           note.innerHTML = "<b>Your IP is hidden.</b> Both reads left over Tor and shared an exit this run; run again for distinct per-account exits.";

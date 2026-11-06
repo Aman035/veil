@@ -1,13 +1,14 @@
-// Veil live-demo IP echo. Deploy as a Cloudflare Worker (free). It reports the
-// IP it saw the request come from: your real IP on a direct read, a Tor exit
-// when Veil routed the read. We control it, so it never blocks Tor (unlike many
-// public IP services). It holds no logs and needs no state.
+// Veil live-demo echo + thin RPC proxy. Deploy as a Cloudflare Worker (free).
+// It reports the IP it saw the request from (your real IP on a direct read, a
+// Tor exit when Veil routed the read) AND forwards the JSON-RPC call to a real
+// Ethereum provider, so the demo shows real data over a real RPC while still
+// revealing the exit IP. No logs, no state; never blocks Tor (you own it).
 //
-// Deploy (dashboard, ~2 min):
-//   1. dash.cloudflare.com -> Workers & Pages -> Create -> Create Worker
-//   2. paste this file, Deploy
-//   3. copy the *.workers.dev URL and set ECHO in site/demo.html to it
-// Or with wrangler:  npx wrangler deploy demo-echo/worker.js --name veil-echo
+// Deploy (dashboard, ~2 min): dash.cloudflare.com -> Workers & Pages -> Create
+//   Worker -> paste this -> Deploy -> copy the *.workers.dev URL into site/demo.html.
+// Or:  npx wrangler deploy demo-echo/worker.js --name veil-echo
+const UPSTREAM = "https://ethereum-rpc.publicnode.com";
+const UPSTREAM_NAME = "publicnode";
 export default {
   async fetch(request) {
     const cors = {
@@ -15,11 +16,19 @@ export default {
       "access-control-allow-headers": "*",
       "access-control-allow-methods": "GET,POST,OPTIONS",
       "cache-control": "no-store",
+      "content-type": "application/json",
     };
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors });
     const ip = request.headers.get("CF-Connecting-IP") || "";
-    // ip (plain), result (JSON-RPC shape) and origin (httpbin shape) so any reader works.
-    const body = JSON.stringify({ jsonrpc: "2.0", id: 1, ip, origin: ip, result: ip });
-    return new Response(body, { headers: { "content-type": "application/json", ...cors } });
+    let upstream = {};
+    if (request.method === "POST") {
+      const body = await request.text();
+      try {
+        const r = await fetch(UPSTREAM, { method: "POST", headers: { "content-type": "application/json" }, body });
+        upstream = await r.json();
+      } catch { /* IP is still reported */ }
+    }
+    const out = JSON.stringify({ ip, origin: ip, provider: UPSTREAM_NAME, ...upstream });
+    return new Response(out, { headers: cors });
   },
 };
