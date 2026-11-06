@@ -62,6 +62,13 @@ body { width: 340px; background: var(--bg); color: var(--text); -webkit-font-smo
 .status-text { font-size: 14px; font-weight: 600; }
 .status-sub { font-size: 12px; color: var(--muted); margin-left: auto; }
 
+/* First-boot progress (only while building the first Tor circuit) */
+.boot { display: none; margin: -4px 0 12px; }
+.app[data-state="connecting"] .boot { display: block; }
+.boot-track { height: 3px; border-radius: 999px; background: var(--panel-2); overflow: hidden; }
+.boot-fill { display: block; height: 100%; width: 0; background: var(--amber); border-radius: 999px; transition: width .9s linear; }
+.boot-step { font-size: 11px; color: var(--faint); margin-top: 6px; }
+
 /* cards */
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; margin-bottom: 10px; }
 .card-label { font-size: 11px; text-transform: uppercase; letter-spacing: .6px; color: var(--faint); margin-bottom: 4px; }

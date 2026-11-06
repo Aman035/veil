@@ -19,10 +19,25 @@ const walletState = document.getElementById("walletState")!;
 const advanced = document.querySelector(".advanced") as HTMLElement;
 const routeWallet = document.getElementById("routeWallet") as HTMLButtonElement;
 const routeWalletNote = document.getElementById("routeWalletNote")!;
+const bootFill = document.getElementById("bootFill")!;
+const bootStep = document.getElementById("bootStep")!;
 
 let activeTabId = -1;
 let activeOrigin: string | null = null;
 let currentPolicy: SitePolicy = "ask";
+let connectingSince = 0;
+
+// Honest first-boot progress: the bar eases toward a cap (never claims "done"
+// until the worker is actually ready), and the label names the real stage.
+function bootLabel(s: number): string {
+  if (s < 3) return "starting the private worker";
+  if (s < 10) return "building a Tor circuit";
+  if (s < 20) return "negotiating a private route";
+  return "almost there, the first time is slow";
+}
+function bootPercent(s: number): number {
+  return Math.round(92 * (1 - Math.exp(-s / 8)));
+}
 
 async function getActiveTab() {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -38,18 +53,25 @@ function render(g: GlobalStats, t: TabStats | null, tabUrl?: string) {
     setState("off");
     statusText.textContent = "Off";
     statusSub.textContent = "not private";
+    connectingSince = 0;
   } else if (g.harness === "ready") {
     setState("on");
     statusText.textContent = "Private · Tor";
     statusSub.textContent = g.harnessMs ? `ready in ${(g.harnessMs / 1000).toFixed(0)}s` : "";
+    connectingSince = 0;
   } else if (g.harness === "error") {
     setState("error");
     statusText.textContent = "Paused: not private";
     statusSub.textContent = "tap to retry";
+    connectingSince = 0;
   } else {
     setState("connecting");
     statusText.textContent = "Connecting privately…";
     statusSub.textContent = "~20s the first time";
+    if (!connectingSince) connectingSince = Date.now();
+    const elapsed = (Date.now() - connectingSince) / 1000;
+    bootStep.textContent = bootLabel(elapsed);
+    bootFill.style.width = bootPercent(elapsed) + "%";
   }
 
   // tab card
