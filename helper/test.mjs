@@ -78,6 +78,16 @@ async function main() {
   const usdc = call.out.split(" ")[0];
   check("cast call USDC.balanceOf", /^\d+$/.test(usdc), `usdc=${call.out} (${call.ms}ms)`);
 
+  // Control API + real pairing signal (what the desktop app and extension use).
+  const health = await (await fetch(RPC + "/__veil/health")).json();
+  check("control /__veil/health ok", health.ok === true, `network=${health.network}`);
+  const s0 = await (await fetch(RPC + "/__veil/status")).json();
+  check("status: extension not paired before ping", s0.extensionPaired === false);
+  check("status: accounts is a list", Array.isArray(s0.accounts));
+  await fetch(RPC + "/__veil/extension-ping"); // the extension announces itself here
+  const s1 = await (await fetch(RPC + "/__veil/status")).json();
+  check("status: extension paired after ping", s1.extensionPaired === true);
+
   const failed = checks.filter((c) => !c.pass);
   console.log(`\n${checks.length - failed.length}/${checks.length} checks passed`);
   return failed.length === 0;
