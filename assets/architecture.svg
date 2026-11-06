@@ -18,12 +18,12 @@
   <!-- travelling packet along the request path -->
   <path id="path" d="M176 150 H 952" fill="none" stroke="none"/>
   <g>
-    <circle r="9" fill="#C9A24B" opacity="0.22"/><circle r="4.5" fill="#DFBE7E"/>
+    <circle r="9" fill="#E7E7EA" opacity="0.22"/><circle r="4.5" fill="#F2F2F3"/>
     <animateMotion dur="3.6s" repeatCount="indefinite"><mpath xlink:href="#path"/></animateMotion>
   </g>
 
   <!-- highlighted anon-rpc region -->
-  <rect x="402" y="112" width="368" height="118" rx="14" fill="#C9A24B" fill-opacity="0.05" stroke="#C9A24B" stroke-opacity="0.45"/>
+  <rect x="402" y="112" width="368" height="118" rx="14" fill="#E7E7EA" fill-opacity="0.05" stroke="#E7E7EA" stroke-opacity="0.45"/>
 
   <!-- nodes -->
   <g class="t">
@@ -39,15 +39,15 @@
     <text class="sub" x="309" y="172" font-size="10" text-anchor="middle">blind the request id</text>
 
     <!-- 3 harness -->
-    <rect class="box" x="418" y="124" width="196" height="94" rx="12" stroke="#C9A24B" stroke-opacity="0.6"/>
+    <rect class="box" x="418" y="124" width="196" height="94" rx="12" stroke="#E7E7EA" stroke-opacity="0.6"/>
     <text class="lbl" x="516" y="150" font-size="13.5" text-anchor="middle">anon-rpc harness</text>
     <text class="sub" x="516" y="167" font-size="10" text-anchor="middle">sandboxed Web Worker</text>
     <text class="sub" x="516" y="179" font-size="10" text-anchor="middle">runs tor-js (hash-pinned</text>
     <text class="sub" x="516" y="191" font-size="10" text-anchor="middle">on chain, verified)</text>
 
     <!-- 4 gateway/tor -->
-    <rect class="box" x="640" y="124" width="112" height="94" rx="12" stroke="#C9A24B" stroke-opacity="0.6"/>
-    <text class="lbl" x="696" y="150" font-size="13.5" text-anchor="middle" fill="#C9A24B">Tor</text>
+    <rect class="box" x="640" y="124" width="112" height="94" rx="12" stroke="#E7E7EA" stroke-opacity="0.6"/>
+    <text class="lbl" x="696" y="150" font-size="13.5" text-anchor="middle" fill="#E7E7EA">Tor</text>
     <text class="sub" x="696" y="167" font-size="10" text-anchor="middle">via KPS</text>
     <text class="sub" x="696" y="179" font-size="10" text-anchor="middle">gateway,</text>
     <text class="sub" x="696" y="191" font-size="10" text-anchor="middle">1 circuit / account</text>
@@ -75,11 +75,11 @@
   <path class="bk" d="M26 198 V 210 H 392 V 198"/>
   <text class="t" x="209" y="230" font-size="12" text-anchor="middle" fill="#9aa7b7">Veil  <tspan class="step" font-size="10.5">(this repo: interception, routing, policy)</tspan></text>
 
-  <path class="bk" d="M418 232 V 244 H 752 V 232" stroke="#C9A24B" stroke-opacity="0.5"/>
-  <text class="t" x="585" y="264" font-size="12" text-anchor="middle" fill="#C9A24B">anon-rpc + tor-js  <tspan fill="#63707f" font-size="10.5">(the Ethereum Foundation's anonymising client)</tspan></text>
+  <path class="bk" d="M418 232 V 244 H 752 V 232" stroke="#E7E7EA" stroke-opacity="0.5"/>
+  <text class="t" x="585" y="264" font-size="12" text-anchor="middle" fill="#E7E7EA">anon-rpc + tor-js  <tspan fill="#63707f" font-size="10.5">(the Ethereum Foundation's anonymising client)</tspan></text>
 
   <!-- fallback -->
   <path d="M875 182 V 300 H 309 V 182" fill="none" stroke="#2a3647" stroke-width="1.4" stroke-dasharray="4 5"/>
-  <text class="t" x="590" y="322" font-size="11.5" text-anchor="middle" fill="#9aa7b7">provider blocks Tor? <tspan fill="#C9A24B">re-route to a Tor-friendly provider</tspan>, same chain, only after a real block.</text>
+  <text class="t" x="590" y="322" font-size="11.5" text-anchor="middle" fill="#9aa7b7">provider blocks Tor? <tspan fill="#E7E7EA">re-route to a Tor-friendly provider</tspan>, same chain, only after a real block.</text>
   <text class="t" x="590" y="340" font-size="11" text-anchor="middle" fill="#63707f">can't re-route? Veil asks you, per site. Never silently direct.</text>
 </svg>

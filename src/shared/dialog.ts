@@ -51,7 +51,7 @@ const CSS = `
   }
   button:hover { background: #222a35; }
   button:active { transform: translateY(1px); }
-  button:focus-visible { outline: 2px solid #C9A24B; outline-offset: 2px; }
+  button:focus-visible { outline: 2px solid #E7E7EA; outline-offset: 2px; }
   button.direct { background: #2a2113; border-color: #532A20; color: #f0c988; }
   button.direct:hover { background: #532A20; }
   button.direct:focus-visible { outline-color: #D9674E; }

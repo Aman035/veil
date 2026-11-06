@@ -12,7 +12,7 @@ mkdirSync(outDir, { recursive: true });
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const lerp = (a, b, t) => a + (b - a) * t;
 const hex = (h) => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
-const GOLD = hex("#C9A24B"), BG = hex("#0b0d11");
+const GOLD = hex("#E7E7EA"), BG = hex("#0b0d11");
 
 // Distance from point (px,py) to the segment a->b.
 function segDist(px, py, ax, ay, bx, by) {

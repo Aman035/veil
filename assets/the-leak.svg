@@ -19,11 +19,11 @@
   <!-- accounts -->
   <g class="t">
     <rect class="card" x="34" y="100" width="176" height="40" rx="10"/>
-    <circle cx="58" cy="120" r="9" fill="#C9A24B"/><text x="76" y="125" font-size="13" fill="#eef3f8">Main</text>
+    <circle cx="58" cy="120" r="9" fill="#E7E7EA"/><text x="76" y="125" font-size="13" fill="#eef3f8">Main</text>
     <rect class="card" x="34" y="152" width="176" height="40" rx="10"/>
-    <circle cx="58" cy="172" r="9" fill="#4fd6e8"/><text x="76" y="177" font-size="13" fill="#eef3f8">Trading</text>
+    <circle cx="58" cy="172" r="9" fill="#9A9EA4"/><text x="76" y="177" font-size="13" fill="#eef3f8">Trading</text>
     <rect class="card" x="34" y="204" width="176" height="40" rx="10"/>
-    <circle cx="58" cy="224" r="9" fill="#9a7cf0"/><text x="76" y="229" font-size="13" fill="#eef3f8">Airdrops</text>
+    <circle cx="58" cy="224" r="9" fill="#63676E"/><text x="76" y="229" font-size="13" fill="#eef3f8">Airdrops</text>
   </g>
 
   <!-- single shared exit -->

@@ -58,7 +58,7 @@ $("#pairedBtn")?.addEventListener("click", () => { extPaired = true; lsSet("veil
 const trunc = (a) => (a && a.length > 12 ? a.slice(0, 6) + "…" + a.slice(-4) : a || "-");
 function avatar(addr) {
   let h = 0; for (const c of (addr || "")) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  return ["#C9A24B", "#4fd6e8", "#9a7cf0"][h % 3];
+  return ["#E7E7EA", "#9A9EA4", "#63676E"][h % 3];
 }
 
 // ---- rendering ----

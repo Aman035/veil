@@ -9,7 +9,7 @@
   <!-- connector path the packet travels -->
   <path id="flow" d="M60 110 H 800" fill="none" stroke="#2a3647" stroke-width="2"/>
   <g>
-    <circle r="9" fill="#C9A24B" opacity="0.25"/><circle r="4.5" fill="#DFBE7E"/>
+    <circle r="9" fill="#E7E7EA" opacity="0.25"/><circle r="4.5" fill="#F2F2F3"/>
     <animateMotion dur="3.4s" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear"><mpath xlink:href="#flow"/></animateMotion>
   </g>
 
@@ -24,7 +24,7 @@
     <text class="sub" x="334" y="124" font-size="10.5" text-anchor="middle">route by account · blind the id</text>
 
     <rect class="box" x="478" y="86" width="150" height="48" rx="11"/>
-    <text x="553" y="108" font-size="13" text-anchor="middle" font-weight="600" fill="#C9A24B">Tor</text>
+    <text x="553" y="108" font-size="13" text-anchor="middle" font-weight="600" fill="#E7E7EA">Tor</text>
     <text class="sub" x="553" y="124" font-size="10.5" text-anchor="middle">anon-rpc harness</text>
 
     <rect class="box" x="674" y="86" width="150" height="48" rx="11"/>
@@ -41,6 +41,6 @@
 
   <!-- fallback note -->
   <path d="M749 134 V 176 H 334 V 150" fill="none" stroke="#2a3647" stroke-width="1.6" stroke-dasharray="4 5"/>
-  <text class="t" x="541" y="198" font-size="12" text-anchor="middle" fill="#9aa7b7">blocked? <tspan fill="#C9A24B">re-route to a Tor-friendly provider</tspan>, same chain, only after a real block</text>
+  <text class="t" x="541" y="198" font-size="12" text-anchor="middle" fill="#9aa7b7">blocked? <tspan fill="#E7E7EA">re-route to a Tor-friendly provider</tspan>, same chain, only after a real block</text>
   <text class="t" x="541" y="218" font-size="11" text-anchor="middle" fill="#63707f">cannot re-route? Veil asks you, per site. Never silently direct.</text>
 </svg>

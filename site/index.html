@@ -6,7 +6,7 @@
 <title>Veil</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
   /* Layout: dark, flat product world - solid surfaces, hairlines, bento grids,
      real product mockups as the centerpiece.
@@ -17,11 +17,12 @@
     --panel:rgba(22,29,38,.72); --panel-solid:#141a22; --panel-2:#1a212b; --panel-3:#212a36;
     --line:rgba(255,255,255,.07); --line-2:rgba(255,255,255,.12);
     --text:#eef3f8; --muted:#9aa7b7; --faint:#637080;
-    --accent:#C9A24B; --accent-2:#DFBE7E; --accent-deep:#7A5E28; --accent-dim:#453619; --accent-ink:#15100A;
-    --cyan:#4fd6e8; --violet:#9a7cf0; --amber:#D9674E; --amber-dim:#532A20;
+    --accent:#E7E7EA; --accent-2:#F2F2F3; --accent-deep:#4A4D53; --accent-dim:#2A2D33; --accent-ink:#0B0C0E;
+    --cyan:#9A9EA4; --violet:#63676E; --amber:#D9674E; --amber-dim:#532A20;
     --shadow:0 24px 70px -20px rgba(0,0,0,.75);
     --maxw:1180px;
     --ff-display:"Hanken Grotesk", system-ui, sans-serif;
+    --ff-head:"Fraunces", Georgia, "Times New Roman", serif;
     --ff-body:"Hanken Grotesk", system-ui, sans-serif;
     --ff-mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
   }
@@ -48,6 +49,7 @@
     padding-left:max(22px, env(safe-area-inset-left,0px)); padding-right:max(22px, env(safe-area-inset-right,0px)); }
   section{ padding-block:clamp(60px,9vw,120px); position:relative }
   h1,h2,h3,h4{ font-family:var(--ff-display); font-weight:700; text-wrap:balance; letter-spacing:-.025em; line-height:1.02 }
+  h1,h2{ font-family:var(--ff-head); font-weight:600; letter-spacing:-.015em; line-height:1.05 }
   a{ color:inherit; text-decoration:none }
   .mono{ font-family:var(--ff-mono) }
 
@@ -56,7 +58,7 @@
 
   .mark{ width:22px; height:22px; border-radius:7px; position:relative; flex:none;
     background:var(--accent);
-    box-shadow:0 0 0 1px rgba(201,162,75,.4) }
+    box-shadow:0 0 0 1px rgba(231,231,234,.4) }
   .mark::after{ content:""; position:absolute; width:6px; height:6px; border-radius:50%; top:4px; left:4px;
     background:var(--accent-ink); box-shadow:8px 8px 0 0 var(--accent-ink) }
 
@@ -67,7 +69,7 @@
   .btn-primary{ background:var(--accent); color:var(--accent-ink); box-shadow:0 1px 2px rgba(0,0,0,.35) }
   .btn-primary:hover{ background:var(--accent-2); transform:translateY(-1px) }
   .btn-ghost{ background:rgba(255,255,255,.03); color:var(--text); border-color:var(--line-2); backdrop-filter:blur(8px) }
-  .btn-ghost:hover{ border-color:var(--accent-dim); background:rgba(201,162,75,.06) }
+  .btn-ghost:hover{ border-color:var(--accent-dim); background:rgba(231,231,234,.06) }
   .btn-sm{ padding:9px 14px; font-size:13.5px }
 
   /* ---------- nav ---------- */
@@ -89,7 +91,7 @@
   .badge b{ color:var(--accent); font-weight:600 }
   .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); flex:none }
   .hero h1{ font-size:clamp(40px,6.4vw,74px); font-weight:800 }
-  .hero h1 .g{ color:var(--accent) }
+  .hero h1 .g{ font-style:italic; font-weight:500 }
   .hero .lede{ color:var(--muted); font-size:clamp(16px,2vw,19px); margin-top:22px; max-width:31em; line-height:1.6 }
   .hero .lede b{ color:var(--text); font-weight:600 }
   .hero-cta{ display:flex; gap:12px; margin-top:30px; flex-wrap:wrap }
@@ -116,7 +118,7 @@
   .pp-top{ display:flex; align-items:center; justify-content:space-between }
   .pp-brand{ display:flex; align-items:center; gap:9px; font-family:var(--ff-display); font-weight:700; font-size:15px }
   .switch{ width:46px; height:26px; border-radius:999px; background:var(--accent); border:1px solid var(--accent); position:relative; cursor:pointer; flex:none }
-  .switch .knob{ position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#F7EFDD; transform:translateX(20px); transition:transform .22s cubic-bezier(.4,.9,.3,1.3) }
+  .switch .knob{ position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#F2F2F3; transform:translateX(20px); transition:transform .22s cubic-bezier(.4,.9,.3,1.3) }
   .popup[data-off="1"] .switch{ background:#222a35; border-color:var(--line-2); box-shadow:none }
   .popup[data-off="1"] .switch .knob{ transform:translateX(0); background:#cfd8e3 }
   .pp-status{ display:flex; align-items:center; gap:9px; margin:15px 0 13px; font-size:14px; font-weight:600 }
@@ -152,7 +154,7 @@
   .cell.span3{ grid-column:span 3 } .cell.span2{ grid-column:span 2 } .cell.span6{ grid-column:span 6 } .cell.span4{ grid-column:span 4 }
   @media (max-width:860px){ .bento{ grid-template-columns:1fr } .cell.span3,.cell.span2,.cell.span4,.cell.span6{ grid-column:auto } }
   .ico{ width:42px; height:42px; border-radius:12px; display:grid; place-items:center; color:var(--accent);
-    background:rgba(201,162,75,.1); border:1px solid var(--accent-dim); margin-bottom:16px }
+    background:rgba(231,231,234,.1); border:1px solid var(--accent-dim); margin-bottom:16px }
   .ico svg{ width:21px; height:21px }
   .cell h3{ font-size:19px; margin-bottom:9px; font-weight:700; letter-spacing:-.02em }
   .cell p{ color:var(--muted); font-size:14.5px; line-height:1.55 }
@@ -169,7 +171,7 @@
   .acct-row{ display:flex; align-items:center; gap:9px; font-family:var(--ff-mono); font-size:11.5px; padding:8px 0; border-top:1px dashed var(--line-2) }
   .acct-row:first-of-type{ border-top:0 }
   .arrow{ color:var(--faint) }
-  .exit{ margin-left:auto; color:var(--accent); background:rgba(201,162,75,.08); border:1px solid var(--accent-dim); border-radius:6px; padding:2px 7px; font-size:10.5px }
+  .exit{ margin-left:auto; color:var(--accent); background:rgba(231,231,234,.08); border:1px solid var(--accent-dim); border-radius:6px; padding:2px 7px; font-size:10.5px }
   .rbox.bad .exit{ color:var(--amber); background:rgba(217,103,78,.08); border-color:var(--amber-dim) }
   .verdict{ border-top:1px dashed var(--line-2); justify-content:center; padding-top:9px; margin-top:2px }
   .rbox.bad .verdict{ color:var(--amber) } .rbox.good .verdict{ color:var(--accent) }
@@ -205,7 +207,7 @@
   .dlg p{ font-size:12px; color:var(--muted); margin:10px 0 15px; line-height:1.5 } .dlg p b{ color:var(--amber) }
   .dlg-btn{ border-radius:11px; padding:12px; text-align:center; font-weight:600; font-size:13px; cursor:pointer }
   .dlg-btn + .dlg-btn{ margin-top:9px }
-  .dlg-keep{ border:1.5px solid var(--accent); color:var(--text); background:rgba(201,162,75,.06) }
+  .dlg-keep{ border:1.5px solid var(--accent); color:var(--text); background:rgba(231,231,234,.06) }
   .dlg-allow{ border:1px solid var(--amber-dim); color:var(--amber); background:rgba(217,103,78,.08) }
   .dlg small{ display:block; margin-top:13px; font-size:10.5px; color:var(--faint) }
 
@@ -221,13 +223,13 @@
   .appside{ border-right:1px solid var(--line); padding:16px 13px; background:rgba(0,0,0,.2) }
   .snav{ list-style:none; display:flex; flex-direction:column; gap:3px }
   .snav li{ display:flex; align-items:center; gap:11px; padding:10px 12px; border-radius:10px; font-size:13.5px; color:var(--muted); cursor:default; font-weight:500 }
-  .snav li.on{ background:rgba(201,162,75,.08); color:var(--text); border:1px solid var(--accent-dim) }
+  .snav li.on{ background:rgba(231,231,234,.08); color:var(--text); border:1px solid var(--accent-dim) }
   .snav svg{ width:16px; height:16px }
   .sfoot{ margin-top:20px; padding:12px; border:1px solid var(--line); border-radius:11px; background:rgba(255,255,255,.025); font-size:11px; color:var(--muted) }
   .appmain{ padding:clamp(18px,2.5vw,26px) }
   .mh{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:6px }
   .mh h3{ font-size:21px; font-weight:800 }
-  .state{ display:inline-flex; align-items:center; gap:8px; font-size:12.5px; color:var(--accent); background:rgba(201,162,75,.08); border:1px solid var(--accent-dim); padding:6px 12px; border-radius:999px }
+  .state{ display:inline-flex; align-items:center; gap:8px; font-size:12.5px; color:var(--accent); background:rgba(231,231,234,.08); border:1px solid var(--accent-dim); padding:6px 12px; border-radius:999px }
   .msub{ color:var(--muted); font-size:14px; margin-bottom:20px }
   .acct-card{ border:1px solid var(--line); border-radius:14px; overflow:hidden; background:rgba(255,255,255,.02) }
   .ah{ display:grid; grid-template-columns:1.4fr 1fr auto; gap:12px; padding:11px 15px; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--faint); background:rgba(255,255,255,.025); border-bottom:1px solid var(--line); font-family:var(--ff-mono) }
@@ -258,7 +260,7 @@
   @media (max-width:720px){ .honest-grid{ grid-template-columns:1fr } }
   .hcol{ border:1px solid var(--line); border-radius:20px; padding:24px; background:var(--panel); backdrop-filter:blur(10px) }
   .hcol .ht{ font-family:var(--ff-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; display:inline-flex; align-items:center; gap:8px; padding:6px 12px; border-radius:999px; margin-bottom:18px }
-  .hcol.hide .ht{ color:var(--accent); background:rgba(201,162,75,.08); border:1px solid var(--accent-dim) }
+  .hcol.hide .ht{ color:var(--accent); background:rgba(231,231,234,.08); border:1px solid var(--accent-dim) }
   .hcol.show .ht{ color:var(--amber); background:rgba(217,103,78,.08); border:1px solid var(--amber-dim) }
   .hcol ul{ list-style:none; display:flex; flex-direction:column; gap:16px }
   .hcol .li-t{ font-weight:600; font-size:15.5px; display:flex; gap:10px; align-items:baseline; font-family:var(--ff-display) }
@@ -522,15 +524,15 @@
           <div class="acct-card">
             <div class="ah"><span>Account</span><span>Route</span><span style="text-align:right">Status</span></div>
             <div class="ar">
-              <div class="nm"><span class="av" style="background:#C9A24B"></span><div class="n"><div class="nn">Main</div><div class="ad">0x28c6…1d60</div></div></div>
+              <div class="nm"><span class="av" style="background:#E7E7EA"></span><div class="n"><div class="nn">Main</div><div class="ad">0x28c6…1d60</div></div></div>
               <div class="route">acct:28c6 <span class="ex">→ 171.25.193.78</span></div><div class="ok">private</div>
             </div>
             <div class="ar">
-              <div class="nm"><span class="av" style="background:#4fd6e8"></span><div class="n"><div class="nn">Trading</div><div class="ad">0xd8dA…6045</div></div></div>
+              <div class="nm"><span class="av" style="background:#9A9EA4"></span><div class="n"><div class="nn">Trading</div><div class="ad">0xd8dA…6045</div></div></div>
               <div class="route">acct:d8dA <span class="ex">→ 45.9.168.92</span></div><div class="ok">private</div>
             </div>
             <div class="ar">
-              <div class="nm"><span class="av" style="background:#9a7cf0"></span><div class="n"><div class="nn">Airdrops</div><div class="ad">0x21a3…5549</div></div></div>
+              <div class="nm"><span class="av" style="background:#63676E"></span><div class="n"><div class="nn">Airdrops</div><div class="ad">0x21a3…5549</div></div></div>
               <div class="route">acct:21a3 <span class="ex">→ 185.220.101.98</span></div><div class="ok">private</div>
             </div>
           </div>
@@ -647,9 +649,9 @@
             ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke(); } } }
       for (i = 0; i < nodes.length; i++){ a = nodes[i];
         var dm = Math.hypot(a.x-mouse.x, a.y-mouse.y), near = dm < 160;
-        ctx.fillStyle = near ? 'rgba(201,162,75,0.95)' : 'rgba(150,160,176,0.45)';
+        ctx.fillStyle = near ? 'rgba(231,231,234,0.95)' : 'rgba(150,160,176,0.45)';
         ctx.beginPath(); ctx.arc(a.x, a.y, near ? 2.1 : 1.4, 0, 6.2832); ctx.fill();
-        if (near){ ctx.strokeStyle = 'rgba(201,162,75,' + (1-dm/160)*0.5 + ')'; ctx.lineWidth = 1;
+        if (near){ ctx.strokeStyle = 'rgba(231,231,234,' + (1-dm/160)*0.5 + ')'; ctx.lineWidth = 1;
           ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(mouse.x,mouse.y); ctx.stroke(); } }
       raf = requestAnimationFrame(frame);
     }

@@ -3,13 +3,14 @@
 </p>
 
 <p align="center">
-  Your crypto traffic leaves through <b>Tor</b> with <b>one route per account</b>, so the providers
-  your wallet and dapps talk to can't see your IP or tell your accounts apart, and when a provider
-  blocks Tor, Veil re-routes so your apps keep working.
+  <b>anon-rpc, adopted by you, not by the app.</b>
+  <br/>
+  Instead of waiting for every dapp and wallet to integrate privacy, you turn Veil on once and get
+  private reads across all the apps you already use, with <b>one route per account</b> over Tor.
   <br/><br/>
   Built on the Ethereum Foundation's <a href="https://github.com/ethereum/anon-rpc">anon-rpc</a> and <a href="https://github.com/ethereum/tor-js">tor-js</a>.
   <br/>
-  <b>🌐 <a href="https://aman035.github.io/veil/">aman035.github.io/veil</a></b> &nbsp;·&nbsp; <i>status: active development</i>
+  <b>🌐 <a href="https://aman035.github.io/veil/">aman035.github.io/veil</a></b>
 </p>
 
 ---
@@ -36,10 +37,10 @@ The usual fixes don't solve it:
 
 Veil makes the wallets and dapps you **already use** private, with no change to them.
 
-> **Privacy becomes your decision, not every app's.** anon-rpc is adopted one app at a time, and
-> only a couple of apps have, all opt-in. Veil flips that: you turn it on once and every wallet and
-> dapp you already use is private, with nothing for them to change. Private reads reach people even
-> when they don't control which RPC their apps talk to, which is how this actually gets to users.
+> **The real fix is every app adopting anon-rpc. Until they do, you shouldn't pay with your privacy.**
+> Only a couple of apps have integrated it, all opt-in. Veil flips the model: instead of each app
+> adopting anon-rpc for you, **you adopt it yourself**, turn it on once, and every wallet and dapp you
+> already use gets private reads today, with nothing for them to change.
 
 <p align="center">
   <img src="assets/one-route-per-account.svg" alt="One route per account: each account's traffic flows through its own Tor circuit to a different exit" width="820">
@@ -72,7 +73,11 @@ and sandboxed** (anon-rpc) with no access to your keys, DOM or cookies. The desk
 same harness for the wallet's own traffic and for local tools.
 
 <p align="center">
-  <img src="assets/architecture.svg" alt="Architecture: dapp page, Veil extension routes by account and blinds the id, the anon-rpc harness runs a sandboxed hash-pinned tor-js worker, over Tor one circuit per account, to the provider" width="980">
+  <img src="assets/interception.svg" alt="Step 1: Veil catches the read, reads the account, and blinds the request id" width="760">
+</p>
+
+<p align="center">
+  <img src="assets/transport.svg" alt="Step 2: the anon-rpc harness (sandboxed hash-pinned tor-js worker) carries the read over Tor, one circuit per account, to the provider" width="880">
 </p>
 
 Three rules shape every request:

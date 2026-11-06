@@ -18,29 +18,29 @@
   <text class="t sub" x="34" y="63" font-size="13">Each account gets its own Tor circuit and exit, so providers see strangers.</text>
 
   <!-- middle Tor band -->
-  <rect x="392" y="92" width="56" height="212" fill="#C9A24B" fill-opacity="0.05"/>
+  <rect x="392" y="92" width="56" height="212" fill="#E7E7EA" fill-opacity="0.05"/>
   <text class="mono sub" x="420" y="108" font-size="11" text-anchor="middle">via Tor</text>
   <text class="mono faint" x="420" y="300" font-size="10" text-anchor="middle">anon-rpc</text>
 
   <!-- routes (faint), ids for motion paths -->
-  <path id="rA" d="M214,150 C 360,120 470,120 606,150" fill="none" stroke="#C9A24B" stroke-width="2" stroke-opacity="0.32"/>
-  <path id="rB" d="M214,210 C 360,210 470,210 606,210" fill="none" stroke="#4fd6e8" stroke-width="2" stroke-opacity="0.32"/>
-  <path id="rC" d="M214,270 C 360,300 470,300 606,270" fill="none" stroke="#9a7cf0" stroke-width="2" stroke-opacity="0.32"/>
+  <path id="rA" d="M214,150 C 360,120 470,120 606,150" fill="none" stroke="#E7E7EA" stroke-width="2" stroke-opacity="0.32"/>
+  <path id="rB" d="M214,210 C 360,210 470,210 606,210" fill="none" stroke="#9A9EA4" stroke-width="2" stroke-opacity="0.32"/>
+  <path id="rC" d="M214,270 C 360,300 470,300 606,270" fill="none" stroke="#63676E" stroke-width="2" stroke-opacity="0.32"/>
 
   <!-- travelling packets -->
   <g>
-    <circle r="9" fill="#C9A24B" opacity="0.22"/>
-    <circle r="4" fill="#DFBE7E"/>
+    <circle r="9" fill="#E7E7EA" opacity="0.22"/>
+    <circle r="4" fill="#F2F2F3"/>
     <animateMotion dur="2.4s" repeatCount="indefinite" rotate="auto"><mpath xlink:href="#rA"/></animateMotion>
   </g>
   <g>
-    <circle r="9" fill="#4fd6e8" opacity="0.22"/>
-    <circle r="4" fill="#7fe6f5"/>
+    <circle r="9" fill="#9A9EA4" opacity="0.22"/>
+    <circle r="4" fill="#C7CBD0"/>
     <animateMotion dur="2.9s" begin="-0.6s" repeatCount="indefinite" rotate="auto"><mpath xlink:href="#rB"/></animateMotion>
   </g>
   <g>
-    <circle r="9" fill="#9a7cf0" opacity="0.22"/>
-    <circle r="4" fill="#b9a3f7"/>
+    <circle r="9" fill="#63676E" opacity="0.22"/>
+    <circle r="4" fill="#8C9096"/>
     <animateMotion dur="2.6s" begin="-1.2s" repeatCount="indefinite" rotate="auto"><mpath xlink:href="#rC"/></animateMotion>
   </g>
 
@@ -48,17 +48,17 @@
   <g class="t">
     <!-- A -->
     <rect class="card" x="34" y="128" width="180" height="44" rx="11"/>
-    <circle cx="60" cy="150" r="11" fill="#C9A24B"/>
+    <circle cx="60" cy="150" r="11" fill="#E7E7EA"/>
     <text x="80" y="146" font-size="13" fill="#eef3f8" font-weight="600">Main</text>
     <text class="mono" x="80" y="162" font-size="10" fill="#63707f">0x28c6…1d60</text>
     <!-- B -->
     <rect class="card" x="34" y="188" width="180" height="44" rx="11"/>
-    <circle cx="60" cy="210" r="11" fill="#4fd6e8"/>
+    <circle cx="60" cy="210" r="11" fill="#9A9EA4"/>
     <text x="80" y="206" font-size="13" fill="#eef3f8" font-weight="600">Trading</text>
     <text class="mono" x="80" y="222" font-size="10" fill="#63707f">0xd8dA…6045</text>
     <!-- C -->
     <rect class="card" x="34" y="248" width="180" height="44" rx="11"/>
-    <circle cx="60" cy="270" r="11" fill="#9a7cf0"/>
+    <circle cx="60" cy="270" r="11" fill="#63676E"/>
     <text x="80" y="266" font-size="13" fill="#eef3f8" font-weight="600">Airdrops</text>
     <text class="mono" x="80" y="282" font-size="10" fill="#63707f">0x21a3…5549</text>
   </g>
@@ -66,17 +66,17 @@
   <!-- exit nodes (right) -->
   <g class="t">
     <rect class="card" x="606" y="128" width="180" height="44" rx="11"/>
-    <circle cx="628" cy="150" r="6" fill="#C9A24B"><animate attributeName="opacity" values="0.45;1;0.45" dur="2s" repeatCount="indefinite"/></circle>
+    <circle cx="628" cy="150" r="6" fill="#E7E7EA"><animate attributeName="opacity" values="0.45;1;0.45" dur="2s" repeatCount="indefinite"/></circle>
     <text class="mono" x="644" y="146" font-size="12" fill="#eef3f8">171.25.193.78</text>
     <text x="644" y="162" font-size="9.5" fill="#63707f">Tor exit</text>
 
     <rect class="card" x="606" y="188" width="180" height="44" rx="11"/>
-    <circle cx="628" cy="210" r="6" fill="#4fd6e8"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.3s" repeatCount="indefinite"/></circle>
+    <circle cx="628" cy="210" r="6" fill="#9A9EA4"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.3s" repeatCount="indefinite"/></circle>
     <text class="mono" x="644" y="206" font-size="12" fill="#eef3f8">45.9.168.92</text>
     <text x="644" y="222" font-size="9.5" fill="#63707f">Tor exit</text>
 
     <rect class="card" x="606" y="248" width="180" height="44" rx="11"/>
-    <circle cx="628" cy="270" r="6" fill="#9a7cf0"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.6s" repeatCount="indefinite"/></circle>
+    <circle cx="628" cy="270" r="6" fill="#63676E"><animate attributeName="opacity" values="0.45;1;0.45" dur="2.6s" repeatCount="indefinite"/></circle>
     <text class="mono" x="644" y="266" font-size="12" fill="#eef3f8">185.220.101.98</text>
     <text x="644" y="282" font-size="9.5" fill="#63707f">Tor exit</text>
   </g>
