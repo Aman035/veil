@@ -245,6 +245,21 @@ function knownFor(origin: string): KnownAccounts {
   return k;
 }
 const tabStats = new Map<number, TabStats>();
+
+// A short live feed of routed reads, for the activity view (demo-visible proof).
+type ActivityEntry = { id: number; ts: number; origin: string; method: string; route: string; state: "tor" | "rerouted" | "blocked" | "direct" | "paused" };
+const activity: ActivityEntry[] = [];
+let activitySeq = 0;
+function methodOf(body: unknown): string {
+  const one = Array.isArray(body) ? (body as unknown[])[0] : body;
+  const m = one && (one as { method?: unknown }).method;
+  const base = typeof m === "string" ? m : "rpc";
+  return Array.isArray(body) && body.length > 1 ? `${base} +${body.length - 1}` : base;
+}
+function pushActivity(origin: string, method: string, route: string, state: ActivityEntry["state"]) {
+  activity.push({ id: ++activitySeq, ts: Date.now(), origin, method, route, state });
+  if (activity.length > 80) activity.splice(0, activity.length - 80);
+}
 function statsFor(tabId: number, origin: string): TabStats {
   let s = tabStats.get(tabId);
   if (!s || s.origin !== origin) {
@@ -299,6 +314,7 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
   const known = knownFor(origin);
   known.observe(body); // learn addresses from balance/nonce reads
   const key = routeKeyForBody(body, known.set);
+  const method = methodOf(body);
   const { sent, restore } = blind(body);
 
   const s = statsFor(tabId, origin);
@@ -308,6 +324,7 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
   // Harness down (not a provider block): fail closed, never go direct, never
   // ask to allow-direct. Matches the popup's "Paused: not private" (PRD §6.3).
   if (harness === "error") {
+    pushActivity(origin, method, key, "paused");
     return { ok: false, error: "veil: paused - the anonymizing network is unavailable (not private)", routeKey: key };
   }
 
@@ -317,7 +334,7 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
   try {
     // Attempt 1: the dapp's own endpoint, over Tor.
     const first = await sendVia(url, sent, key);
-    if (first.ok) { s.protectedCount++; addRoute(); return { ok: true, status: 200, body: restore(first.json), routeKey: key }; }
+    if (first.ok) { s.protectedCount++; addRoute(); pushActivity(origin, method, key, "tor"); return { ok: true, status: 200, body: restore(first.json), routeKey: key }; }
 
     // Blocked. Re-route only for a known single-chain standard RPC (E4/E5).
     const cls = classifyEndpoint(url);
@@ -326,9 +343,10 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
       for (const p of torFriendlyFor(cls.chainId)) {
         if (new URL(p).hostname === here) continue;
         const rr = await sendVia(p, sent, key);
-        if (rr.ok) { s.rerouted++; s.protectedCount++; addRoute(); return { ok: true, status: 200, body: restore(rr.json), routeKey: key, rerouted: true }; }
+        if (rr.ok) { s.rerouted++; s.protectedCount++; addRoute(); pushActivity(origin, method, key, "rerouted"); return { ok: true, status: 200, body: restore(rr.json), routeKey: key, rerouted: true }; }
       }
       s.blocked++;
+      pushActivity(origin, method, key, "blocked");
       return { ok: false, blocked: true, error: "veil: provider blocked anonymous access and re-routing failed", routeKey: key };
     }
 
@@ -338,10 +356,12 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
       // The user explicitly allowed a direct (non-private) connection for this
       // site. The page performs the real native request itself (inject.ts).
       s.direct++;
+      pushActivity(origin, method, key, "direct");
       return { ok: false, allowDirect: true, error: "veil: allowed direct for this site (not private)", routeKey: key };
     }
     if (policy === "block") {
       s.blocked++;
+      pushActivity(origin, method, key, "blocked");
       return { ok: false, blocked: true, error: "veil: this site's provider blocks anonymous access - kept blocked", routeKey: key };
     }
     // "ask" (default): tell the page to show the one-time dialog; don't count it
@@ -402,6 +422,10 @@ chrome.runtime.onMessage.addListener((msg, sender, respond) => {
     respond(s ?? null);
     return true;
   }
+  if (msg?.type === "veil:activity") {
+    respond({ activity, harness, enabled: undefined });
+    return true;
+  }
   if (msg?.type === "popup:toggle") {
     (async () => {
       await chrome.storage.local.set({ enabled: !!msg.enabled });
@@ -442,6 +466,7 @@ chrome.runtime.onInstalled.addListener((details) => {
   harness: () => ({ harness, harnessMs }),
   tab: (id: number) => tabStats.get(id),
   tabs: () => [...tabStats.entries()],
+  activity: () => activity,
   today: () => ({ ...today, sites: [...today.sites] }),
   accounts: (o: string) => [...(accountsByOrigin.get(o)?.set ?? [])],
   policy: (o: string) => getPolicy(o),

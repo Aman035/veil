@@ -24,6 +24,7 @@ const builds = [
   { entryPoints: [here + "src/popup/popup.ts"], outfile: dist + "popup/popup.js", format: "iife" },
   { entryPoints: [here + "src/onboarding/onboarding.ts"], outfile: dist + "onboarding/onboarding.js", format: "iife" },
   { entryPoints: [here + "src/options/options.ts"], outfile: dist + "options/options.js", format: "iife" },
+  { entryPoints: [here + "src/activity/activity.ts"], outfile: dist + "activity/activity.js", format: "iife" },
 ];
 
 async function copyStatic() {
@@ -36,6 +37,9 @@ async function copyStatic() {
   mkdirSync(dist + "options", { recursive: true });
   cpSync(here + "src/options/options.html", dist + "options/options.html");
   cpSync(here + "src/options/options.css", dist + "options/options.css");
+  mkdirSync(dist + "activity", { recursive: true });
+  cpSync(here + "src/activity/activity.html", dist + "activity/activity.html");
+  cpSync(here + "src/activity/activity.css", dist + "activity/activity.css");
   // anon-rpc version-stamped assets (offscreen + sandbox) - must match the installed package
   const staticSrc = here + "node_modules/@anon-rpc/browser-extension-harness/dist/static/anon-rpc";
   if (!existsSync(staticSrc)) throw new Error("missing anon-rpc assets; run pnpm install");

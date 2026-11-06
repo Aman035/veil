@@ -187,6 +187,7 @@ routeWallet.addEventListener("click", async () => {
 });
 
 document.getElementById("openSettings")?.addEventListener("click", () => chrome.runtime.openOptionsPage());
+document.getElementById("openActivity")?.addEventListener("click", () => chrome.tabs.create({ url: chrome.runtime.getURL("activity/activity.html") }));
 
 refresh();
 setInterval(refresh, 1000);
