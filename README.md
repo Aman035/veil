@@ -93,8 +93,25 @@ Three rules shape every request:
 **Built on anon-rpc.** Veil routes its RPC reads through anon-rpc **by default**. The extension
 runs [`@anon-rpc/browser-extension-harness`](https://www.npmjs.com/package/@anon-rpc/browser-extension-harness) and the helper runs [`@anon-rpc/browser-harness`](https://www.npmjs.com/package/@anon-rpc/browser-harness). With protection on, essentially all of a dapp page's JSON-RPC reads leave through
 anon-rpc. We intentionally **don't hide which addresses you look up** (that needs PIR, a separate
-problem), which is a stated trade-off, not a gap. Known gaps: Web-Worker `fetch` and WebSockets
-aren't intercepted yet.
+problem), which is a stated trade-off, not a gap.
+
+### How the interception works
+
+At `document_start`, before any of the page's own scripts run, Veil installs a MAIN-world shim that
+wraps `window.fetch` and `XMLHttpRequest`. Every dapp read goes through one of those, so a single hook
+covers viem, ethers v5 and v6, and raw XHR with no per-library integration. For each call Veil:
+
+1. parses the JSON-RPC body (anything that is not a JSON-RPC request passes straight through, untouched);
+2. finds the account the read is for, from the params or from inside `eth_call` calldata, ignoring the
+   zero address;
+3. picks that account's isolation key and blinds the request id (viem numbers requests with one global
+   counter, so leaving ids as-is would let a provider stitch the per-account routes back together);
+4. relays it through the extension (MAIN world -> ISOLATED-world relay -> background service worker ->
+   offscreen anon-rpc worker) and returns the provider's reply to the page unchanged.
+
+Honest boundary: reads a dapp makes from a **Web Worker's `fetch`** or over a **WebSocket** are not
+hooked yet, so they are not routed. Nothing is silently downgraded, those channels are simply outside
+the current shim; closing the WebSocket one is a matter of wrapping its constructor the same way.
 
 ### Scope
 
