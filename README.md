@@ -109,20 +109,22 @@ covers viem, ethers v5 and v6, and raw XHR with no per-library integration. For 
 4. relays it through the extension (MAIN world -> ISOLATED-world relay -> background service worker ->
    offscreen anon-rpc worker) and returns the provider's reply to the page unchanged.
 
-Honest boundary: reads a dapp makes from a **Web Worker's `fetch`** or over a **WebSocket** are not
-hooked yet, so they are not routed. Nothing is silently downgraded, those channels are simply outside
-the current shim; closing the WebSocket one is a matter of wrapping its constructor the same way.
+### Scope and what's next
 
-### Scope
+Today Veil makes **dapp reads** private per account (the main leak, since dapps read straight from
+the page) and gives **local tools** (`cast`, scripts) the same per-account reads through the helper.
+With protection on, essentially all of a page's JSON-RPC reads leave through anon-rpc. Two things are
+deliberately next, and in both, nothing is ever silently sent in the clear:
 
-This version makes **dapp reads** private per account (the main leak, since dapps read straight
-from the page), and gives **local tools** (`cast`, scripts) private per-account reads through the
-helper. Routing the **wallet's own opaque HTTPS traffic** through Tor is a deliberate next step,
-not shipped here: anon-rpc exposes an anonymised `fetch`, not raw TCP tunnels, so opaque wallet
-traffic needs either a raw-stream capability upstream (the tor-js gateway already supports
-`CONNECT`; the harness doesn't expose it yet) or a local Tor tunnel (which hides the IP but can't
-split per account). The extension's `chrome.proxy` hook for this is built but stays **inert**
-until one of those lands, so nothing is ever silently sent in the clear.
+- **A couple of read channels aren't wrapped yet.** Reads from a Web Worker's `fetch` or over a
+  WebSocket bypass the `fetch`/XHR shim, so they are not routed (not silently downgraded, just not
+  covered). Wrapping the `WebSocket` constructor closes most of it; Web Worker scopes need the shim
+  injected per worker.
+- **The wallet's own opaque HTTPS traffic.** anon-rpc exposes an anonymised `fetch`, not raw TCP
+  tunnels, so this needs either a raw-stream capability upstream (the tor-js gateway already supports
+  `CONNECT`; the harness doesn't expose it yet) or a local Tor tunnel (hides the IP but can't split
+  per account). The extension's `chrome.proxy` hook for this is built but stays **inert** until one
+  lands.
 
 <details>
 <summary><b>See the full read path on a real app (ENS), with and without Veil</b></summary>
