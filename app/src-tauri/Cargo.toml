@@ -1,0 +1,23 @@
+[package]
+name = "unlink-app"
+version = "0.1.0"
+description = "Unlink desktop app — runs the privacy engine and shows status."
+edition = "2021"
+rust-version = "1.77"
+license = "MIT"
+
+# Keep the binary name stable for the Tauri CLI.
+[[bin]]
+name = "unlink-app"
+path = "src/main.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+[profile.release]
+opt-level = "s"
+lto = true
+strip = true

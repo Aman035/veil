@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Unlink</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="appwin">
+  <!-- window chrome -->
+  <div class="titlebar" data-tauri-drag-region>
+    <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+    <div class="tt"><span class="mark"></span> Unlink</div>
+    <div class="conn" id="connPill"><span class="dot"></span> <span id="connText">Connecting…</span></div>
+  </div>
+
+  <div class="appbody">
+    <!-- sidebar -->
+    <aside class="appside">
+      <ul class="snav">
+        <li data-view="status" class="on">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg> Status
+        </li>
+        <li data-view="setup">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg> Setup
+        </li>
+        <li data-view="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.2-1.6l2-1.5-2-3.4-2.3 1a7 7 0 00-2.8-1.6L15 1H9l-.7 2.3A7 7 0 005.5 5L3.2 4 1.2 7.4l2 1.5A7 7 0 003 12"/></svg> Settings
+        </li>
+      </ul>
+      <div class="sfoot">
+        <b>Browser extension</b><br>
+        <span id="extFoot">Not paired yet</span>
+      </div>
+    </aside>
+
+    <!-- main -->
+    <main class="appmain">
+
+      <!-- ====== STATUS VIEW ====== -->
+      <section class="view on" data-view="status">
+        <div class="mh">
+          <h3 id="protHead">Protection on</h3>
+          <span class="state" id="statePill"><span class="dot"></span> <span id="stateText">Private · Tor</span></span>
+        </div>
+        <div class="msub" id="protSub">Your wallet, dapps and local tools leave through the privacy engine — one route per account.</div>
+
+        <div class="acct-card">
+          <div class="ah"><span>Account</span><span>Route → Exit</span><span style="text-align:right">Status</span></div>
+          <div id="acctRows">
+            <div class="empty" id="acctEmpty">No account traffic yet. Point a wallet or <span class="mono">cast</span> at the local RPC, or seed accounts via <span class="mono">HELPER_ACCOUNTS</span>.</div>
+          </div>
+        </div>
+
+        <div class="tiles">
+          <div class="tile">
+            <div class="tl">Wallet traffic</div>
+            <div class="tv" id="walletTv">Wallet · <span class="mono" id="walletState">protected</span></div>
+            <div class="td">Its RPC and API hosts routed through the engine via the local proxy.</div>
+          </div>
+          <div class="tile">
+            <div class="tl">Local RPC endpoint</div>
+            <div class="tv"><span class="mono">127.0.0.1:18545</span></div>
+            <div class="td">Point <span class="mono">cast</span>, scripts or a wallet's custom RPC here — private, per account.</div>
+          </div>
+          <div class="tile">
+            <div class="tl">Today</div>
+            <div class="tv"><span class="mono" id="todayReq">0</span> requests · <span class="mono" id="todaySites">0</span> sites</div>
+            <div class="td">Routed through the engine since this session started.</div>
+          </div>
+          <div class="tile">
+            <div class="tl">Upstream</div>
+            <div class="tv"><span class="mono" id="upstreamHost">—</span></div>
+            <div class="td">Where reads are forwarded after leaving the engine.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== SETUP / ONBOARDING VIEW ====== -->
+      <section class="view" data-view="setup">
+        <div class="mh"><h3>Add the browser extension</h3></div>
+        <div class="msub">The app runs the privacy engine. The extension does the in-page part — catching each dapp's reads. One flow pairs both halves.</div>
+
+        <div class="pair-grid">
+          <div class="pcard pair">
+            <div class="pair-num">01</div>
+            <div class="pair-body">
+              <div class="pair-t">Privacy engine</div>
+              <div class="pair-s" id="engineStep">Starting…</div>
+            </div>
+            <div class="pair-ic" id="engineIc"><span class="spin"></span></div>
+          </div>
+
+          <div class="pcard pair">
+            <div class="pair-num">02</div>
+            <div class="pair-body">
+              <div class="pair-t">Browser extension</div>
+              <div class="pair-s" id="extStep">Waiting for the extension…</div>
+            </div>
+            <div class="pair-ic" id="extIc"><span class="spin"></span></div>
+          </div>
+        </div>
+
+        <div class="install-row">
+          <button class="btn btn-primary" id="addBtn">Add to Chrome</button>
+          <button class="btn btn-ghost" id="pairedBtn">I've added the extension</button>
+        </div>
+
+        <div class="onb-toggle">
+          <div><div class="t">Protection</div><div class="s" id="protToggleSub">Routes wallet, dapp and tool traffic through the engine</div></div>
+          <div class="switch" id="protSwitch" role="switch" aria-checked="true" tabindex="0" aria-label="Toggle protection"><span class="knob"></span></div>
+        </div>
+
+        <div class="hv">
+          <div class="col hide"><div class="ct">Hidden from providers</div><ul><li>Your IP address</li><li>That your accounts belong together</li></ul></div>
+          <div class="col show"><div class="ct">Still visible</div><ul><li>The addresses you query</li><li>That you use Tor</li></ul></div>
+        </div>
+      </section>
+
+      <!-- ====== SETTINGS VIEW ====== -->
+      <section class="view" data-view="settings">
+        <div class="mh"><h3>Settings</h3></div>
+        <div class="msub">Minimal for now — the engine is configured by the app when it launches.</div>
+
+        <div class="set-list">
+          <div class="set-row">
+            <div><div class="set-t">Network</div><div class="set-d">The anonymous network the engine routes through.</div></div>
+            <div class="set-val mono" id="setNetwork">—</div>
+          </div>
+          <div class="set-row">
+            <div><div class="set-t">Local RPC</div><div class="set-d">Endpoint for <span class="mono">cast</span>, scripts and custom wallet RPCs.</div></div>
+            <div class="set-val mono">127.0.0.1:18545</div>
+          </div>
+          <div class="set-row">
+            <div><div class="set-t">Open at login</div><div class="set-d">Start the engine automatically when you sign in. <span class="muted">(coming soon)</span></div></div>
+            <div class="switch off" id="loginSwitch" role="switch" aria-checked="false" tabindex="0" aria-label="Open at login"><span class="knob"></span></div>
+          </div>
+          <div class="set-row">
+            <div><div class="set-t">Engine status endpoint</div><div class="set-d">The local control API the app reads.</div></div>
+            <div class="set-val mono" id="setApi">—</div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
