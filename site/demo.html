@@ -9,9 +9,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     :root{
-      --bg:#0b0d11; --panel:#15181c; --panel2:#101316; --line:#242a31; --line2:#2f363d;
+      --bg:#0b0d11; --panel:#15181c; --panel2:#101316; --line:#242a31;
       --text:#e8edf2; --muted:#9aa0a8; --faint:#5c6672;
-      --accent:#ededee; --amber:#D9674E; --amber-dim:#3a221c;
+      --accent:#ededee; --amber:#D9674E;
       --ff:"Hanken Grotesk",-apple-system,system-ui,sans-serif;
       --ff-head:"Fraunces",Georgia,serif;
       --ff-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
@@ -19,13 +19,13 @@
     *{box-sizing:border-box}
     html,body{margin:0}
     body{background:var(--bg);color:var(--text);font-family:var(--ff);line-height:1.55;-webkit-font-smoothing:antialiased;padding:38px 16px 80px}
-    .wrap{max-width:900px;margin:0 auto}
+    .wrap{max-width:760px;margin:0 auto}
     .eyebrow{font-family:var(--ff-mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint)}
     h1{font-family:var(--ff-head);font-weight:600;font-size:36px;line-height:1.08;margin:10px 0 12px;letter-spacing:-.01em}
-    .lede{color:var(--muted);font-size:15.5px;max-width:64ch;margin:0 0 22px}
+    .lede{color:var(--muted);font-size:15.5px;max-width:62ch;margin:0 0 22px}
     .lede b{color:var(--text);font-weight:600}
 
-    .status{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-family:var(--ff-mono);padding:7px 12px;border:1px solid var(--line);border-radius:9px;color:var(--muted);margin-bottom:16px}
+    .status{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-family:var(--ff-mono);padding:7px 12px;border:1px solid var(--line);border-radius:9px;color:var(--muted);margin-bottom:18px}
     .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
     .status.ok{color:var(--accent);border-color:#30373a}.status.ok::before{background:var(--accent)}
     .status.warn{color:var(--amber);border-color:#53342a}.status.warn::before{background:var(--amber)}
@@ -33,41 +33,52 @@
     .steps ol{margin:0;padding-left:20px;color:var(--muted);font-size:14px;line-height:1.75}
     .steps ol b{color:var(--text)} .steps .dl{display:inline-block;margin-left:7px;font-size:12px;color:var(--bg);background:var(--accent);border-radius:7px;padding:3px 10px;text-decoration:none;font-weight:600}
 
-    .reads{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:15px 17px;margin:0 0 18px}
-    .reads .cap{font-size:12.5px;color:var(--muted);margin-bottom:11px}
-    .reads .cap b{color:var(--text)}
+    .reads{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:14px 16px;margin:0 0 16px}
+    .reads .cap{font-size:12.5px;color:var(--muted);margin-bottom:9px}
     .reads .apps{color:var(--faint)}
-    .call{font-family:var(--ff-mono);font-size:13px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:6px 0}
+    .call{font-family:var(--ff-mono);font-size:13px;display:flex;flex-wrap:wrap;align-items:baseline;gap:8px;padding:5px 0}
     .call+.call{border-top:1px solid var(--line)}
     .call .arrow{color:var(--faint)} .call .mth{color:var(--accent)} .call .addr{color:var(--muted)}
     .call .who{margin-left:auto;color:var(--faint);font-size:11.5px;font-family:var(--ff)}
 
-    .runbar{display:flex;align-items:center;gap:14px;margin:0 0 20px}
+    /* flow of the request path, reflects the live state */
+    .flow{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 6px}
+    .node{border:1px solid var(--line);border-radius:9px;padding:8px 12px;font-size:12.5px;white-space:nowrap;background:var(--panel)}
+    .node.ends{font-weight:600}
+    .arrow{color:var(--faint);font-size:14px}
+    .flow .via{display:inline-flex;align-items:center;gap:9px}
+    .flow[data-on="0"] .via{display:none}
+    .flow[data-on="1"] .node.mid{border-color:#343b3f;color:var(--accent)}
+    .carry{font-size:12.5px;margin:0 0 18px}
+    .carry b{font-weight:600}
+    .flow[data-on="0"] ~ .carry b{color:var(--amber)}
+    .flow[data-on="1"] ~ .carry b{color:var(--accent)}
+
+    .runbar{display:flex;align-items:center;gap:14px;margin:16px 0 18px}
     button{font-family:var(--ff);font-size:14.5px;font-weight:600;color:var(--bg);background:var(--accent);border:0;border-radius:10px;padding:12px 20px;cursor:pointer}
     button:disabled{opacity:.5;cursor:default}
     .hint{font-size:13px;color:var(--muted)}
 
-    .logs{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-    @media (max-width:680px){ .logs{grid-template-columns:1fr} h1{font-size:28px} }
-    .log{border:1px solid var(--line);border-radius:13px;background:var(--panel);overflow:hidden;display:flex;flex-direction:column}
-    .log.exposed{border-color:#4a2c24} .log.safe{border-color:#343b3f}
+    .log{border:1px solid var(--line);border-radius:13px;background:var(--panel);overflow:hidden}
+    .log.exposed{border-color:#4a2c24}.log.safe{border-color:#343b3f}
     .log .bar{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--line);font-size:12.5px}
-    .log .bar .tag{font-weight:600} .log.exposed .bar .tag{color:var(--amber)} .log.safe .bar .tag{color:var(--accent)}
-    .log .bar .sub{color:var(--faint);font-size:11.5px;margin-left:auto}
-    .log .body{padding:12px 14px;min-height:96px;font-family:var(--ff-mono);font-size:12px;line-height:1.5}
+    .log .bar .tag{font-weight:600}
+    .log.exposed .bar .tag{color:var(--amber)}.log.safe .bar .tag{color:var(--accent)}
+    .log .bar .sub{color:var(--faint);font-size:11.5px;margin-left:auto;font-family:var(--ff-mono)}
+    .log .body{padding:13px 14px;min-height:74px;font-family:var(--ff-mono);font-size:12.5px;line-height:1.55}
     .log .ph{color:var(--faint);font-family:var(--ff)}
-    .logline{display:flex;gap:9px;padding:3px 0;opacity:0;transform:translateY(3px);transition:opacity .25s,transform .25s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .logline{display:flex;gap:10px;padding:4px 0;opacity:0;transform:translateY(3px);transition:opacity .25s,transform .25s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .logline.in{opacity:1;transform:none}
     .logline .ip{font-weight:500}
-    .log.exposed .logline .ip{color:var(--amber)} .log.safe .logline .ip{color:var(--accent)}
-    .logline .mth{color:var(--muted)} .logline .ad{color:var(--faint)}
-    .log .note{padding:10px 14px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--muted)}
-    .log.exposed .note b{color:var(--amber)} .log.safe .note b{color:var(--accent)}
-    .log.dim{opacity:.5}
+    .log.exposed .logline .ip{color:var(--amber)}.log.safe .logline .ip{color:var(--accent)}
+    .logline .mth{color:var(--muted)}.logline .ad{color:var(--faint)}
+    .log .note{padding:11px 14px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.5;color:var(--muted)}
+    .log.exposed .note b{color:var(--amber)}.log.safe .note b{color:var(--accent)}
+    .compare{font-size:12.5px;color:var(--faint);margin:14px 0 0}
 
-    .fine{color:var(--faint);font-size:12.5px;margin-top:26px;line-height:1.65;max-width:72ch}
-    .fine code{font-family:var(--ff-mono);color:var(--muted)}
+    .fine{color:var(--faint);font-size:12.5px;margin-top:24px;line-height:1.65;max-width:72ch}
     a{color:var(--text)}
+    @media (max-width:560px){ h1{font-size:28px} }
   </style>
 </head>
 <body>
@@ -75,9 +86,9 @@
     <div class="eyebrow">Veil &middot; live</div>
     <h1>What your RPC provider sees</h1>
     <p class="lede">
-      Every dapp reads your balances from an RPC provider, and each read hands that provider <b>your IP</b>
-      and <b>the address</b>. Below is the read, and the provider's log, with Veil off and on. This page is
-      where you point the extension.
+      Every dapp reads your balances from an RPC provider, and each read hands it <b>your IP</b> and
+      <b>the address</b>. Watch the provider's log change as you turn Veil on. This page is where you
+      point the extension.
     </p>
 
     <div class="status" id="extStatus">Checking for the Veil extension&hellip;</div>
@@ -95,37 +106,38 @@
       <div class="call"><span class="arrow">&rarr;</span><span class="mth">eth_getBalance</span><span class="addr" id="adB"></span><span class="who">account B</span></div>
     </div>
 
+    <div class="flow" id="flow" data-on="0">
+      <span class="node ends">Your browser</span>
+      <span class="via">
+        <span class="arrow">&rarr;</span><span class="node mid">Veil</span>
+        <span class="arrow">&rarr;</span><span class="node mid">Tor, a circuit per account</span>
+      </span>
+      <span class="arrow">&rarr;</span>
+      <span class="node ends">RPC provider</span>
+    </div>
+    <div class="carry" id="carry"></div>
+
     <div class="runbar">
       <button id="run">Run the reads</button>
       <span class="hint" id="hint"></span>
     </div>
 
-    <div class="logs">
-      <div class="log exposed" id="logOff">
-        <div class="bar"><span class="tag">Without Veil</span><span class="sub">provider access log</span></div>
-        <div class="body" id="bOff"><span class="ph">run to see what a provider logs</span></div>
-        <div class="note" id="nOff" style="display:none"></div>
-      </div>
-      <div class="log safe" id="logOn">
-        <div class="bar"><span class="tag">With Veil</span><span class="sub">provider access log</span></div>
-        <div class="body" id="bOn"><span class="ph">run to see what a provider logs</span></div>
-        <div class="note" id="nOn" style="display:none"></div>
-      </div>
+    <div class="log" id="log">
+      <div class="bar"><span class="tag">Provider access log</span><span class="sub" id="logSub"></span></div>
+      <div class="body" id="logBody"><span class="ph">run the reads to see what the provider logs</span></div>
+      <div class="note" id="logNote" style="display:none"></div>
     </div>
+    <p class="compare" id="compare"></p>
 
     <p class="fine">
       These logs are real, not mocked: the reads actually go out and a server reports back the IP it saw.
-      Without Veil, a provider logs your real IP for both accounts, tying them to one person; with Veil, each
+      Without Veil a provider logs your real IP for both accounts, tying them to one person; with Veil each
       account arrives from its own Tor exit. What you look up stays visible by design, Veil hides your IP and
       the link between your accounts, not which addresses you query. &nbsp;<a href="./">Back to Veil</a>
     </p>
   </main>
 
   <script>
-    // Echo that reports the IP (and request) it received. The extension routes any
-    // POST whose body is JSON-RPC, so POSTs go over Tor; a GET does not, so it
-    // reveals your real IP. Deploy demo-echo/worker.js and set WORKER for a
-    // reliable demo; or pass ?echo=<url> (e.g. from demo-echo/serve-local.mjs).
     const WORKER = "https://greg-relatives-modify-fires.trycloudflare.com"; // temporary live echo (tunnel)
     const FALLBACK = "https://httpbin.org/anything";
     const OVERRIDE = new URLSearchParams(location.search).get("echo");
@@ -134,12 +146,14 @@
     const ACCT_A = "0xd8da6bf26964af9d7eed9e03e53415d37aa96045";
     const ACCT_B = "0xab5801a7d398351b8be11c439e05c5b3259aec9b";
     const short = (a) => a.slice(0, 6) + "…" + a.slice(-4);
+    const isV4 = (ip) => /^\d{1,3}(\.\d{1,3}){3}$/.test(ip || "");
     const $ = (id) => document.getElementById(id);
     $("adA").textContent = short(ACCT_A); $("adB").textContent = short(ACCT_B);
     const originFrom = (j) => (j && (j.ip || j.origin || j.result)) || null;
 
-    async function directIp() { const r = await fetch(ECHO, { cache: "no-store" }); return originFrom(await r.json()); }
-    async function veilIp(addr) {
+    // One kind of read. It is routed over Tor only when Veil is on; otherwise it
+    // goes out directly, exactly as the page would without the extension.
+    async function readFor(addr) {
       const r = await fetch(ECHO, { method: "POST", headers: { "content-type": "application/json" },
         body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "eth_getBalance", params: [addr, "latest"] }) });
       return originFrom(await r.json());
@@ -158,76 +172,70 @@
       window.postMessage({ tag: TAG, dir: "p2c", kind: "hello" }, "*");
       if (veilState === "none") setVeil("off");
     }
-    function setVeil(s) { veilState = s; renderState(); }
+    function setVeil(s) { if (s !== veilState) { veilState = s; clearLog(); } renderState(); }
+
     function renderState() {
       const on = veilState === "on";
       $("steps").style.display = veilState === "none" ? "" : "none";
       const el = $("extStatus");
       if (on) { el.className = "status ok"; el.textContent = "Veil is on, reads go over Tor, one route per account"; }
-      else if (veilState === "off") { el.className = "status warn"; el.textContent = "Veil is installed but off, turn it on to route over Tor"; }
+      else if (veilState === "off") { el.className = "status warn"; el.textContent = "Veil is off, reads go out directly with your IP"; }
       else { el.className = "status warn"; el.textContent = "Veil not detected, install it to route reads over Tor"; }
-      $("hint").textContent = on ? "" : "Turn Veil on to fill the right-hand log.";
-      $("logOn").classList.toggle("dim", !on);
+
+      $("flow").dataset.on = on ? "1" : "0";
+      $("carry").innerHTML = on
+        ? "The provider logs <b>a Tor exit</b> for each account, never you."
+        : "The provider logs <b>your real IP</b> on every read.";
+
+      const log = $("log");
+      log.classList.toggle("safe", on);
+      log.classList.toggle("exposed", !on && veilState !== "none");
+      $("logSub").textContent = on ? "over Tor, private" : (veilState === "none" ? "" : "direct, not private");
+      $("compare").textContent = veilState === "none" ? ""
+        : on ? "Turn Veil off in the popup and run again to see the leak."
+             : "Turn Veil on in the popup and run again to watch it disappear.";
     }
-    probeVeil(); setInterval(probeVeil, 1500);
 
-    let realIp = null;
-    directIp().then((ip) => { realIp = ip; }).catch(() => {});
-
-    const stamp = () => new Date().toISOString().replace("T", " ").slice(0, 19);
-    function logLine(bodyEl, ip, addr, i) {
+    function clearLog() {
+      $("logBody").innerHTML = '<span class="ph">run the reads to see what the provider logs</span>';
+      $("logNote").style.display = "none"; $("hint").textContent = "";
+    }
+    function logLine(ip, addr, i) {
       const d = document.createElement("div"); d.className = "logline";
       d.innerHTML = `<span class="ip">${ip}</span> <span class="mth">eth_getBalance</span> <span class="ad">${short(addr)}</span>`;
-      bodyEl.appendChild(d); setTimeout(() => d.classList.add("in"), 60 + i * 180);
+      $("logBody").appendChild(d); setTimeout(() => d.classList.add("in"), 60 + i * 200);
     }
-    function fillLog(panelId, bodyId, noteId, entries, note) {
-      $(bodyId).innerHTML = ""; $(panelId).classList.remove("dim");
-      entries.forEach((e, i) => logLine($(bodyId), e.ip, e.addr, i));
-      const n = $(noteId); n.style.display = ""; n.innerHTML = note;
-    }
-    function dimLog(bodyId, noteId, msg) {
-      $(bodyId).innerHTML = `<span class="ph">${msg}</span>`; $(noteId).style.display = "none";
-    }
+
+    probeVeil(); setInterval(probeVeil, 1500);
 
     $("run").addEventListener("click", async () => {
       const on = veilState === "on";
       const btn = $("run"); btn.disabled = true;
       $("hint").textContent = on ? "reading over Tor (first read can take ~20s)…" : "reading…";
-      $("bOff").innerHTML = '<span class="ph">…</span>'; $("nOff").style.display = "none";
-      if (on) { $("bOn").innerHTML = '<span class="ph">…</span>'; $("nOn").style.display = "none"; }
+      $("logBody").innerHTML = '<span class="ph">…</span>'; $("logNote").style.display = "none";
       try {
-        if (realIp == null) realIp = await directIp().catch(() => null);
-        if (!realIp) { $("hint").textContent = "The IP echo did not respond. Set up demo-echo/, or use the recorded clip."; return; }
-        // Without Veil: your real IP on both reads (we got it from a direct, unrouted GET)
-        fillLog("logOff", "bOff", "nOff",
-          [{ ip: realIp, addr: ACCT_A }, { ip: realIp, addr: ACCT_B }],
-          "<b>Same IP on both.</b> The provider ties account A and account B to one person, and to where you are.");
+        const a = await readFor(ACCT_A);
+        const b = await readFor(ACCT_B);
+        if (!a || !b) { $("hint").textContent = on ? "The reads did not route. Is the gateway running, and the echo Tor-friendly?" : "The IP echo did not respond."; return; }
+
+        $("logBody").innerHTML = "";
+        logLine(a, ACCT_A, 0); logLine(b, ACCT_B, 1);
+        const note = $("logNote"); note.style.display = ""; $("hint").textContent = "";
 
         if (!on) {
-          dimLog("bOn", "nOn", "turn Veil on and run to fill this");
-          $("hint").textContent = "Without Veil, both accounts log your real IP. Turn Veil on and run again.";
-          return;
-        }
-        const a = await veilIp(ACCT_A); const b = await veilIp(ACCT_B);
-        if (!a || !b) { $("hint").textContent = "The reads did not route. Is the gateway running, and is the echo Tor-friendly?"; return; }
-        const notRouted = realIp && (a === realIp || b === realIp);
-        const logOn = $("logOn");
-        logOn.classList.toggle("safe", !notRouted);
-        logOn.classList.toggle("exposed", !!notRouted);
-        let note;
-        if (notRouted) {
-          note = "<b>These did not go over Tor.</b> The echo refused Tor (or you allowed a direct connection), so your real IP showed. Point the page at a Tor-friendly echo to see the exits.";
-          $("hint").textContent = "This echo blocks Tor. Use your own echo, then reload.";
+          note.innerHTML = "<b>Same IP on both.</b> The provider ties account A and account B to one person, and to where you are.";
+        } else if (!isV4(a) || !isV4(b)) {
+          // Over Tor you get IPv4 exits; your real IP here is IPv6. A non-IPv4 means it did not route.
+          $("log").classList.remove("safe"); $("log").classList.add("exposed");
+          note.innerHTML = "<b>This did not go over Tor.</b> The echo refused Tor (or a direct connection was allowed), so your real IP showed. Use a Tor-friendly echo.";
+          $("hint").textContent = "This echo blocks Tor.";
         } else if (a !== b) {
-          note = "<b>A different Tor exit each.</b> The provider sees two unrelated strangers, and never your IP.";
-          $("hint").textContent = "";
+          note.innerHTML = "<b>A different Tor exit each.</b> The provider sees two unrelated strangers, and never your IP.";
         } else {
-          note = "<b>Your IP is hidden.</b> Both reads left over Tor and shared an exit this run; run again for distinct per-account exits.";
-          $("hint").textContent = "";
+          note.innerHTML = "<b>Your IP is hidden.</b> Both reads left over Tor and shared an exit this run; run again for distinct per-account exits.";
         }
-        fillLog("logOn", "bOn", "nOn", [{ ip: a, addr: ACCT_A }, { ip: b, addr: ACCT_B }], note);
       } catch (e) {
-        $("hint").textContent = "The IP echo did not respond. Set up demo-echo/, or use the recorded clip.";
+        $("hint").textContent = "The IP echo did not respond.";
       } finally { btn.disabled = false; }
     });
   </script>
