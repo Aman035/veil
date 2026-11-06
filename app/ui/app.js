@@ -58,8 +58,7 @@ $("#pairedBtn")?.addEventListener("click", () => { extPaired = true; lsSet("veil
 const trunc = (a) => (a && a.length > 12 ? a.slice(0, 6) + "…" + a.slice(-4) : a || "-");
 function avatar(addr) {
   let h = 0; for (const c of (addr || "")) h = (h * 31 + c.charCodeAt(0)) >>> 0;
-  const a = h % 360, b = (a + 70) % 360, c = (a + 200) % 360;
-  return `conic-gradient(from ${a}deg, hsl(${a} 70% 60%), hsl(${b} 70% 58%), hsl(${c} 70% 60%), hsl(${a} 70% 60%))`;
+  return ["#C9A24B", "#4fd6e8", "#9a7cf0"][h % 3];
 }
 
 // ---- rendering ----
