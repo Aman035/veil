@@ -113,12 +113,12 @@ _Censorship-resistant, Open-source, Private, Secure._
 ```
 veil/
 ├── src/        browser extension (Chrome / Brave, MV3)
-├── helper/     desktop helper (localhost RPC routed through the harness)
-├── app/        desktop app (Tauri) that runs the helper and pairs the extension
+├── helper/     desktop helper (localhost RPC for cast / scripts, routed through the harness)
+├── tools/      gateway runner and dev scripts
 └── site/       landing site (published to GitHub Pages)
 ```
 
-Prereqs: Node 18+ and `pnpm`. The desktop app also needs Rust + Tauri; the real-Tor demo needs a tor-js gateway.
+Prereqs: Node 18+ and `pnpm`. The real-Tor demo needs a tor-js gateway.
 
 ```bash
 # Browser extension (to actually route, build with a network - see below)
@@ -127,9 +127,6 @@ node build.mjs                 # -> dist/  (load unpacked at chrome://extensions
 
 # Desktop helper (private localhost RPC for cast / scripts)
 cd helper && pnpm install && node helper.mjs      # serves http://127.0.0.1:18545
-
-# Desktop app (optional): spawns the helper, shows status, pairs the extension
-cd app/src-tauri && cargo tauri dev
 ```
 
 **Point Veil at a gateway (no rebuild).** The gateway is a runtime setting: install the extension, run a gateway, and paste its address into **Settings → Network**. To run a self-hosted gateway, build [`tor-js-gateway`](https://github.com/ethereum/tor-js) once, copy the binary to `~/veil-gateway`, then:
