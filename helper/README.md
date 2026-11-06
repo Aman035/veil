@@ -33,6 +33,30 @@ cast block-number --rpc-url http://127.0.0.1:18545
 Ctrl-C (SIGINT) / SIGTERM shuts down the JSON-RPC server, the asset server and
 Chromium cleanly.
 
+### Control API (read-only, for the desktop app)
+
+The **same** server on `127.0.0.1:18545` also serves a small read-only control
+API the Unlink desktop app polls. Every response carries `Access-Control-Allow-Origin: *`
+and `OPTIONS` is answered for preflight. The JSON-RPC `POST /` is unchanged.
+
+| Route | Returns |
+|---|---|
+| `GET /__unlink/health` | `{ ok, network:"tor"\|"passthrough", harness:"booting"\|"ready"\|"error" }` |
+| `GET /__unlink/status` | `{ ok, connected, network, harness, accounts:[{label, address, routeKey, exitIp, status}], todayRequests, sites, upstream }` |
+
+`accounts` are derived from traffic the helper has already routed: for each
+account seen it tracks the last `routeKey` (from `src/shared/routing`). `exitIp`
+is `null` under passthrough (the harness doesn't surface the Tor exit yet).
+`HELPER_ACCOUNTS` seeds rows up front — entries may be a bare address or
+`Label=0xaddr`. The server starts listening **before** the harness boots, so the
+app can show a `booting` state; JSON-RPC POSTs return `503` (fail visibly, never
+a silent direct connection) until `harness` is `ready`.
+
+> **Security:** `health`/`status` are read-only and safe with CORS `*`. Any
+> future *mutation* route (toggle protection, switch network) MUST require a
+> per-session bearer token — a web page on any origin can reach `127.0.0.1`, so
+> a mutation must never trust the Origin alone.
+
 ### Configuration (env vars)
 
 | Var | Default | Notes |

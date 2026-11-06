@@ -49,6 +49,10 @@ const cfg = {
   readyTimeoutMs: Number(process.env.HELPER_READY_TIMEOUT_MS || 90000),
 };
 
+// "tor" when real gateways are configured, "passthrough" when the plumbing runs
+// without privacy (empty gateways / passthrough specifier).
+const networkLabel = cfg.gateways.length ? "tor" : "passthrough";
+
 const log = (...a) => console.log("[helper]", ...a);
 
 // --- routing heuristic: single source of truth is src/shared/routing.ts ------
@@ -115,6 +119,52 @@ function blind(parsed) {
   return { blinded, restore };
 }
 
+// --- control API state (read-only dashboard feed) ----------------------------
+// The desktop app reads these over the SAME local server. Everything here is a
+// view of traffic the helper has already routed — no new network behaviour.
+//
+// SECURITY NOTE: /__unlink/health and /__unlink/status are READ-ONLY and safe to
+// serve with CORS `*`. Any future MUTATION route (toggle protection, switch
+// network, forget an account) MUST require a per-session bearer token — a web
+// page on any origin can reach 127.0.0.1, so a mutation must never trust the
+// Origin/CORS alone. GET status/health leak only local, non-secret counters.
+let harnessState = "booting"; // "booting" | "ready" | "error"
+let page = null; // the Chromium page running the harness (set once ready)
+const accounts = new Map(); // norm(addr) -> { label, address, routeKey, exitIp, status, requests }
+const sitesSet = new Set(); // distinct upstream hosts seen (the helper's "sites")
+let todayRequests = 0;
+let learnedCount = 0;
+
+const CORS = { "access-control-allow-origin": "*" };
+function sendJson(res, code, obj) {
+  res.writeHead(code, { "content-type": "application/json", ...CORS }).end(JSON.stringify(obj));
+}
+// Track, per account seen, its last route key (exitIp stays null under
+// passthrough — the harness doesn't surface the exit under tor-js yet either).
+function recordAccount(normAddr, key) {
+  let a = accounts.get(normAddr);
+  if (!a) {
+    a = { label: `Account ${++learnedCount}`, address: "0x" + normAddr, routeKey: key, exitIp: null, status: "private", requests: 0 };
+    accounts.set(normAddr, a);
+  }
+  a.routeKey = key;
+  a.requests++;
+}
+function statusBody() {
+  return {
+    ok: true,
+    connected: harnessState === "ready",
+    network: networkLabel,
+    harness: harnessState,
+    accounts: [...accounts.values()].map((a) => ({
+      label: a.label, address: a.address, routeKey: a.routeKey, exitIp: a.exitIp ?? null, status: a.status,
+    })),
+    todayRequests,
+    sites: sitesSet.size,
+    upstream: cfg.upstream,
+  };
+}
+
 // --- main --------------------------------------------------------------------
 let browser, assetServer, rpcServer;
 const reqLog = [];
@@ -134,7 +184,19 @@ async function main() {
   await buildPage();
 
   const known = new routing.KnownAccounts();
-  if (known.addMany(cfg.seedAccounts)) log("seeded known accounts:", [...known.set]);
+  // HELPER_ACCOUNTS entries may be a bare address or "Label=0xaddr" (additive;
+  // plain addresses still work). Seeded accounts show as dashboard rows at once.
+  const seedEntries = cfg.seedAccounts.map((e, i) => {
+    const eq = e.indexOf("=");
+    return eq > 0
+      ? { label: e.slice(0, eq).trim(), address: e.slice(eq + 1).trim() }
+      : { label: `Account ${i + 1}`, address: e };
+  });
+  if (known.addMany(seedEntries.map((e) => e.address))) log("seeded known accounts:", [...known.set]);
+  for (const e of seedEntries) {
+    const n = routing.norm(e.address);
+    if (n) accounts.set(n, { label: e.label, address: "0x" + n, routeKey: "acct:" + n, exitIp: null, status: "private", requests: 0 });
+  }
 
   // Serve the harness page to the browser over loopback.
   const types = { ".html": "text/html", ".js": "text/javascript", ".map": "application/json" };
@@ -150,34 +212,52 @@ async function main() {
   log(`specifier ${cfg.specifier}`);
   log(`gateways ${JSON.stringify(cfg.gateways)}${cfg.gateways.length === 0 ? "  (passthrough: no privacy, plumbing only)" : ""}`);
   log(`upstream ${cfg.upstream}`);
-  log("launching headless Chromium (channel chromium)…");
-  browser = await chromium.launch({ channel: "chromium", headless: true });
-  const page = await browser.newPage();
-  page.on("console", (m) => { if (m.type() === "error") log("page error:", m.text()); });
-  await page.goto(`http://127.0.0.1:${assetPort}/helper.html`);
-
-  log("booting anon-rpc harness…");
-  const readyMs = await Promise.race([
-    page.evaluate(() => window.__anonReady),
-    new Promise((_, rej) => setTimeout(() => rej(new Error("harness not ready within timeout")), cfg.readyTimeoutMs)),
-  ]).catch((e) => { throw new Error(`harness boot failed: ${e.message}`); });
-  log(`harness ready in ${readyMs} ms`);
-
-  // The localhost JSON-RPC endpoint (D3).
+  // The localhost server (D3). It serves BOTH the JSON-RPC POST at "/" and the
+  // read-only control API the desktop app polls. It starts listening BEFORE the
+  // harness boots, so the app can show "booting" (and never a silent direct
+  // fallback — JSON-RPC POSTs fail visibly with 503 until the harness is ready).
   rpcServer = createServer((req, res) => {
-    if (req.method !== "POST") { res.writeHead(405).end(); return; }
+    const path = (req.url || "/").split("?")[0];
+
+    // CORS preflight for the local control API.
+    if (req.method === "OPTIONS") {
+      res.writeHead(204, { ...CORS, "access-control-allow-methods": "GET,POST,OPTIONS", "access-control-allow-headers": "content-type" }).end();
+      return;
+    }
+    // Read-only control routes (safe with CORS *; see SECURITY NOTE above).
+    if (req.method === "GET" && path === "/__unlink/health") {
+      sendJson(res, 200, { ok: true, network: networkLabel, harness: harnessState });
+      return;
+    }
+    if (req.method === "GET" && path === "/__unlink/status") {
+      sendJson(res, 200, statusBody());
+      return;
+    }
+
+    if (req.method !== "POST") { res.writeHead(405, CORS).end(); return; }
     let raw = "";
     req.on("data", (c) => (raw += c));
     req.on("end", async () => {
       let parsed;
       try { parsed = JSON.parse(raw); }
-      catch { res.writeHead(400, { "content-type": "application/json" }).end(JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "parse error" } })); return; }
+      catch { res.writeHead(400, { "content-type": "application/json", ...CORS }).end(JSON.stringify({ jsonrpc: "2.0", id: null, error: { code: -32700, message: "parse error" } })); return; }
+
+      // No silent direct fallback: while the harness is booting or broken, fail
+      // visibly. Nothing is ever sent outside the harness (CLAUDE.md, PRD G4).
+      if (harnessState !== "ready" || !page) {
+        sendJson(res, 503, { jsonrpc: "2.0", id: Array.isArray(parsed) ? null : parsed?.id ?? null, error: { code: -32000, message: `harness ${harnessState}` } });
+        return;
+      }
 
       // 1) learn accounts from this request (balance/nonce name the user)
       known.observe(parsed);
       // 2) pick the per-account isolation key (ignores the zero address; finds
       //    the user's address inside eth_call calldata) — E9 heuristic.
       const key = routing.routeKeyForBody(parsed, known.set);
+      // control-API counters: record the account's last route + bump totals
+      todayRequests++;
+      try { sitesSet.add(new URL(cfg.upstream).host); } catch {}
+      if (key.startsWith("acct:")) recordAccount(key.slice(5), key);
       // 3) blind ids before sending
       const { blinded, restore } = blind(parsed);
 
@@ -192,19 +272,40 @@ async function main() {
         const method = Array.isArray(parsed) ? "batch" : parsed?.method;
         reqLog.push({ method, key, status, ms: Date.now() - t });
         log(`${method}  key=${key}  ${status}  ${Date.now() - t}ms`);
-        res.writeHead(status || 200, { "content-type": "application/json" }).end(outText);
+        res.writeHead(status || 200, { "content-type": "application/json", ...CORS }).end(outText);
       } catch (e) {
         // Fail visibly — never fall back to a direct connection.
         reqLog.push({ method: Array.isArray(parsed) ? "batch" : parsed?.method, key, error: String(e), ms: Date.now() - t });
         log("request failed:", String(e));
-        res.writeHead(502, { "content-type": "application/json" })
+        res.writeHead(502, { "content-type": "application/json", ...CORS })
           .end(JSON.stringify({ jsonrpc: "2.0", id: Array.isArray(parsed) ? null : parsed?.id ?? null, error: { code: -32603, message: String(e) } }));
       }
     });
   });
   await new Promise((r) => rpcServer.listen(cfg.port, cfg.host, r));
-  log(`private JSON-RPC on http://${cfg.host}:${cfg.port}`);
-  log("ready — point cast/wallets at the endpoint above. Ctrl-C to stop.");
+  log(`control API on http://${cfg.host}:${cfg.port}/__unlink/health  (and /status)`);
+  log(`private JSON-RPC on http://${cfg.host}:${cfg.port}  (harness booting…)`);
+
+  // Now boot the harness. The server already answers health/status as "booting".
+  try {
+    log("launching headless Chromium (channel chromium)…");
+    browser = await chromium.launch({ channel: "chromium", headless: true });
+    page = await browser.newPage();
+    page.on("console", (m) => { if (m.type() === "error") log("page error:", m.text()); });
+    await page.goto(`http://127.0.0.1:${assetPort}/helper.html`);
+
+    log("booting anon-rpc harness…");
+    const readyMs = await Promise.race([
+      page.evaluate(() => window.__anonReady),
+      new Promise((_, rej) => setTimeout(() => rej(new Error("harness not ready within timeout")), cfg.readyTimeoutMs)),
+    ]);
+    harnessState = "ready";
+    log(`harness ready in ${readyMs} ms`);
+    log("ready — point cast/wallets at the endpoint above. Ctrl-C to stop.");
+  } catch (e) {
+    harnessState = "error";
+    throw new Error(`harness boot failed: ${e.message}`);
+  }
 }
 
 main().catch((e) => { console.error("[helper] fatal:", e); shutdown(1); });
