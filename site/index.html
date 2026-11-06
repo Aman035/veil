@@ -182,14 +182,17 @@
   /* route diagram inside bento */
   .routes-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:4px }
   @media (max-width:620px){ .routes-grid{ grid-template-columns:1fr } }
-  .how-steps{ list-style:none; display:grid; gap:14px; margin:28px 0 0; max-width:780px; padding:0 }
-  .how-steps li{ display:flex; gap:16px; background:rgba(255,255,255,.025); border:1px solid var(--line); border-radius:14px; padding:18px 20px }
-  .how-steps .hn{ flex:none; width:30px; height:30px; border-radius:9px; display:grid; place-items:center; font-family:var(--ff-display); font-weight:700; font-size:15px; color:var(--accent); background:rgba(255,255,255,.04); border:1px solid var(--line) }
-  .how-steps h3{ font-size:16px; font-weight:650; margin:3px 0 6px; font-family:var(--ff-display) }
-  .how-steps p{ font-size:14px; line-height:1.62; color:var(--muted); margin:0 }
+  .how-steps{ list-style:none; margin:32px 0 0; max-width:760px; padding:0 }
+  .how-steps li{ position:relative; display:grid; grid-template-columns:36px 1fr; gap:18px; padding-bottom:28px }
+  .how-steps li:last-child{ padding-bottom:0 }
+  .how-steps li:not(:last-child)::before{ content:""; position:absolute; left:17px; top:42px; bottom:-2px; width:2px; background:var(--line-2) }
+  .how-steps .hn{ position:relative; z-index:1; width:36px; height:36px; border-radius:50%; display:grid; place-items:center; font-family:var(--ff-display); font-weight:700; font-size:15px; color:var(--accent); background:var(--bg); border:1.5px solid var(--accent-deep) }
+  .how-steps .hc{ padding-top:5px; min-width:0 }
+  .how-steps h3{ font-size:16.5px; font-weight:650; margin:0 0 7px; font-family:var(--ff-display); letter-spacing:-.01em }
+  .how-steps p{ font-size:14px; line-height:1.64; color:var(--muted); margin:0 }
   .how-steps p b{ color:var(--text); font-weight:600 }
   .how-steps p .mut{ color:var(--faint) }
-  .how-steps code{ font-family:var(--ff-mono,ui-monospace,monospace); font-size:12.5px; color:var(--text); background:rgba(255,255,255,.05); padding:1px 5px; border-radius:5px }
+  .how-steps code{ font-family:var(--ff-mono,ui-monospace,monospace); font-size:12.5px; color:var(--text); background:rgba(255,255,255,.05); padding:1.5px 6px; border-radius:6px; white-space:nowrap }
   .rbox{ border:1px solid var(--line-2); border-radius:14px; padding:16px; background:rgba(8,11,15,.6) }
   .rbox h4{ font-family:var(--ff-display); font-size:13px; color:var(--muted); font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px }
   .tag{ margin-left:auto; font-size:10.5px; font-family:var(--ff-mono) }
@@ -509,7 +512,7 @@
         <div class="hn">1</div>
         <div class="hc">
           <h3>Catch the read in the page</h3>
-          <p>At <code>document_start</code>, before the dapp's own scripts run, Veil wraps <code>window.fetch</code> and <code>XMLHttpRequest</code>. Every JSON-RPC read goes through one of those, so a single hook covers <b>viem, ethers v5/v6 and raw XHR</b> with no per-app integration. <span class="mut">Known gap: Web Worker fetch and WebSockets aren't wrapped yet.</span></p>
+          <p>At <code>document_start</code>, before the dapp's own scripts run, Veil wraps <code>window.fetch</code> and <code>XMLHttpRequest</code>. Every JSON-RPC read goes through one of those, so a single hook covers <b>viem, ethers v5/v6 and raw XHR</b> with no per-app integration. <span class="mut">The rare read over a WebSocket or Web Worker isn't wrapped yet, a negligible slice of traffic.</span></p>
         </div>
       </li>
       <li>
