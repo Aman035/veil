@@ -50,9 +50,20 @@
         <span>Today</span>
         <span><b id="todayReq">0</b> requests · <b id="todaySites">0</b> sites</span>
       </div>
-      <div class="notcovered">
-        Not covered: your wallet's own traffic
-        <span class="soon">desktop helper — coming in phase 2</span>
+      <div id="walletRow" class="walletrow" data-helper="off">
+        <span class="wallet-dot" aria-hidden="true"></span>
+        <span id="walletState" class="wallet-state">Wallet traffic: not covered</span>
+        <span id="walletAction" class="wallet-action">Get the desktop app</span>
+      </div>
+
+      <div class="advanced">
+        <div class="adv-head">
+          <span class="adv-title">Route wallet traffic via helper</span>
+          <button id="routeWallet" class="mini-switch" role="switch" aria-checked="false" aria-label="Route wallet traffic through the desktop helper" disabled>
+            <span class="mini-knob"></span>
+          </button>
+        </div>
+        <div id="routeWalletNote" class="adv-note">Needs the desktop app to be running.</div>
       </div>
     </section>
 

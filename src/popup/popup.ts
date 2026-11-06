@@ -14,6 +14,11 @@ const tabDirect = document.getElementById("tabDirect")!;
 const policySeg = document.getElementById("policySeg")!;
 const todayReq = document.getElementById("todayReq")!;
 const todaySites = document.getElementById("todaySites")!;
+const walletRow = document.getElementById("walletRow")!;
+const walletState = document.getElementById("walletState")!;
+const advanced = document.querySelector(".advanced") as HTMLElement;
+const routeWallet = document.getElementById("routeWallet") as HTMLButtonElement;
+const routeWalletNote = document.getElementById("routeWalletNote")!;
 
 let activeTabId = -1;
 let activeOrigin: string | null = null;
@@ -75,6 +80,31 @@ function render(g: GlobalStats, t: TabStats | null, tabUrl?: string) {
 
   todayReq.textContent = String(g.todayRequests);
   todaySites.textContent = String(g.todaySites);
+
+  renderHelper(g);
+}
+
+// Live wallet-traffic (desktop helper) state + the opt-in route toggle.
+function renderHelper(g: GlobalStats) {
+  walletRow.setAttribute("data-helper", g.helperConnected ? "on" : "off");
+  walletState.textContent = g.helperConnected
+    ? "Wallet traffic: protected · desktop helper"
+    : "Wallet traffic: not covered";
+
+  routeWallet.disabled = !g.helperConnected;
+  routeWallet.setAttribute("aria-checked", g.routeWalletTraffic ? "true" : "false");
+  advanced.setAttribute("data-disabled", g.helperConnected ? "false" : "true");
+
+  // Honest note: never imply protection the proxy isn't actually providing.
+  if (!g.helperConnected) {
+    routeWalletNote.textContent = "Needs the desktop app to be running.";
+  } else if (g.routeWalletTraffic && g.walletProxyActive) {
+    routeWalletNote.textContent = "Active — wallet RPC & API hosts go through the helper.";
+  } else if (g.routeWalletTraffic && !g.walletProxyActive) {
+    routeWalletNote.textContent = "Wired — activates once the desktop app ships its proxy endpoint.";
+  } else {
+    routeWalletNote.textContent = "Route wallet RPC & API hosts through the helper (experimental).";
+  }
 }
 
 function renderPolicy() {
@@ -124,6 +154,14 @@ policySeg.addEventListener("click", async (e) => {
   currentPolicy = btn.dataset.policy as SitePolicy;
   renderPolicy();
   await chrome.runtime.sendMessage({ type: "set-policy", origin: activeOrigin, policy: currentPolicy });
+});
+
+routeWallet.addEventListener("click", async () => {
+  if (routeWallet.disabled) return;
+  const enabled = routeWallet.getAttribute("aria-checked") !== "true";
+  routeWallet.setAttribute("aria-checked", enabled ? "true" : "false");
+  await chrome.runtime.sendMessage({ type: "popup:set-route-wallet", enabled });
+  refresh();
 });
 
 refresh();

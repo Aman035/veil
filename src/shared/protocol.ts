@@ -48,6 +48,7 @@ export type PopupToBg =
   | { type: "popup:toggle"; enabled: boolean }
   | { type: "popup:tab-stats"; tabId: number }
   | { type: "popup:retry" }
+  | { type: "popup:set-route-wallet"; enabled: boolean }
   | { type: "get-policy"; origin: string }
   | { type: "set-policy"; origin: string; policy: SitePolicy };
 
@@ -69,4 +70,12 @@ export type GlobalStats = {
   harnessMs?: number;
   todayRequests: number;
   todaySites: number;
+  // Desktop helper (PRD §5.1, §7.2 D2). helperConnected: the companion helper's
+  // health endpoint answered. routeWalletTraffic: the user opted in to point
+  // chrome.proxy at the helper for wallet/crypto hosts. walletProxyActive: the
+  // proxy is actually armed right now (needs helper present + a real non-loopback
+  // helper proxy endpoint — see background.ts HELPER_PROXY).
+  helperConnected: boolean;
+  routeWalletTraffic: boolean;
+  walletProxyActive: boolean;
 };
