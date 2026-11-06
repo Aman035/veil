@@ -31,11 +31,11 @@
     .row .k b{display:block;font-size:13.5px;font-weight:600}
     .row .k span{display:block;font-size:11.5px;color:var(--faint)}
     .row .v{font-family:var(--ff-mono);font-size:15px;color:var(--muted);word-break:break-all}
-    .row[data-kind="direct"] .v.set{color:var(--amber)}
-    .row[data-kind="veil"] .v.set{color:var(--accent);font-weight:500}
+    .row.exposed .v{color:var(--amber);font-weight:500}
+    .row.private .v{color:var(--accent);font-weight:500}
     .dot{width:9px;height:9px;border-radius:50%;background:var(--faint);flex:none}
-    .row[data-kind="direct"].set .dot{background:var(--amber)}
-    .row[data-kind="veil"].set .dot{background:var(--accent)}
+    .row.exposed .dot{background:var(--amber)}
+    .row.private .dot{background:var(--accent)}
     .controls{display:flex;align-items:center;gap:14px;margin:22px 0 10px}
     button{font-family:var(--ff);font-size:14.5px;font-weight:600;color:var(--bg);background:var(--accent);
       border:0;border-radius:9px;padding:11px 18px;cursor:pointer}
@@ -63,10 +63,11 @@
     <div class="eyebrow">Veil &middot; live</div>
     <h1>Watch your IP disappear</h1>
     <p class="lede">
-      This page makes the same kind of read a dapp makes: a JSON-RPC request to a server that reports
-      back the IP it saw. <b>The Veil extension intercepts that read and sends it over Tor</b>, one
-      route per account. So a direct read shows your real IP; through Veil, the server sees a different
-      Tor exit for each account, never you. This page is where you point the extension.
+      This page makes the read a dapp makes, for two of your accounts: a JSON-RPC request to a server
+      that reports back the IP it saw. It is the same read either way. <b>With Veil on, each read is
+      routed over Tor on its own circuit</b>, so the server sees a different exit per account. With Veil
+      off, both reads carry your real IP, linking your accounts to one person. This page is where you
+      point the extension.
     </p>
 
     <div class="status" id="extStatus">Checking for the Veil extension&hellip;</div>
@@ -79,19 +80,14 @@
     </div>
 
     <div class="card">
-      <div class="row" data-kind="direct" id="rDirect">
+      <div class="row" id="rA">
         <span class="dot"></span>
-        <div class="k"><b>Direct read</b><span>no Veil, what any dapp does</span></div>
-        <div class="v" id="vDirect">&mdash;</div>
-      </div>
-      <div class="row" data-kind="veil" id="rA">
-        <span class="dot"></span>
-        <div class="k"><b>Through Veil</b><span>account A</span></div>
+        <div class="k"><b>Account A</b><span>a balance read</span></div>
         <div class="v" id="vA">&mdash;</div>
       </div>
-      <div class="row" data-kind="veil" id="rB">
+      <div class="row" id="rB">
         <span class="dot"></span>
-        <div class="k"><b>Through Veil</b><span>account B</span></div>
+        <div class="k"><b>Account B</b><span>a balance read</span></div>
         <div class="v" id="vB">&mdash;</div>
       </div>
     </div>
@@ -103,8 +99,8 @@
 
     <p class="fine">
       Needs the Veil extension installed and on (and, on this build, your local gateway running). With
-      Veil off or not installed you see only your real IP, that is the leak; turn Veil on and the
-      per-account Tor routes appear. The reads go to an IP echo (<code>demo-echo/</code>), overridable
+      Veil off or not installed, both accounts show your real IP, that is the leak; turn Veil on and
+      each read exits at its own Tor IP. The reads go to an IP echo (<code>demo-echo/</code>), overridable
       with <code>?echo=&lt;url&gt;</code>. Addresses queried are still visible to providers by design;
       Veil removes your IP and the link between your accounts, not the addresses.
       &nbsp;<a href="./">Back to Veil</a>
@@ -143,10 +139,14 @@
       return originFrom(await r.json());
     }
 
-    function setRow(rowId, valId, ip) {
+    let realIp = null;
+    directIp().then((ip) => { realIp = ip; }).catch(() => {});
+
+    function paint(rowId, valId, ip, on) {
       $(valId).textContent = ip || "no response";
-      $(valId).classList.toggle("set", !!ip);
-      $(rowId).classList.toggle("set", !!ip);
+      const row = $(rowId);
+      row.classList.remove("exposed", "private");
+      if (ip) row.classList.add(on && ip !== realIp ? "private" : "exposed");
     }
 
     // --- Detect Veil's real state on this page --------------------------------
@@ -172,8 +172,6 @@
     function renderState() {
       const on = veilState === "on";
       $("steps").style.display = veilState === "none" ? "" : "none"; // install steps only when absent
-      $("rA").style.display = on ? "" : "none";                       // per-account rows only when routing
-      $("rB").style.display = on ? "" : "none";
       const el = $("extStatus");
       if (on) { el.className = "status ok"; el.textContent = "Veil is on, reads go over Tor, one route per account"; }
       else if (veilState === "off") { el.className = "status warn"; el.textContent = "Veil is installed but off, turn it on to route over Tor"; }
@@ -189,28 +187,32 @@
       const on = veilState === "on";
       const btn = $("run"), verdict = $("verdict");
       btn.disabled = true; verdict.className = "verdict";
-      verdict.textContent = on ? "reading (first read over Tor can take ~20s)…" : "reading…";
-      for (const v of (on ? ["vDirect", "vA", "vB"] : ["vDirect"])) { $(v).textContent = "…"; $(v).classList.remove("set"); }
+      verdict.textContent = on ? "reading over Tor (first read can take ~20s)…" : "reading…";
+      for (const id of ["vA", "vB"]) { $(id).textContent = "…"; }
+      for (const id of ["rA", "rB"]) { $(id).classList.remove("exposed", "private"); }
       try {
-        const direct = await directIp();
-        setRow("rDirect", "vDirect", direct);
-        if (!on) {
+        if (realIp == null) realIp = await directIp().catch(() => null);
+        const a = await veilIp(ACCT_A); paint("rA", "vA", a, on);
+        const b = await veilIp(ACCT_B); paint("rB", "vB", b, on);
+        if (!a || !b) {
           verdict.className = "verdict off";
-          verdict.textContent = veilState === "off"
-            ? "This is your real IP. Turn Veil on and run again to hide it."
-            : "This is your real IP, every provider sees it. Install Veil, turn it on, and run again.";
-          return;
+          verdict.textContent = on
+            ? "The reads did not route, is the gateway running?"
+            : "The IP echo did not respond. Set up demo-echo/, or use the recorded clip.";
+        } else if (on && a !== b) {
+          verdict.className = "verdict on";
+          verdict.textContent = "Veil is on. Each account exited at a different Tor IP"
+            + (realIp ? `, and your real IP (${realIp}) never left` : "") + ". The provider sees two strangers.";
+        } else if (on) {
+          verdict.className = "verdict on";
+          verdict.textContent = "Veil is on, your real IP is hidden. Both accounts shared an exit this run, run again for distinct ones.";
+        } else {
+          verdict.className = "verdict off";
+          verdict.textContent = "Both accounts show your real IP, so a provider links them to one person. Turn Veil on and run again.";
         }
-        const a = await veilIp(ACCT_A); setRow("rA", "vA", a);
-        const b = await veilIp(ACCT_B); setRow("rB", "vB", b);
-        const hidden = a && b && a !== direct && b !== direct;
-        const perAccount = a && b && a !== b;
-        if (hidden && perAccount) { verdict.className = "verdict on"; verdict.textContent = "Veil is on. Your real IP never left, and each account exited somewhere different."; }
-        else if (hidden) { verdict.className = "verdict on"; verdict.textContent = "Veil is on. Your real IP never left."; }
-        else { verdict.className = "verdict off"; verdict.textContent = "The reads did not route, is the gateway running?"; }
       } catch (e) {
         verdict.className = "verdict off";
-        verdict.textContent = "The IP echo did not respond. Set up the echo (demo-echo/), or use the recorded clip.";
+        verdict.textContent = "The IP echo did not respond. Set up demo-echo/, or use the recorded clip.";
       } finally {
         btn.disabled = false;
       }
