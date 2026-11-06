@@ -48,7 +48,7 @@ your keys, DOM or cookies.
 
 ```mermaid
 flowchart TB
-  subgraph browser["Your browser (unchanged wallet & dapps)"]
+  subgraph browser["Your browser — unchanged wallet and dapps"]
     D["dapp page"] --> I["Unlink extension<br/>interceptor · per-account routing · site policy"]
     I --> H["anon-rpc harness<br/>(sandboxed, hash-pinned worker)"]
     W["wallet<br/>(MetaMask / Rabby)"]
