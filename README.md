@@ -35,6 +35,11 @@ The usual fixes don't solve it:
 
 Veil makes the wallets and dapps you **already use** private, with no change to them.
 
+> **Privacy becomes your decision, not every app's.** anon-rpc is adopted one app at a time, and
+> only a couple of apps have, all opt-in. Veil flips that: you turn it on once and every wallet and
+> dapp you already use is private, with nothing for them to change. Private reads reach people even
+> when they don't control which RPC their apps talk to, which is how this actually gets to users.
+
 <p align="center">
   <img src="assets/one-route-per-account.svg" alt="One route per account: each account's traffic flows through its own Tor circuit to a different exit" width="820">
 </p>
