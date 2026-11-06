@@ -260,6 +260,28 @@ function pushActivity(origin: string, method: string, route: string, state: Acti
   activity.push({ id: ++activitySeq, ts: Date.now(), origin, method, route, state });
   if (activity.length > 80) activity.splice(0, activity.length - 80);
 }
+
+// Tor exit IP per circuit (route), learned by fetching a public "what's my IP"
+// service OVER that account's circuit. This is how we show the recorded IP with
+// no echo webpage and no tunnel: the extension asks over the circuit itself.
+const EXIT_ECHOS = ["https://api.ipify.org?format=json", "https://icanhazip.com", "https://ifconfig.me/ip"];
+const routeExits = new Map<string, { ip: string | null; ts: number }>();
+async function probeExit(key: string): Promise<string | null> {
+  const c = routeExits.get(key);
+  if (c && c.ip && Date.now() - c.ts < 120000) return c.ip;
+  for (const url of EXIT_ECHOS) {
+    try {
+      const res = await getWorker().fetch(url, { method: "GET", anonOptions: { isolationKey: key } } as RequestInit);
+      if (!res.ok) continue;
+      const text = (await res.text()).trim();
+      let ip: string | null = null;
+      try { ip = (JSON.parse(text) as { ip?: string }).ip ?? null; } catch { ip = /^[0-9a-fA-F:.]+$/.test(text) ? text : null; }
+      if (ip) { routeExits.set(key, { ip, ts: Date.now() }); return ip; }
+    } catch { /* try next echo */ }
+  }
+  routeExits.set(key, { ip: null, ts: Date.now() });
+  return null;
+}
 function statsFor(tabId: number, origin: string): TabStats {
   let s = tabStats.get(tabId);
   if (!s || s.origin !== origin) {
@@ -424,6 +446,15 @@ chrome.runtime.onMessage.addListener((msg, sender, respond) => {
   }
   if (msg?.type === "veil:activity") {
     respond({ activity, harness, enabled: undefined });
+    return true;
+  }
+  if (msg?.type === "veil:exits") {
+    (async () => {
+      const keys: string[] = Array.isArray(msg.keys) ? msg.keys.slice(0, 8) : [];
+      const out: Record<string, string | null> = {};
+      await Promise.all(keys.map(async (k) => { out[k] = await probeExit(k); }));
+      respond({ exits: out });
+    })();
     return true;
   }
   if (msg?.type === "popup:toggle") {
