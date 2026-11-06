@@ -94,8 +94,8 @@
   @media (max-width:800px){ .nav-links{ display:none } }
 
   /* ---------- hero ---------- */
-  .hero{ padding-top:clamp(44px,6vw,80px); padding-bottom:clamp(30px,5vw,56px) }
-  .hero .wrap{ display:grid; grid-template-columns:1.08fr .92fr; gap:clamp(28px,5vw,60px); align-items:center }
+  .hero{ min-height:calc(100dvh - 64px); display:flex; align-items:center; padding-block:clamp(28px,4vw,48px) }
+  .hero .wrap{ display:grid; grid-template-columns:1.04fr .96fr; gap:clamp(28px,5vw,60px); align-items:center; width:100% }
   .badge{ display:inline-flex; align-items:center; gap:9px; font-size:12.5px; color:var(--muted); font-weight:500;
     background:rgba(255,255,255,.03); border:1px solid var(--line-2); border-radius:999px; padding:7px 14px 7px 11px; margin-bottom:26px; backdrop-filter:blur(8px) }
   .badge b{ color:var(--accent); font-weight:600 }
@@ -120,6 +120,21 @@
   .float-chip2 .mono{ color:var(--cyan) }
   @keyframes floaty{ 0%,100%{ transform:translateY(0) } 50%{ transform:translateY(-9px) } }
   @media (max-width:560px){ .float-chip{ display:none } }
+
+  /* ---------- hero routing diagram ---------- */
+  .hero-diagram{ width:100%; max-width:470px; margin-inline:auto }
+  .hd-svg{ width:100%; height:auto; display:block; overflow:visible }
+  .hd-lane{ fill:none; stroke:var(--line-2,var(--line)); stroke-width:1.5 }
+  .hd-flow{ fill:none; stroke:var(--accent); stroke-width:1.6; stroke-dasharray:2 10; stroke-linecap:round; animation:hdflow 1.4s linear infinite }
+  @keyframes hdflow{ to{ stroke-dashoffset:-24 } }
+  .hd-pill{ fill:var(--panel); stroke:var(--line-2,var(--line)) }
+  .hd-core{ fill:#15181c; stroke:var(--accent-dim) }
+  .hd-h{ fill:var(--faint); font:600 9.5px var(--ff-mono); letter-spacing:.12em }
+  .hd-k{ fill:var(--text); font:600 15px var(--ff-display) }
+  .hd-mono{ fill:var(--text); font:500 12.5px var(--ff-mono) }
+  .hd-accent{ fill:var(--accent) }
+  .hd-cap{ color:var(--muted); font-size:13px; line-height:1.6; text-align:center; max-width:40ch; margin:16px auto 0 } .hd-cap b{ color:var(--text) }
+  @media (prefers-reduced-motion:reduce){ .hd-flow{ animation:none; opacity:.5 } }
 
   /* ---------- popup mockup ---------- */
   .device{ position:relative; z-index:2; filter:drop-shadow(0 30px 64px rgba(0,0,0,.6)) }
@@ -146,18 +161,34 @@
   .today{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted) } .today b{ color:var(--text) }
 
   /* ---------- trust strip ---------- */
-  .trust{ padding-block:clamp(44px,6vw,68px); border-block:1px solid var(--line); text-align:center; overflow:hidden }
-  .trust .wrap{ display:block }
-  .trust .t-lbl{ font-size:11.5px; color:var(--faint); font-family:var(--ff-mono); letter-spacing:.12em; text-transform:uppercase }
-  .trust .t-line{ font-family:var(--ff-display); font-weight:600; font-size:clamp(24px,4vw,34px); line-height:1.12; margin:12px auto 30px; max-width:20ch; letter-spacing:-.015em }
-  .trust .t-line .g{ font-style:italic; font-weight:500 }
-  .appmarq{ overflow:hidden; -webkit-mask:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent); mask:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent) }
-  .appmarq .track{ display:inline-flex; gap:16px; width:max-content; animation:marq 26s linear infinite }
-  .appmarq:hover .track{ animation-play-state:paused }
-  .appmarq .chip{ font-family:var(--ff-display); font-weight:600; font-size:16px; color:var(--text);
-    background:rgba(255,255,255,.03); border:1px solid var(--line-2,var(--line)); border-radius:999px; padding:11px 22px; white-space:nowrap }
-  @keyframes marq{ to{ transform:translateX(-50%) } }
-  @media (prefers-reduced-motion:reduce){ .appmarq .track{ animation:none } }
+  /* ---------- orbit of apps ---------- */
+  .orbit{ position:relative; width:min(420px,82vw); aspect-ratio:1; margin:40px auto 26px; --r:155px; --ring:calc(var(--r)*2) }
+  @media (max-width:520px){ .orbit{ --r:116px } }
+  .orbit::before{ content:""; position:absolute; top:50%; left:50%; width:var(--ring); height:var(--ring); transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(231,231,234,.05), transparent 62%) }
+  .orbit .guide{ position:absolute; top:50%; left:50%; width:var(--ring); height:var(--ring); transform:translate(-50%,-50%); border-radius:50%; border:1px dashed var(--line-2,var(--line)); opacity:.7 }
+  /* a light that travels around the orbit, passing each app in turn */
+  .orbit .sweep{ position:absolute; top:50%; left:50%; width:calc(var(--ring) + 2px); height:calc(var(--ring) + 2px); transform:translate(-50%,-50%); border-radius:50%;
+    background:conic-gradient(from 0deg, transparent 0 68%, rgba(231,231,234,.12) 84%, var(--accent) 96%, transparent 100%);
+    -webkit-mask:radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+    mask:radial-gradient(farthest-side, transparent calc(100% - 2px), #000 calc(100% - 2px));
+    animation:orbit-spin 7s linear infinite }
+  @keyframes orbit-spin{ to{ transform:translate(-50%,-50%) rotate(360deg) } }
+  .orbit .core{ position:absolute; top:50%; left:50%; width:94px; height:94px; transform:translate(-50%,-50%); display:grid; place-items:center; gap:5px; background:linear-gradient(180deg,#191c21,var(--panel)); border:1px solid var(--accent-dim); border-radius:26px; box-shadow:0 10px 36px -12px rgba(0,0,0,.7), inset 0 1px 0 rgba(255,255,255,.05); z-index:3 }
+  .orbit .core .mark{ width:30px; height:30px }
+  .orbit .core .clbl{ font-family:var(--ff-mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--muted) }
+  .orbit .core .halo{ position:absolute; inset:-14px; border-radius:50%; background:radial-gradient(circle, rgba(231,231,234,.16), transparent 70%); animation:halo 4.5s ease-in-out infinite }
+  @keyframes halo{ 0%,100%{ opacity:.5; transform:scale(.92) } 50%{ opacity:1; transform:scale(1.08) } }
+  .orbit .node{ position:absolute; top:50%; left:50%; width:0; height:0; transform:rotate(var(--a)) translateY(calc(var(--r)*-1)); z-index:2 }
+  .orbit .node .spoke{ position:absolute; top:0; left:0; width:1px; height:var(--r); transform:translateX(-50%); transform-origin:top;
+    background:linear-gradient(var(--line-2,var(--line)), transparent) }
+  .orbit .node .ch{ position:absolute; display:inline-flex; align-items:center; gap:8px; transform:translate(-50%,-50%) rotate(calc(var(--a)*-1));
+    font-family:var(--ff-display); font-weight:600; font-size:14.5px; white-space:nowrap; color:var(--text);
+    background:linear-gradient(180deg,#191c21,var(--panel)); border:1px solid var(--line-2,var(--line)); border-radius:999px; padding:9px 16px;
+    box-shadow:0 6px 20px -10px rgba(0,0,0,.6) }
+  .orbit .node .ch::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 3px rgba(231,231,234,.12); flex:none }
+  .orbit-cap{ text-align:center; font-family:var(--ff-display); font-size:clamp(18px,3vw,24px); font-weight:500; line-height:1.25; margin:0 auto 30px; max-width:26ch; color:var(--text) }
+  .orbit-cap .g{ font-style:italic; color:var(--muted) }
+  @media (prefers-reduced-motion:reduce){ .orbit .sweep,.orbit .core .halo{ animation:none } }
 
   /* ---------- section heads ---------- */
   .head{ max-width:44rem; margin-bottom:46px }
@@ -338,8 +369,8 @@
   <canvas id="net" aria-hidden="true"></canvas>
   <div class="wrap">
     <div>
-      <h1>Your wallets, <span class="g">private</span> by default.</h1>
-      <p class="lede">Veil routes your crypto traffic through Tor - <b>one route per account</b> - so the providers your apps talk to can't see your IP or tell your accounts apart. And it keeps dapps working even when their providers block Tor.</p>
+      <h1>Your accounts, <span class="g">unlinkable</span> by default.</h1>
+      <p class="lede">Veil carries the reads your apps make through the Ethereum Foundation's <b>anon-rpc</b> over Tor, with <b>one circuit per account</b>, so the providers your apps talk to never see your IP or tell your accounts apart. And it keeps dapps working even when their providers block Tor.</p>
       <div class="hero-cta">
         <a class="btn btn-live" href="demo.html">See it live</a>
         <button class="btn btn-primary">Download extension</button>
@@ -348,54 +379,83 @@
     </div>
 
     <div class="hero-visual">
-      <div class="device">
-        <div class="popup" id="heroPopup" data-off="0">
-          <div class="pp">
-            <div class="pp-top">
-              <div class="pp-brand"><span class="mark"></span> Veil</div>
-              <div class="switch" id="heroSwitch" role="switch" aria-checked="true" tabindex="0" aria-label="Toggle protection"><span class="knob"></span></div>
-            </div>
-            <div class="pp-status"><span class="dot" id="heroDot"></span> <span id="heroStatus">Private · Tor</span> <span class="sub" id="heroSub">ready in 1s</span></div>
-            <div class="pcard">
-              <div class="lbl">This tab</div>
-              <div class="host">app.aave.com</div>
-              <ul class="facts">
-                <li><b>27</b> requests protected</li>
-                <li class="mut">3 accounts on 3 separate routes · 1 shared</li>
-                <li class="rr">↻ Provider blocks Tor → re-routed (safe)</li>
-              </ul>
-            </div>
-            <div class="pcard"><div class="today"><span>Today</span><span><b>1,284</b> requests · <b>9</b> sites</span></div></div>
-          </div>
-        </div>
+      <div class="hero-diagram">
+        <svg class="hd-svg" viewBox="0 0 440 340" role="img" aria-label="One circuit per account: the same wallet reaches providers as three unrelated Tor exits">
+          <text class="hd-h" x="70" y="20" text-anchor="middle">YOUR ACCOUNTS</text>
+          <text class="hd-h" x="337" y="20" text-anchor="middle">WHAT PROVIDERS SEE</text>
+
+          <!-- static lanes -->
+          <path class="hd-lane" d="M122,72 C140,72 132,170 146,170"/>
+          <path class="hd-lane" d="M122,170 L146,170"/>
+          <path class="hd-lane" d="M122,268 C140,268 132,170 146,170"/>
+          <path class="hd-lane" d="M238,170 C256,170 250,72 262,72"/>
+          <path class="hd-lane" d="M238,170 L262,170"/>
+          <path class="hd-lane" d="M238,170 C256,170 250,268 262,268"/>
+          <!-- animated packets -->
+          <path class="hd-flow" style="animation-delay:-.1s" d="M122,72 C140,72 132,170 146,170"/>
+          <path class="hd-flow" style="animation-delay:-.5s" d="M122,170 L146,170"/>
+          <path class="hd-flow" style="animation-delay:-.9s" d="M122,268 C140,268 132,170 146,170"/>
+          <path class="hd-flow" style="animation-delay:-.3s" d="M238,170 C256,170 250,72 262,72"/>
+          <path class="hd-flow" style="animation-delay:-.7s" d="M238,170 L262,170"/>
+          <path class="hd-flow" style="animation-delay:-1.1s" d="M238,170 C256,170 250,268 262,268"/>
+
+          <!-- account pills -->
+          <g>
+            <rect class="hd-pill" x="18" y="53" width="104" height="38" rx="11"/>
+            <text class="hd-mono" x="70" y="76" text-anchor="middle">0x a1b2…</text>
+            <rect class="hd-pill" x="18" y="151" width="104" height="38" rx="11"/>
+            <text class="hd-mono" x="70" y="174" text-anchor="middle">0x c3d4…</text>
+            <rect class="hd-pill" x="18" y="249" width="104" height="38" rx="11"/>
+            <text class="hd-mono" x="70" y="272" text-anchor="middle">0x e5f6…</text>
+          </g>
+
+          <!-- Veil core -->
+          <rect class="hd-core" x="146" y="124" width="92" height="92" rx="22"/>
+          <image href="logo.svg" x="180" y="138" width="24" height="24"/>
+          <text class="hd-k" x="192" y="182" text-anchor="middle">Veil</text>
+          <text class="hd-h" x="192" y="200" text-anchor="middle" style="font-size:8px">ANON-RPC · TOR</text>
+
+          <!-- exit pills -->
+          <g>
+            <rect class="hd-pill" x="262" y="49" width="150" height="46" rx="12"/>
+            <text class="hd-accent" x="337" y="70" text-anchor="middle" style="font:500 12px var(--ff-mono)">185.220.101.63</text>
+            <text class="hd-h" x="337" y="85" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
+            <rect class="hd-pill" x="262" y="147" width="150" height="46" rx="12"/>
+            <text class="hd-accent" x="337" y="168" text-anchor="middle" style="font:500 12px var(--ff-mono)">185.220.101.108</text>
+            <text class="hd-h" x="337" y="183" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
+            <rect class="hd-pill" x="262" y="245" width="150" height="46" rx="12"/>
+            <text class="hd-accent" x="337" y="266" text-anchor="middle" style="font:500 12px var(--ff-mono)">23.129.64.217</text>
+            <text class="hd-h" x="337" y="281" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
+          </g>
+        </svg>
+        <p class="hd-cap"><b>One circuit per account</b>, over anon-rpc and Tor. The same wallet reaches providers as three unrelated visitors, so they can't link your accounts or see your IP.</p>
       </div>
     </div>
   </div>
 </header>
 
-<!-- TRUST -->
-<div class="trust">
-  <div class="wrap">
-    <span class="t-lbl">No new app to learn</span>
-    <h2 class="t-line">The apps you already open, <span class="g">private the moment you do.</span></h2>
-    <div class="appmarq">
-      <div class="track">
-        <span class="chip">Lido</span><span class="chip">ENS</span><span class="chip">Compound</span><span class="chip">Morpho</span><span class="chip">Spark</span><span class="chip">Aave</span>
-        <span class="chip" aria-hidden="true">Lido</span><span class="chip" aria-hidden="true">ENS</span><span class="chip" aria-hidden="true">Compound</span><span class="chip" aria-hidden="true">Morpho</span><span class="chip" aria-hidden="true">Spark</span><span class="chip" aria-hidden="true">Aave</span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- HOW (bento) -->
-<!-- POSITIONING -->
+<!-- POSITIONING + apps -->
 <section id="yours">
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Why it's different</span>
       <h2>Privacy shouldn't wait for apps to adopt it.</h2>
-      <p>The real fix is apps integrating anon-rpc, but only a couple have, all opt-in, and until the rest do, you are the one who pays, with every read exposed. Veil moves the decision to <b>you</b>: turn it on once and every wallet and dapp you already use is private today, with nothing for them to change.</p>
+      <p>The real fix is apps integrating anon-rpc, but only a couple have, all opt-in, and until the rest do, you are the one who pays, with every read exposed. Veil moves the decision to <b>you</b>: no new app to learn, turn it on once, and every wallet and dapp you already use is private the moment you open it.</p>
     </div>
+
+    <div class="orbit" aria-hidden="true">
+      <span class="sweep"></span>
+      <span class="guide"></span>
+      <div class="node" style="--a:0deg"><i class="spoke"></i><span class="ch">Lido</span></div>
+      <div class="node" style="--a:60deg"><i class="spoke"></i><span class="ch">ENS</span></div>
+      <div class="node" style="--a:120deg"><i class="spoke"></i><span class="ch">Compound</span></div>
+      <div class="node" style="--a:180deg"><i class="spoke"></i><span class="ch">Morpho</span></div>
+      <div class="node" style="--a:240deg"><i class="spoke"></i><span class="ch">Spark</span></div>
+      <div class="node" style="--a:300deg"><i class="spoke"></i><span class="ch">Aave</span></div>
+      <div class="core"><span class="halo"></span><span class="mark"></span><span class="clbl">Veil on</span></div>
+    </div>
+    <p class="orbit-cap">The apps you already open, <span class="g">private the moment you do.</span></p>
+
     <div class="honest-grid">
       <div class="feat">
         <h3 style="color:var(--muted)">The old way: app by app</h3>
@@ -582,23 +642,6 @@
 </footer>
 
 <script>
-  (function(){
-    var pop=document.getElementById('heroPopup'), sw=document.getElementById('heroSwitch'),
-        st=document.getElementById('heroStatus'), sub=document.getElementById('heroSub'), dt=document.getElementById('heroDot');
-    if(!pop||!sw) return;
-    function set(on){
-      pop.setAttribute('data-off', on?'0':'1');
-      sw.setAttribute('aria-checked', on?'true':'false');
-      st.textContent=on?'Private · Tor':'Off';
-      sub.textContent=on?'ready in 1s':'not private';
-      dt.style.background=on?'var(--accent)':'var(--faint)';
-      dt.style.boxShadow='none';
-    }
-    function toggle(){ set(sw.getAttribute('aria-checked')!=='true'); }
-    sw.addEventListener('click', toggle);
-    sw.addEventListener('keydown', function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggle(); } });
-  })();
-
   // Hero node-network: nodes drift, nearby ones link, cursor pulls links in.
   (function(){
     var c = document.getElementById('net'); if(!c) return;
