@@ -210,7 +210,7 @@ private, labelled as such) when you just want to show the interception and routi
 VEIL_SPECIFIER=0x4fd77be300f31c5fe6ab266d35d27750a3478d27 VEIL_GATEWAYS='[]' node build.mjs
 ```
 
-### Run it for a demo (no store or developer account needed)
+### Run it for a demo
 
 - **Extension:** build with a network chosen (path A or B above, not a bare `node build.mjs`), then
   open `chrome://extensions`, enable Developer mode, click **Load unpacked**, and pick `dist/`. For a
@@ -218,8 +218,7 @@ VEIL_SPECIFIER=0x4fd77be300f31c5fe6ab266d35d27750a3478d27 VEIL_GATEWAYS='[]' nod
   Compound) so the per-account flow is clean; Aave is the one re-route beat (its provider blocks Tor,
   so Veil re-routes it).
 - **Desktop app:** `cd app/src-tauri && cargo tauri dev` (or build an unsigned bundle and open it
-  with right-click then Open on macOS). Signed installers and store listings are a later, optional
-  step; you don't need a Chrome Web Store or Apple Developer account to run or demo Veil.
+  with right-click then Open on macOS). Signed installers and store listings are a later, optional step.
 
 ## License
 
