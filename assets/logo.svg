@@ -1,28 +1,15 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" role="img" aria-label="Veil logo">
-  <defs>
-    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#5cf0b0"/>
-      <stop offset="1" stop-color="#1f9e68"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#5cf0b0" stop-opacity="0.9"/>
-      <stop offset="1" stop-color="#5cf0b0" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
+  <rect x="6" y="6" width="84" height="84" rx="24" fill="#0b0d11"/>
+  <rect x="6.5" y="6.5" width="83" height="83" rx="23.5" fill="none" stroke="#C9A24B" stroke-opacity="0.5"/>
 
-  <!-- tile -->
-  <rect x="6" y="6" width="84" height="84" rx="24" fill="#0b0f14"/>
-  <rect x="6.5" y="6.5" width="83" height="83" rx="23.5" fill="none" stroke="#2bd389" stroke-opacity="0.55"/>
-
-  <!-- veil: a draped arc concealing the top of the routes -->
-  <path d="M26 34 Q48 22 70 34" fill="none" stroke="url(#mint)" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
-  <path d="M30 42 Q48 32 66 42" fill="none" stroke="url(#mint)" stroke-width="4" stroke-linecap="round" opacity="0.45"/>
+  <!-- veil: a draped arc over the routes -->
+  <path d="M26 34 Q48 22 70 34" fill="none" stroke="#C9A24B" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+  <path d="M30 42 Q48 32 66 42" fill="none" stroke="#C9A24B" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
 
   <!-- two routes converging to one node (the V of Veil) -->
-  <path d="M30 44 L48 70" fill="none" stroke="url(#mint)" stroke-width="7" stroke-linecap="round"/>
-  <path d="M66 44 L48 70" fill="none" stroke="url(#mint)" stroke-width="7" stroke-linecap="round"/>
+  <path d="M30 44 L48 70" fill="none" stroke="#C9A24B" stroke-width="7" stroke-linecap="round"/>
+  <path d="M66 44 L48 70" fill="none" stroke="#C9A24B" stroke-width="7" stroke-linecap="round"/>
 
-  <!-- the hidden identity node at the vertex -->
-  <circle cx="48" cy="70" r="13" fill="url(#glow)"/>
-  <circle cx="48" cy="70" r="5.5" fill="#eafff4"/>
+  <!-- the identity node at the vertex -->
+  <circle cx="48" cy="70" r="6" fill="#F7EFDD"/>
 </svg>

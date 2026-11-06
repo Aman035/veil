@@ -1,49 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1280 360" width="1280" height="360" role="img" aria-label="Veil - private by default for the wallets and dapps you already use">
   <defs>
-    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#5cf0b0"/><stop offset="1" stop-color="#1f9e68"/>
-    </linearGradient>
-    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="#5cf0b0" stop-opacity="0.9"/><stop offset="1" stop-color="#5cf0b0" stop-opacity="0"/>
-    </radialGradient>
-    <linearGradient id="scrim" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0" stop-color="#06090d" stop-opacity="0.97"/>
-      <stop offset="0.55" stop-color="#06090d" stop-opacity="0.82"/>
-      <stop offset="1" stop-color="#06090d" stop-opacity="0.15"/>
-    </linearGradient>
     <style>.t{font-family:-apple-system,"Segoe UI",Roboto,sans-serif}.m{font-family:ui-monospace,"SF Mono",Menlo,monospace}</style>
   </defs>
 
-  <!-- background -->
-  <rect width="1280" height="360" rx="20" fill="#06090d"/>
-  <rect width="1280" height="360" rx="20" fill="#36e39a" opacity="0.06"/>
+  <rect width="1280" height="360" rx="20" fill="#0b0d11"/>
 
-  <!-- ambient flowing routes (full width) -->
-  <path id="bA" d="M-40 96 C 360 60 820 60 1320 96" fill="none" stroke="#36e39a" stroke-width="2" stroke-opacity="0.35"/>
-  <path id="bB" d="M-40 180 C 360 180 820 180 1320 180" fill="none" stroke="#4fd6e8" stroke-width="2" stroke-opacity="0.32"/>
-  <path id="bC" d="M-40 264 C 360 300 820 300 1320 264" fill="none" stroke="#9a7cf0" stroke-width="2" stroke-opacity="0.32"/>
-  <g><circle r="4" fill="#5cf0b0"/><animateMotion dur="5s" repeatCount="indefinite"><mpath xlink:href="#bA"/></animateMotion></g>
-  <g><circle r="4" fill="#7fe6f5"/><animateMotion dur="6s" begin="-2s" repeatCount="indefinite"><mpath xlink:href="#bB"/></animateMotion></g>
-  <g><circle r="4" fill="#b9a3f7"/><animateMotion dur="5.5s" begin="-3.4s" repeatCount="indefinite"><mpath xlink:href="#bC"/></animateMotion></g>
-  <g><circle r="4" fill="#5cf0b0"/><animateMotion dur="5s" begin="-2.5s" repeatCount="indefinite"><mpath xlink:href="#bA"/></animateMotion></g>
+  <!-- ambient routes (solid, faint) -->
+  <path id="bA" d="M-40 96 C 360 60 820 60 1320 96" fill="none" stroke="#C9A24B" stroke-width="2" stroke-opacity="0.26"/>
+  <path id="bB" d="M-40 276 C 360 300 820 300 1320 276" fill="none" stroke="#9a7cf0" stroke-width="2" stroke-opacity="0.2"/>
+  <g><circle r="4" fill="#C9A24B"/><animateMotion dur="5s" repeatCount="indefinite"><mpath xlink:href="#bA"/></animateMotion></g>
+  <g><circle r="4" fill="#9a7cf0"/><animateMotion dur="6s" begin="-2.5s" repeatCount="indefinite"><mpath xlink:href="#bB"/></animateMotion></g>
+  <g><circle r="4" fill="#C9A24B"/><animateMotion dur="5s" begin="-2.5s" repeatCount="indefinite"><mpath xlink:href="#bA"/></animateMotion></g>
 
-  <!-- left scrim so the brand reads clearly -->
-  <rect width="1280" height="360" rx="20" fill="url(#scrim)"/>
-
-  <!-- logo mark -->
+  <!-- logo mark (flat) -->
   <g transform="translate(70,104) scale(1.55)">
-    <rect x="6" y="6" width="84" height="84" rx="24" fill="#0b0f14"/>
-    <rect x="6.5" y="6.5" width="83" height="83" rx="23.5" fill="none" stroke="#2bd389" stroke-opacity="0.55"/>
-    <path d="M26 34 Q48 22 70 34" fill="none" stroke="url(#mint)" stroke-width="5" stroke-linecap="round" opacity="0.85"/>
-    <path d="M30 42 Q48 32 66 42" fill="none" stroke="url(#mint)" stroke-width="4" stroke-linecap="round" opacity="0.45"/>
-    <path d="M30 44 L48 70" fill="none" stroke="url(#mint)" stroke-width="7" stroke-linecap="round"/>
-    <path d="M66 44 L48 70" fill="none" stroke="url(#mint)" stroke-width="7" stroke-linecap="round"/>
-    <circle cx="48" cy="70" r="13" fill="url(#glow)"/>
-    <circle cx="48" cy="70" r="5.5" fill="#eafff4"/>
+    <rect x="6" y="6" width="84" height="84" rx="24" fill="#07090c"/>
+    <rect x="6.5" y="6.5" width="83" height="83" rx="23.5" fill="none" stroke="#C9A24B" stroke-opacity="0.5"/>
+    <path d="M26 34 Q48 22 70 34" fill="none" stroke="#C9A24B" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+    <path d="M30 42 Q48 32 66 42" fill="none" stroke="#C9A24B" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+    <path d="M30 44 L48 70" fill="none" stroke="#C9A24B" stroke-width="7" stroke-linecap="round"/>
+    <path d="M66 44 L48 70" fill="none" stroke="#C9A24B" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="48" cy="70" r="6" fill="#F7EFDD"/>
   </g>
 
   <!-- wordmark + tagline -->
   <text class="t" x="232" y="158" font-size="76" font-weight="800" fill="#eef3f8" letter-spacing="-2">Veil</text>
   <text class="t" x="236" y="208" font-size="22" fill="#c6d2df">Private by default for the wallets and dapps you already use.</text>
-  <text class="m" x="236" y="244" font-size="15" fill="#36e39a">one route per account  ·  over Tor  ·  built on anon-rpc</text>
+  <text class="m" x="236" y="244" font-size="15" fill="#C9A24B">one route per account  ·  over Tor  ·  built on anon-rpc</text>
 </svg>

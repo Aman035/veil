@@ -24,8 +24,9 @@ to **where you are**. That is how holders get de-anonymised, phished and physica
 The usual fixes don't solve it:
 
 - A **VPN** gives all your accounts one IP, so they still look like one person.
-- **Tor Browser** gives the whole session one circuit, so accounts are still linked, and many
-  providers block Tor outright (Aave's rejected 0 of 16 reads in our tests).
+- **Tor Browser** isolates circuits per site, not per account, so every account you use on one
+  dapp still shares an exit, and many providers block Tor outright (Aave's provider blocked all 16
+  of our test reads).
 
 <p align="center">
   <img src="assets/the-leak.svg" alt="Today, every account shares one exit, so a provider sees one person" width="820">
@@ -71,7 +72,7 @@ and sandboxed** (anon-rpc) with no access to your keys, DOM or cookies. The desk
 same harness for the wallet's own traffic and for local tools.
 
 <p align="center">
-  <img src="assets/pipeline.svg" alt="How a read stays private: dapp page, Veil routes by account, over Tor, provider answers, with re-route on a block" width="860">
+  <img src="assets/architecture.svg" alt="Architecture: dapp page, Veil extension routes by account and blinds the id, the anon-rpc harness runs a sandboxed hash-pinned tor-js worker, over Tor one circuit per account, to the provider" width="980">
 </p>
 
 Three rules shape every request:
