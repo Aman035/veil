@@ -251,7 +251,8 @@ function knownFor(origin: string): KnownAccounts {
 const tabStats = new Map<number, TabStats>();
 
 // A short live feed of routed reads, for the activity view (demo-visible proof).
-type ActivityEntry = { id: number; ts: number; origin: string; method: string; route: string; state: "tor" | "rerouted" | "blocked" | "direct" | "paused" };
+type ActivityCall = { method: string; to?: string; data?: string; params?: string };
+type ActivityEntry = { id: number; ts: number; origin: string; provider: string; method: string; route: string; state: "tor" | "rerouted" | "blocked" | "direct" | "paused"; calls: ActivityCall[] };
 const activity: ActivityEntry[] = [];
 let activitySeq = 0;
 function methodOf(body: unknown): string {
@@ -260,8 +261,24 @@ function methodOf(body: unknown): string {
   const base = typeof m === "string" ? m : "rpc";
   return Array.isArray(body) && body.length > 1 ? `${base} +${body.length - 1}` : base;
 }
-function pushActivity(origin: string, method: string, route: string, state: ActivityEntry["state"]) {
-  activity.push({ id: ++activitySeq, ts: Date.now(), origin, method, route, state });
+function hostOf(url: string): string { try { return new URL(url).host; } catch { return url; } }
+function describeCalls(body: unknown): ActivityCall[] {
+  const arr = (Array.isArray(body) ? body : [body]).slice(0, 12);
+  return arr.map((c) => {
+    const o = (c ?? {}) as { method?: unknown; params?: unknown };
+    const method = typeof o.method === "string" ? o.method : "rpc";
+    const p = Array.isArray(o.params) ? (o.params as unknown[]) : undefined;
+    const first = p && typeof p[0] === "object" && p[0] ? (p[0] as { to?: unknown; data?: unknown }) : undefined;
+    if (method === "eth_call" && first) {
+      return { method, to: typeof first.to === "string" ? first.to : undefined, data: typeof first.data === "string" ? first.data.slice(0, 256) : undefined };
+    }
+    let params: string | undefined;
+    try { params = p !== undefined ? JSON.stringify(p).slice(0, 256) : undefined; } catch { params = undefined; }
+    return { method, params };
+  });
+}
+function pushActivity(origin: string, url: string, body: unknown, route: string, state: ActivityEntry["state"]) {
+  activity.push({ id: ++activitySeq, ts: Date.now(), origin, provider: hostOf(url), method: methodOf(body), route, state, calls: describeCalls(body) });
   if (activity.length > 80) activity.splice(0, activity.length - 80);
 }
 
@@ -350,7 +367,7 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
   // Harness down (not a provider block): fail closed, never go direct, never
   // ask to allow-direct. Matches the popup's "Paused: not private" (PRD §6.3).
   if (harness === "error") {
-    pushActivity(origin, method, key, "paused");
+    pushActivity(origin, url, body, key, "paused");
     return { ok: false, error: "veil: paused - the anonymizing network is unavailable (not private)", routeKey: key };
   }
 
@@ -360,7 +377,7 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
   try {
     // Attempt 1: the dapp's own endpoint, over Tor.
     const first = await sendVia(url, sent, key);
-    if (first.ok) { s.protectedCount++; addRoute(); pushActivity(origin, method, key, "tor"); return { ok: true, status: 200, body: restore(first.json), routeKey: key }; }
+    if (first.ok) { s.protectedCount++; addRoute(); pushActivity(origin, url, body, key, "tor"); return { ok: true, status: 200, body: restore(first.json), routeKey: key }; }
 
     // Blocked. Re-route only for a known single-chain standard RPC (E4/E5).
     const cls = classifyEndpoint(url);
@@ -369,10 +386,10 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
       for (const p of torFriendlyFor(cls.chainId)) {
         if (new URL(p).hostname === here) continue;
         const rr = await sendVia(p, sent, key);
-        if (rr.ok) { s.rerouted++; s.protectedCount++; addRoute(); pushActivity(origin, method, key, "rerouted"); return { ok: true, status: 200, body: restore(rr.json), routeKey: key, rerouted: true }; }
+        if (rr.ok) { s.rerouted++; s.protectedCount++; addRoute(); pushActivity(origin, url, body, key, "rerouted"); return { ok: true, status: 200, body: restore(rr.json), routeKey: key, rerouted: true }; }
       }
       s.blocked++;
-      pushActivity(origin, method, key, "blocked");
+      pushActivity(origin, url, body, key, "blocked");
       return { ok: false, blocked: true, error: "veil: provider blocked anonymous access and re-routing failed", routeKey: key };
     }
 
@@ -382,12 +399,12 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
       // The user explicitly allowed a direct (non-private) connection for this
       // site. The page performs the real native request itself (inject.ts).
       s.direct++;
-      pushActivity(origin, method, key, "direct");
+      pushActivity(origin, url, body, key, "direct");
       return { ok: false, allowDirect: true, error: "veil: allowed direct for this site (not private)", routeKey: key };
     }
     if (policy === "block") {
       s.blocked++;
-      pushActivity(origin, method, key, "blocked");
+      pushActivity(origin, url, body, key, "blocked");
       return { ok: false, blocked: true, error: "veil: this site's provider blocks anonymous access - kept blocked", routeKey: key };
     }
     // "ask" (default): tell the page to show the one-time dialog; don't count it
