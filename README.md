@@ -63,7 +63,7 @@ tools like `cast`, and pairs with the extension.
 
 | | Hidden from providers | Still visible |
 |---|---|---|
-| **Your IP** | yes, on dapp reads (and wallet traffic with the helper) | the Tor gateway sees you use Tor, not what for |
+| **Your IP** | yes, on dapp reads and local tools | wallet's own opaque traffic is a planned next step (see Scope); the Tor gateway sees you use Tor, not what for |
 | **Accounts linked** | yes, one route per account for RPC traffic | wallets' own multi-account APIs still link them at the app layer |
 | **Addresses you query** | no | providers see them; hiding that needs PIR, a separate problem |
 
@@ -116,6 +116,17 @@ runs [`@anon-rpc/browser-extension-harness`](https://www.npmjs.com/package/@anon
 anon-rpc. We intentionally **don't hide which addresses you look up** (that needs PIR, a separate
 problem), which is a stated trade-off, not a gap. Known gaps: Web-Worker `fetch` and WebSockets
 aren't intercepted yet.
+
+### Scope
+
+This version makes **dapp reads** private per account (the main leak, since dapps read straight
+from the page), and gives **local tools** (`cast`, scripts) private per-account reads through the
+helper. Routing the **wallet's own opaque HTTPS traffic** through Tor is a deliberate next step,
+not shipped here: anon-rpc exposes an anonymised `fetch`, not raw TCP tunnels, so opaque wallet
+traffic needs either a raw-stream capability upstream (the tor-js gateway already supports
+`CONNECT`; the harness doesn't expose it yet) or a local Tor tunnel (which hides the IP but can't
+split per account). The extension's `chrome.proxy` hook for this is built but stays **inert**
+until one of those lands, so nothing is ever silently sent in the clear.
 
 ## 4. CROPS
 
@@ -176,6 +187,14 @@ node build.mjs
 
 Without a gateway, build with the `passthrough` specifier (`0x4fd77be300f31c5fe6ab266d35d27750a3478d27`,
 empty gateways) for a deterministic, non-private plumbing demo.
+
+### Run it for a demo (no store or developer account needed)
+
+- **Extension:** `node build.mjs`, then open `chrome://extensions`, enable Developer mode, click
+  **Load unpacked**, and pick `dist/`.
+- **Desktop app:** `cd app/src-tauri && cargo tauri dev` (or build an unsigned bundle and open it
+  with right-click then Open on macOS). Signed installers and store listings are a later, optional
+  step; you don't need a Chrome Web Store or Apple Developer account to run or demo Veil.
 
 ## License
 
