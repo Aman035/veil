@@ -25,3 +25,5 @@ _probe.mjs
 # internal / dev-only - kept local, not published
 CLAUDE.md
 docs/
+
+*.zip

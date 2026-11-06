@@ -118,7 +118,7 @@
   .pp-top{ display:flex; align-items:center; justify-content:space-between }
   .pp-brand{ display:flex; align-items:center; gap:9px; font-family:var(--ff-display); font-weight:700; font-size:15px }
   .switch{ width:46px; height:26px; border-radius:999px; background:var(--accent); border:1px solid var(--accent); position:relative; cursor:pointer; flex:none }
-  .switch .knob{ position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#F2F2F3; transform:translateX(20px); transition:transform .22s cubic-bezier(.4,.9,.3,1.3) }
+  .switch .knob{ position:absolute; top:2px; left:2px; width:20px; height:20px; border-radius:50%; background:#0b0d11; transform:translateX(20px); transition:transform .22s cubic-bezier(.4,.9,.3,1.3) }
   .popup[data-off="1"] .switch{ background:#222a35; border-color:var(--line-2); box-shadow:none }
   .popup[data-off="1"] .switch .knob{ transform:translateX(0); background:#cfd8e3 }
   .pp-status{ display:flex; align-items:center; gap:9px; margin:15px 0 13px; font-size:14px; font-weight:600 }
@@ -293,8 +293,8 @@
       <a href="#honest">What it hides</a>
     </div>
     <div class="nav-right">
-      <button class="btn btn-ghost btn-sm">Get the app</button>
-      <button class="btn btn-primary btn-sm">Add to Chrome</button>
+      <button class="btn btn-ghost btn-sm">GitHub</button>
+      <button class="btn btn-primary btn-sm">Download extension</button>
     </div>
   </div>
 </nav>
@@ -308,8 +308,8 @@
       <h1>Your wallets, <span class="g">private</span> by default.</h1>
       <p class="lede">Veil routes your crypto traffic through Tor - <b>one route per account</b> - so the providers your apps talk to can't see your IP or tell your accounts apart. And it keeps dapps working even when their providers block Tor.</p>
       <div class="hero-cta">
-        <button class="btn btn-primary">Add to Chrome - free</button>
-        <button class="btn btn-ghost">Get the desktop app</button>
+        <button class="btn btn-primary">Download extension</button>
+        <button class="btn btn-ghost">View on GitHub</button>
       </div>
       <div class="hero-note"><span class="dot"></span> No account · no telemetry · open source · Chrome &amp; Brave</div>
     </div>
@@ -498,8 +498,8 @@
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Desktop app · for everyone</span>
-      <h2>The friendly app that protects your wallet too.</h2>
-      <p>The extension makes dapps private. The desktop app covers what a browser extension can't reach - your <b>wallet's own traffic</b> and local tools like <span class="mono">cast</span> - and sets up both halves in one install. No terminal, no config.</p>
+      <h2>A desktop app for your local tools.</h2>
+      <p>The extension makes dapps private. The desktop app runs the same privacy engine for your local tools: point <span class="mono">cast</span>, a script, or a wallet's custom RPC at it and reads leave per account, over Tor. It pairs with the extension. Routing the wallet's own traffic is on the roadmap.</p>
     </div>
 
     <div class="appwin">
@@ -537,7 +537,7 @@
             </div>
           </div>
           <div class="tiles">
-            <div class="tile"><div class="tl">Wallet traffic</div><div class="tv">MetaMask · <span class="mono">protected</span></div><div class="td">Its RPC and API hosts routed through Tor via the local proxy.</div></div>
+            <div class="tile"><div class="tl">Wallet traffic</div><div class="tv">roadmap</div><div class="td">Routing the wallet's own traffic through Tor is the next step; the hook is built, off by default.</div></div>
             <div class="tile"><div class="tl">Local RPC endpoint</div><div class="tv"><span class="mono">127.0.0.1:18545</span></div><div class="td">Point <span class="mono">cast</span>, scripts or a wallet's custom RPC here - private, per account.</div></div>
           </div>
         </main>
@@ -564,16 +564,16 @@
       <div class="hcol hide">
         <span class="ht">Hidden from providers</span>
         <ul>
-          <li><div class="li-t">Your IP address</div><div class="li-d">On every dapp read - and on your wallet's own traffic with the desktop app.</div></li>
+          <li><div class="li-t">Your IP address</div><div class="li-d">On every dapp read, and on your local tools through the desktop app.</div></li>
           <li><div class="li-t">That your accounts belong together</div><div class="li-d">For RPC traffic, each account gets its own route, so providers see unrelated strangers.</div></li>
         </ul>
       </div>
       <div class="hcol show">
         <span class="ht">Still visible</span>
         <ul>
-          <li><div class="li-t">Which addresses you look up</div><div class="li-d">Providers still see the addresses you query. Hiding that needs PIR - a different project.</div></li>
-          <li><div class="li-t">Your wallet's multi-account APIs</div><div class="li-d">Some wallet services take all your accounts in one request. We hide the IP; the app can split them (off by default).</div></li>
-          <li><div class="li-t">That you use Tor</div><div class="li-d">The Tor gateway sees you use it - not what for.</div></li>
+          <li><div class="li-t">The addresses you query</div><div class="li-d">Providers still see which addresses you read. Concealing that requires private information retrieval (PIR), which is beyond the scope of this project.</div></li>
+          <li><div class="li-t">Your wallet's multi-account APIs</div><div class="li-d">Some wallet services request every account in a single call. Veil hides your IP on that traffic, but the accounts remain linked at the application layer. The desktop app can split these requests per account, disabled by default.</div></li>
+          <li><div class="li-t">That you use Tor</div><div class="li-d">The Tor gateway can see that you use Tor, but not which sites you visit or what you read.</div></li>
         </ul>
       </div>
     </div>
@@ -587,8 +587,8 @@
       <h2>Turn privacy on for the apps you already use.</h2>
       <p>Free, open source, and honest about what it does. Add the extension in a click, or get the desktop app to cover your wallet too.</p>
       <div class="hero-cta">
-        <button class="btn btn-primary">Add to Chrome</button>
-        <button class="btn btn-ghost">Get the desktop app</button>
+        <button class="btn btn-primary">Download extension</button>
+        <button class="btn btn-ghost">View on GitHub</button>
       </div>
     </div>
   </div>
@@ -599,7 +599,7 @@
     <div class="foot-note"><span class="dot"></span> No accounts. No telemetry. Network code is sandboxed and hash-pinned on-chain.</div>
     <div class="brand" style="font-size:15px"><span class="mark"></span> Veil</div>
   </div>
-  <div class="wrap"><p class="disc">Veil is independent software built on the Ethereum Foundation's anon-rpc and tor-js. Measurements - provider behaviour over Tor, per-account exits, re-routing - come from the project's own tests. “Add to Chrome” is illustrative in this preview.</p></div>
+  <div class="wrap"><p class="disc">Veil is independent software built on the Ethereum Foundation's anon-rpc and tor-js. Measurements - provider behaviour over Tor, per-account exits, re-routing - come from the project's own tests. “Download extension” is illustrative in this preview.</p></div>
 </footer>
 
 <script>
@@ -662,6 +662,11 @@
     hero.addEventListener('pointermove', function(e){ var r = c.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top; });
     hero.addEventListener('pointerleave', function(){ mouse.x = mouse.y = -999; });
   })();
+</script>
+<script>
+  // Wire the pre-release buttons to the real GitHub artifacts.
+  document.querySelectorAll('.btn-primary').forEach(function(b){ b.addEventListener('click', function(){ window.open('https://github.com/Aman035/veil/releases','_blank','noopener'); }); });
+  document.querySelectorAll('.btn-ghost').forEach(function(b){ b.addEventListener('click', function(){ window.open('https://github.com/Aman035/veil','_blank','noopener'); }); });
 </script>
 </body>
 </html>

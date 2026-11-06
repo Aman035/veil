@@ -107,6 +107,17 @@ traffic needs either a raw-stream capability upstream (the tor-js gateway alread
 split per account). The extension's `chrome.proxy` hook for this is built but stays **inert**
 until one of those lands, so nothing is ever silently sent in the clear.
 
+<details>
+<summary><b>See the full flow on a real app (Aave), with and without Veil</b></summary>
+
+<br/>
+
+<p align="center">
+  <img src="assets/aave-flow.svg" alt="Opening Aave with and without Veil: without Veil, Tenderly sees your IP and links all your accounts; with Veil, reads go per-account over Tor, re-route around Tenderly's Tor block, and the provider sees three strangers with no IP" width="900">
+</p>
+
+</details>
+
 ## 4. CROPS
 
 _Censorship-resistant, Open-source, Private, Secure - the properties Veil is built to hold at once._

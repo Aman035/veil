@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 430" width="900" height="430" role="img" aria-label="Opening Aave with and without Veil. Without Veil, Tenderly sees your IP and links all your accounts. With Veil, reads go per-account over Tor, re-route around Tenderly's Tor block, and the provider sees three strangers with no IP.">
+  <defs><style>
+    .t{font-family:-apple-system,"Segoe UI",Roboto,sans-serif}
+    .m{font-family:ui-monospace,"SF Mono",Menlo,monospace}
+    .box{fill:#16181c;stroke:#2a2e35}
+    .out{fill:#101316;stroke:#3a3f47}
+    .lbl{fill:#ededee;font-weight:600}
+    .sub{fill:#9a9ea4}
+    .hdr{fill:#ededee;font-weight:700}
+    .tag{fill:#5f636a}
+    .ar{stroke:#454b54;fill:none}
+    .arl{fill:#6a6f77}
+  </style></defs>
+  <rect width="900" height="430" rx="18" fill="#0b0d11"/>
+  <rect x="0.5" y="0.5" width="899" height="429" rx="17.5" fill="none" stroke="#23262b"/>
+
+  <!-- ===================== WITHOUT ===================== -->
+  <text class="t hdr" x="30" y="44" font-size="16">Opening Aave today</text>
+  <text class="t tag" x="360" y="44" font-size="12">without Veil</text>
+
+  <g class="t">
+    <rect class="box" x="28" y="78" width="168" height="58" rx="11"/>
+    <text class="lbl" x="112" y="104" font-size="12.5" text-anchor="middle">You</text>
+    <text class="sub m" x="112" y="121" font-size="9.5" text-anchor="middle">3 accounts &#183; IP 203.0.113.7</text>
+
+    <rect class="box" x="246" y="78" width="150" height="58" rx="11"/>
+    <text class="lbl" x="321" y="104" font-size="12.5" text-anchor="middle">app.aave.com</text>
+    <text class="sub" x="321" y="121" font-size="9.5" text-anchor="middle">reads from the page</text>
+
+    <rect class="box" x="446" y="78" width="150" height="58" rx="11"/>
+    <text class="lbl" x="521" y="104" font-size="12.5" text-anchor="middle">Tenderly</text>
+    <text class="sub" x="521" y="121" font-size="9.5" text-anchor="middle">Aave's RPC provider</text>
+
+    <rect class="out" x="646" y="74" width="226" height="66" rx="11"/>
+    <text class="lbl" x="759" y="100" font-size="12" text-anchor="middle">Tenderly profiles you</text>
+    <text class="sub" x="759" y="118" font-size="9.5" text-anchor="middle">your IP + all 3 accounts,</text>
+    <text class="sub" x="759" y="130" font-size="9.5" text-anchor="middle">linked to one person</text>
+  </g>
+  <g class="ar"><path d="M196 107 h38"/><path d="M396 107 h38"/><path d="M596 107 h38"/></g>
+  <g class="arl"><path d="M230 103 l6 4 -6 4 z"/><path d="M430 103 l6 4 -6 4 z"/><path d="M630 103 l6 4 -6 4 z"/></g>
+
+  <line x1="24" y1="178" x2="876" y2="178" stroke="#23262b"/>
+
+  <!-- ===================== WITH ===================== -->
+  <text class="t hdr" x="30" y="222" font-size="16">The same visit with Veil on</text>
+  <text class="t tag" x="446" y="222" font-size="12">per account, over Tor</text>
+
+  <g class="t">
+    <rect class="box" x="28" y="256" width="130" height="58" rx="11"/>
+    <text class="lbl" x="93" y="282" font-size="12.5" text-anchor="middle">You</text>
+    <text class="sub" x="93" y="299" font-size="9.5" text-anchor="middle">3 accounts</text>
+
+    <rect class="box" x="196" y="256" width="130" height="58" rx="11"/>
+    <text class="lbl" x="261" y="288" font-size="12.5" text-anchor="middle">app.aave.com</text>
+
+    <rect class="box" x="364" y="256" width="166" height="58" rx="11"/>
+    <text class="lbl" x="447" y="282" font-size="12.5" text-anchor="middle">Veil</text>
+    <text class="sub" x="447" y="299" font-size="9.5" text-anchor="middle">a route per account, over Tor</text>
+
+    <rect class="box" x="568" y="256" width="150" height="58" rx="11"/>
+    <text class="lbl" x="643" y="282" font-size="12.5" text-anchor="middle">re-routed</text>
+    <text class="sub" x="643" y="299" font-size="9.5" text-anchor="middle">Tenderly blocks Tor</text>
+
+    <rect class="out" x="756" y="252" width="118" height="66" rx="11"/>
+    <text class="lbl" x="815" y="280" font-size="11.5" text-anchor="middle">provider sees</text>
+    <text class="sub" x="815" y="298" font-size="9.5" text-anchor="middle">3 strangers,</text>
+    <text class="sub" x="815" y="310" font-size="9.5" text-anchor="middle">no IP</text>
+  </g>
+  <g class="ar"><path d="M158 285 h26"/><path d="M326 285 h26"/><path d="M530 285 h26"/><path d="M718 285 h26"/></g>
+  <g class="arl"><path d="M180 281 l6 4 -6 4 z"/><path d="M348 281 l6 4 -6 4 z"/><path d="M552 281 l6 4 -6 4 z"/><path d="M740 281 l6 4 -6 4 z"/></g>
+
+  <text class="t sub" x="450" y="356" font-size="11.5" text-anchor="middle">Tenderly blocks Tor, so standard reads re-route to a Tor-friendly provider on the same chain, only after a real block.</text>
+  <text class="t tag" x="450" y="374" font-size="11" text-anchor="middle">Measured: Aave 0 of 16 over Tor, working after re-routing.</text>
+</svg>
