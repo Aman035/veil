@@ -127,10 +127,9 @@ body { width: 340px; background: var(--bg); color: var(--text); -webkit-font-smo
 .mini-switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
 /* honesty footer */
-.honesty { font-size: 11.5px; color: var(--faint); line-height: 1.45; padding: 4px 2px 0; }
-.honesty b { color: var(--muted); font-weight: 600; }
-.settings-link { display: block; margin-top: 8px; background: none; border: 0; padding: 0; cursor: pointer;
-  color: var(--muted); font-size: 11.5px; text-decoration: underline; text-underline-offset: 2px; }
-.settings-link:hover { color: var(--text); }
+.footlinks { display: flex; gap: 8px; padding-top: 12px; margin-top: 2px; border-top: 1px solid var(--line); }
+.foot-btn { flex: 1; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px;
+  color: var(--muted); font-size: 12px; font-weight: 600; padding: 9px; cursor: pointer; text-align: center; transition: color .15s, border-color .15s; }
+.foot-btn:hover { color: var(--text); border-color: var(--accent-dim); }
 
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
