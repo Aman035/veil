@@ -52,7 +52,11 @@ async function getPolicies(): Promise<Record<string, SitePolicy>> {
 }
 async function getPolicy(origin: string): Promise<SitePolicy> {
   const p = (await getPolicies())[origin];
-  return p === "block" || p === "allow-direct" ? p : "ask";
+  if (p === "block" || p === "allow-direct") return p;
+  // No per-site override (set via the in-page dialog): use the global default
+  // configured in Settings.
+  const { defaultPolicy } = await chrome.storage.local.get({ defaultPolicy: "ask" });
+  return defaultPolicy === "block" || defaultPolicy === "allow-direct" ? defaultPolicy : "ask";
 }
 async function setPolicy(origin: string, policy: SitePolicy): Promise<void> {
   const all = await getPolicies();

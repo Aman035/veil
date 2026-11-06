@@ -4,14 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="options.css" />
-  <title>Veil - Network</title>
+  <title>Veil - Settings</title>
 </head>
 <body>
   <main class="wrap">
     <header class="top">
       <span class="mark" aria-hidden="true"></span>
       <span class="name">Veil</span>
-      <span class="crumb">Network</span>
+      <span class="crumb">Settings</span>
     </header>
 
     <p class="lede">
@@ -40,6 +40,17 @@
       <button id="reset" class="btn btn-ghost">Reset to default</button>
     </div>
     <p class="note" id="note"></p>
+
+    <div class="section">
+      <span class="lbl">When a provider blocks Tor</span>
+      <span class="help">Some providers refuse Tor and can't be safely re-routed. Choose what Veil does then. It never connects directly on its own.</span>
+      <div id="policySeg" class="seg" role="radiogroup" aria-label="Blocking policy">
+        <button class="seg-btn" data-policy="ask" role="radio">Ask me</button>
+        <button class="seg-btn" data-policy="block" role="radio">Keep blocked</button>
+        <button class="seg-btn" data-policy="allow-direct" role="radio">Allow direct</button>
+      </div>
+      <p class="pnote" id="pnote"></p>
+    </div>
 
     <p class="fine">
       Veil never silently connects directly. If a gateway is unreachable, reads fail or ask you, they are

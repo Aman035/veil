@@ -40,14 +40,6 @@
         <li id="tabDirect" class="direct hidden"><b>0</b> sent direct (you allowed it)</li>
       </ul>
 
-      <div class="policy">
-        <div class="policy-label">If this site's provider blocks Tor</div>
-        <div id="policySeg" class="seg" role="radiogroup" aria-label="Site policy">
-          <button class="seg-btn" data-policy="ask" role="radio" aria-checked="false">Ask</button>
-          <button class="seg-btn" data-policy="block" role="radio" aria-checked="false">Block</button>
-          <button class="seg-btn" data-policy="allow-direct" role="radio" aria-checked="false">Allow direct</button>
-        </div>
-      </div>
     </section>
 
     <section class="card today">
@@ -55,27 +47,11 @@
         <span>Today</span>
         <span><b id="todayReq">0</b> requests · <b id="todaySites">0</b> sites</span>
       </div>
-      <div id="walletRow" class="walletrow" data-helper="off">
-        <span class="wallet-dot" aria-hidden="true"></span>
-        <span id="walletState" class="wallet-state">Wallet traffic: not covered</span>
-        <span id="walletAction" class="wallet-action">Get the desktop app</span>
-      </div>
-
-      <div class="advanced">
-        <div class="adv-head">
-          <span class="adv-title">Route wallet traffic via helper</span>
-          <button id="routeWallet" class="mini-switch" role="switch" aria-checked="false" aria-label="Route wallet traffic through the desktop helper" disabled>
-            <span class="mini-knob"></span>
-          </button>
-        </div>
-        <div id="routeWalletNote" class="adv-note">Needs the desktop app to be running.</div>
-      </div>
     </section>
 
     <footer class="honesty">
-      Still visible to providers: <b>the addresses you look up</b>.
       <button id="openActivity" class="settings-link">Live activity</button>
-      <button id="openSettings" class="settings-link">Network settings</button>
+      <button id="openSettings" class="settings-link">Settings</button>
     </footer>
   </main>
   <script src="popup.js"></script>

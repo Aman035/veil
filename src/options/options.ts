@@ -12,6 +12,8 @@ const gwEl = $<HTMLTextAreaElement>("gateways");
 const specEl = $<HTMLInputElement>("specifier");
 const noteEl = $<HTMLElement>("note");
 const statusEl = $<HTMLElement>("status");
+const segEl = $<HTMLElement>("policySeg");
+const pnoteEl = $<HTMLElement>("pnote");
 
 specEl.placeholder = DEF_SPEC;
 gwEl.placeholder = DEF_GW.join("\n") || "(none)";
@@ -51,6 +53,32 @@ $("reset").addEventListener("click", async () => {
   noteEl.textContent = "Reset to the default gateway. Reconnecting…";
 });
 
+// Default blocking policy: what Veil does when a provider blocks Tor and the read
+// can't be safely re-routed. Per-site overrides are set from the in-page dialog.
+const POLICY_NOTE: Record<string, string> = {
+  ask: "Veil asks you, per site, before any direct connection.",
+  block: "Blocked reads stay blocked. Nothing is ever sent in the clear.",
+  "allow-direct": "Blocked reads fall back to a direct, non-private connection, exposing your IP to that provider.",
+};
+function renderPolicy(p: string) {
+  for (const b of segEl.querySelectorAll<HTMLButtonElement>(".seg-btn")) {
+    b.setAttribute("aria-checked", b.dataset.policy === p ? "true" : "false");
+  }
+  pnoteEl.textContent = POLICY_NOTE[p] ?? "";
+}
+async function loadPolicy() {
+  const { defaultPolicy } = await chrome.storage.local.get({ defaultPolicy: "ask" });
+  renderPolicy((defaultPolicy as string) || "ask");
+}
+segEl.addEventListener("click", async (e) => {
+  const btn = (e.target as HTMLElement).closest<HTMLButtonElement>(".seg-btn");
+  if (!btn) return;
+  const p = btn.dataset.policy!;
+  renderPolicy(p);
+  await chrome.storage.local.set({ defaultPolicy: p });
+});
+
 load();
+loadPolicy();
 refreshStatus();
 setInterval(refreshStatus, 1500);
