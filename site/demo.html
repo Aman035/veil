@@ -140,7 +140,7 @@
   </main>
 
   <script>
-    const WORKER = "https://greg-relatives-modify-fires.trycloudflare.com"; // temporary live echo (tunnel)
+    const WORKER = "https://genealogy-dont-avon-mood.trycloudflare.com"; // temporary live echo (tunnel)
     const FALLBACK = "https://httpbin.org/anything";
     const OVERRIDE = new URLSearchParams(location.search).get("echo");
     const ECHO = OVERRIDE || (/^https:\/\//.test(WORKER) && !WORKER.includes("REPLACE_WITH") ? WORKER : FALLBACK);
