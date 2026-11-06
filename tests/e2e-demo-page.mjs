@@ -21,7 +21,8 @@ let sw = ctx.serviceWorkers().find((w) => w.url().includes("background.js"));
 for (let i = 0; i < 60 && !sw; i++) { await sleep(250); sw = ctx.serviceWorkers().find((w) => w.url().includes("background.js")); }
 
 const page = await ctx.newPage();
-await page.goto(origin, { waitUntil: "domcontentloaded" });
+const echoQ = process.env.ECHO_URL ? ("/?echo=" + encodeURIComponent(process.env.ECHO_URL)) : "";
+await page.goto(origin + echoQ, { waitUntil: "domcontentloaded" });
 await page.click("#run");
 // wait for all three values to be filled (not the placeholder/ellipsis)
 await page.waitForFunction(() => {

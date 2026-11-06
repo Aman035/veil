@@ -100,7 +100,10 @@
     // WORKER below. Until then it falls back to a public echo, which can be slow.
     const WORKER = "REPLACE_WITH_YOUR_WORKER_URL"; // e.g. https://veil-echo.<you>.workers.dev/
     const FALLBACK = "https://httpbin.org/anything";
-    const ECHO = /^https:\/\//.test(WORKER) && !WORKER.includes("REPLACE_WITH") ? WORKER : FALLBACK;
+    // ?echo=<url> overrides at demo time (e.g. a trycloudflare tunnel URL from
+    // demo-echo/serve-local.mjs), so an ephemeral endpoint needs no redeploy.
+    const OVERRIDE = new URLSearchParams(location.search).get("echo");
+    const ECHO = OVERRIDE || (/^https:\/\//.test(WORKER) && !WORKER.includes("REPLACE_WITH") ? WORKER : FALLBACK);
     const ACCT_A = "0xd8da6bf26964af9d7eed9e03e53415d37aa96045";
     const ACCT_B = "0xab5801a7d398351b8be11c439e05c5b3259aec9b";
 
