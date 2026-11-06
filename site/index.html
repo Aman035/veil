@@ -297,7 +297,6 @@
     <div class="nav-links">
       <a href="#how">How it works</a>
       <a href="#screens">Screens</a>
-      <a href="#app">Desktop app</a>
       <a href="#honest">What it hides</a>
       <a href="demo.html">Try it live</a>
     </div>
@@ -508,65 +507,6 @@
   </div>
 </section>
 
-<!-- DESKTOP APP -->
-<section id="app">
-  <div class="wrap">
-    <div class="head">
-      <span class="eyebrow">Desktop app · for everyone</span>
-      <h2>A desktop app for your local tools.</h2>
-      <p>The extension makes dapps private. The desktop app runs the same privacy engine for your local tools: point <span class="mono">cast</span>, a script, or a wallet's custom RPC at it and reads leave per account, over Tor. It pairs with the extension. Routing the wallet's own traffic is on the roadmap.</p>
-    </div>
-
-    <div class="appwin">
-      <div class="titlebar">
-        <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-        <div class="tt">Veil</div>
-        <div class="conn"><span class="dot"></span> Tor connected · 3 circuits</div>
-      </div>
-      <div class="appbody">
-        <aside class="appside">
-          <ul class="snav">
-            <li class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l9-9 9 9"/><path d="M5 10v10h14V10"/></svg> Status</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg> Accounts</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18V9m5 9V5m5 13v-6m5 6V8"/></svg> Activity</li>
-            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 00-.2-1.6l2-1.5-2-3.4-2.3 1a7 7 0 00-2.8-1.6L15 1H9l-.7 2.3A7 7 0 005.5 5L3.2 4 1.2 7.4l2 1.5A7 7 0 003 12"/></svg> Settings</li>
-          </ul>
-          <div class="sfoot"><b style="color:var(--text)">Browser extension</b><br>Connected · protecting 9 sites</div>
-        </aside>
-        <main class="appmain">
-          <div class="mh"><h3>Protection on</h3><span class="state"><span class="dot"></span> Private · Tor</span></div>
-          <div class="msub">Your wallet, dapps and local tools leave through Tor - one route per account.</div>
-          <div class="acct-card">
-            <div class="ah"><span>Account</span><span>Route</span><span style="text-align:right">Status</span></div>
-            <div class="ar">
-              <div class="nm"><span class="av" style="background:#E7E7EA"></span><div class="n"><div class="nn">Main</div><div class="ad">0x28c6…1d60</div></div></div>
-              <div class="route">acct:28c6 <span class="ex">→ 171.25.193.78</span></div><div class="ok">private</div>
-            </div>
-            <div class="ar">
-              <div class="nm"><span class="av" style="background:#9A9EA4"></span><div class="n"><div class="nn">Trading</div><div class="ad">0xd8dA…6045</div></div></div>
-              <div class="route">acct:d8dA <span class="ex">→ 45.9.168.92</span></div><div class="ok">private</div>
-            </div>
-            <div class="ar">
-              <div class="nm"><span class="av" style="background:#63676E"></span><div class="n"><div class="nn">Airdrops</div><div class="ad">0x21a3…5549</div></div></div>
-              <div class="route">acct:21a3 <span class="ex">→ 185.220.101.98</span></div><div class="ok">private</div>
-            </div>
-          </div>
-          <div class="tiles">
-            <div class="tile"><div class="tl">Wallet traffic</div><div class="tv">roadmap</div><div class="td">Routing the wallet's own traffic through Tor is the next step; the hook is built, off by default.</div></div>
-            <div class="tile"><div class="tl">Local RPC endpoint</div><div class="tv"><span class="mono">127.0.0.1:18545</span></div><div class="td">Point <span class="mono">cast</span>, scripts or a wallet's custom RPC here - private, per account.</div></div>
-          </div>
-        </main>
-      </div>
-    </div>
-
-    <div class="steps">
-      <div class="step"><span class="num">01</span><h4>Install &amp; open</h4><p>One download. The app starts the privacy engine and connects to Tor in the background - the menu-bar icon turns green.</p></div>
-      <div class="step"><span class="num">02</span><h4>Add the extension</h4><p>The app walks you through adding the browser extension and pairs with it automatically. One flow sets up both halves.</p></div>
-      <div class="step"><span class="num">03</span><h4>Use your apps as usual</h4><p>Nothing to configure. Your dapps, wallet and tools just go private - each account on its own route.</p></div>
-    </div>
-  </div>
-</section>
-
 <!-- HONEST -->
 <section id="honest">
   <div class="wrap">
@@ -579,7 +519,7 @@
       <div class="hcol hide">
         <span class="ht">Hidden from providers</span>
         <ul>
-          <li><div class="li-t">Your IP address</div><div class="li-d">On every dapp read, and on your local tools through the desktop app.</div></li>
+          <li><div class="li-t">Your IP address</div><div class="li-d">On every dapp read.</div></li>
           <li><div class="li-t">That your accounts belong together</div><div class="li-d">For RPC traffic, each account gets its own route, so providers see unrelated strangers.</div></li>
         </ul>
       </div>
@@ -587,7 +527,7 @@
         <span class="ht">Still visible</span>
         <ul>
           <li><div class="li-t">The addresses you query</div><div class="li-d">Providers still see which addresses you read. Concealing that requires private information retrieval (PIR), which is beyond the scope of this project.</div></li>
-          <li><div class="li-t">Your wallet's multi-account APIs</div><div class="li-d">Some wallet services request every account in a single call. Veil hides your IP on that traffic, but the accounts remain linked at the application layer. The desktop app can split these requests per account, disabled by default.</div></li>
+          <li><div class="li-t">Your wallet's multi-account APIs</div><div class="li-d">Some wallet services request every account in a single call. Veil hides your IP on that traffic, but the accounts remain linked at the application layer.</div></li>
           <li><div class="li-t">That you use Tor</div><div class="li-d">The Tor gateway can see that you use Tor, but not which sites you visit or what you read.</div></li>
         </ul>
       </div>
