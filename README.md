@@ -14,6 +14,10 @@ Built on the Ethereum Foundation's **[anon-rpc](https://github.com/ethereum/anon
 
 </div>
 
+<p align="center">
+  <img src="assets/one-route-per-account.svg" alt="One route per account: each account's traffic flows through its own Tor circuit to a different exit" width="820">
+</p>
+
 ---
 
 ## 1. The problem
