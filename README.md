@@ -187,26 +187,28 @@ cd helper && pnpm install && node helper.mjs      # serves http://127.0.0.1:1854
 cd app/src-tauri && cargo tauri dev
 ```
 
-**Choose a network at build time.** The gateway and worker are config, not code, baked in by
-`build.mjs`. A bare `node build.mjs` uses a built-in default gateway that is **not guaranteed to be
-up** (public demo gateways come and go), and the extension will sit on "Connecting privately…" if it
-can't reach one. For anything you rely on, always build with one of the two explicit paths below.
-
-**A) Real Tor via a self-hosted gateway** (the path to demo). Build
-[`tor-js-gateway`](https://github.com/ethereum/tor-js), run it, then build the extension against it:
+**Point Veil at a gateway (no rebuild).** The gateway is a runtime setting: install the extension,
+run a gateway, and paste its address into the popup's **Network settings**. To run and watch a
+self-hosted gateway, build [`tor-js-gateway`](https://github.com/ethereum/tor-js) once and copy the
+binary to `~/veil-gateway`, then:
 
 ```bash
-VEIL_SPECIFIER=0x700dA3193D35fA54Cd3fBf29B66f2a2A0385659e \
-VEIL_GATEWAYS='["127.0.0.1:12298:<your-gateway-certhash>"]' \
-node build.mjs
+node tools/gateway.mjs          # start it, show live status, and print the line to paste
+node tools/gateway.mjs status   # check UP / DOWN anytime
 ```
 
-The gateway prints its `<your-gateway-certhash>` on startup. Keep it running while you demo.
+It prints a line like `127.0.0.1:12298:<certhash>`; paste that into **popup -> Network settings ->
+Gateways -> Save**. The default build points at the EF public demo gateway, which is often down, so
+a fresh install may sit on "Connecting privately…" until you set your own. Veil never falls back to a
+direct connection silently.
 
-**B) No gateway, deterministic plumbing demo.** Build with the `passthrough` specifier (no Tor, not
-private, labelled as such) when you just want to show the interception and routing pipeline:
+**Baking a network at build time (optional).** Instead of the runtime setting, you can bake it in:
 
 ```bash
+# real Tor via your gateway:
+VEIL_SPECIFIER=0x700dA3193D35fA54Cd3fBf29B66f2a2A0385659e \
+VEIL_GATEWAYS='["127.0.0.1:12298:<your-gateway-certhash>"]' node build.mjs
+# or the passthrough specifier (no Tor, not private) for a deterministic plumbing demo:
 VEIL_SPECIFIER=0x4fd77be300f31c5fe6ab266d35d27750a3478d27 VEIL_GATEWAYS='[]' node build.mjs
 ```
 
