@@ -193,6 +193,10 @@
   .how-steps p b{ color:var(--text); font-weight:600 }
   .how-steps p .mut{ color:var(--faint) }
   .how-steps code{ font-family:var(--ff-mono,ui-monospace,monospace); font-size:12.5px; color:var(--text); background:rgba(255,255,255,.05); padding:1.5px 6px; border-radius:6px; white-space:nowrap }
+  .compare-intro{ margin-top:40px; max-width:660px }
+  .compare-intro h3{ font-family:var(--ff-display); font-size:20px; font-weight:600; margin:0 0 9px; letter-spacing:-.01em }
+  .compare-intro p{ font-size:14.5px; line-height:1.62; color:var(--muted); margin:0 }
+  .compare-intro p b{ color:var(--text); font-weight:600 }
   .rbox{ border:1px solid var(--line-2); border-radius:14px; padding:16px; background:rgba(8,11,15,.6) }
   .rbox h4{ font-family:var(--ff-display); font-size:13px; color:var(--muted); font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px }
   .tag{ margin-left:auto; font-size:10.5px; font-family:var(--ff-mono) }
@@ -545,7 +549,11 @@
       </li>
     </ol>
 
-    <div class="routes-grid" style="margin-top:28px">
+    <div class="compare-intro">
+      <h3>Why a VPN or Tor Browser isn't enough</h3>
+      <p>A <b>VPN</b> gives all your accounts one IP, so they still look like one person. <b>Tor Browser</b> isolates by site, not by account, so two wallets on the same dapp share an exit, and many providers block it outright. Veil gives <b>each account its own circuit</b>.</p>
+    </div>
+    <div class="routes-grid" style="margin-top:16px">
       <div class="rbox bad">
         <h4>VPN / Tor Browser <span class="tag">one exit</span></h4>
         <div class="acct-row"><span>account A</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
