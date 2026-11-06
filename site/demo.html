@@ -209,13 +209,23 @@
           return;
         }
         const a = await veilIp(ACCT_A); const b = await veilIp(ACCT_B);
-        if (!a || !b) { $("hint").textContent = "The reads did not route, is the gateway running?"; return; }
-        fillLog("logOn", "bOn", "nOn",
-          [{ ip: a, addr: ACCT_A }, { ip: b, addr: ACCT_B }],
-          a !== b
-            ? "<b>A different Tor exit each.</b> The provider sees two unrelated strangers, and never your IP."
-            : "<b>Your IP is gone.</b> Both reads left over Tor; run again for distinct per-account exits.");
-        $("hint").textContent = "";
+        if (!a || !b) { $("hint").textContent = "The reads did not route. Is the gateway running, and is the echo Tor-friendly?"; return; }
+        const notRouted = realIp && (a === realIp || b === realIp);
+        const logOn = $("logOn");
+        logOn.classList.toggle("safe", !notRouted);
+        logOn.classList.toggle("exposed", !!notRouted);
+        let note;
+        if (notRouted) {
+          note = "<b>These did not go over Tor.</b> The echo refused Tor (or you allowed a direct connection), so your real IP showed. Point the page at a Tor-friendly echo to see the exits.";
+          $("hint").textContent = "This echo blocks Tor. Use your own echo, then reload.";
+        } else if (a !== b) {
+          note = "<b>A different Tor exit each.</b> The provider sees two unrelated strangers, and never your IP.";
+          $("hint").textContent = "";
+        } else {
+          note = "<b>Your IP is hidden.</b> Both reads left over Tor and shared an exit this run; run again for distinct per-account exits.";
+          $("hint").textContent = "";
+        }
+        fillLog("logOn", "bOn", "nOn", [{ ip: a, addr: ACCT_A }, { ip: b, addr: ACCT_B }], note);
       } catch (e) {
         $("hint").textContent = "The IP echo did not respond. Set up demo-echo/, or use the recorded clip.";
       } finally { btn.disabled = false; }
