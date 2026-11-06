@@ -1,6 +1,6 @@
 # Unlink: PRD
 
-**Working name.** Private by default for the wallets and dapps you already use.
+Private by default for the wallets and dapps you already use.
 
 | | |
 |---|---|
@@ -324,7 +324,7 @@ gantt
 
 ## 12. Open questions — resolved 6 Nov 2026
 
-1. **Name:** keep **Unlink** for now.
+1. **Name:** **Unlink** — final.
 2. **Default site policy when re-routing isn't possible:** **ask** (one clear choice per site; never silent).
 3. **Tor-friendly providers to ship with:** ship the 10 measured-good public RPCs (see `evidence.md` E7); users can add their own in settings.
 4. **Nym in MVP:** **skip.** It ignores isolation keys *(measured)*, so it can't give per-account routes. tor-js only in MVP; keep anon-rpc swappable for later.

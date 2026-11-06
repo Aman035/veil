@@ -1,4 +1,4 @@
-# Unlink (working name)
+# Unlink
 
 A browser extension, then a desktop helper, that makes the wallets and dapps people already use private by default. It routes their crypto traffic through EF anon-rpc (tor-js), with **one route per account** so providers can't link a user's accounts, and **fallback re-routing** so dapps keep working when their providers block Tor.
 

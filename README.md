@@ -1,4 +1,4 @@
-# Unlink (working name)
+# Unlink
 
 Private by default for the wallets and dapps you already use: your crypto traffic leaves through an anonymous network, one route per account, and dapps keep working when their providers block Tor. Built on the EF's anon-rpc.
 
