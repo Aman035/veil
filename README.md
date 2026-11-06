@@ -5,8 +5,8 @@
 <p align="center">
   <b>anon-rpc, adopted by you, not by the app.</b>
   <br/>
-  Instead of waiting for every dapp and wallet to integrate privacy, you turn Veil on once and get
-  private reads across all the apps you already use, with <b>one route per account</b> over Tor.
+  Turn Veil on once and the wallets and dapps you already use get private reads,
+  with <b>one route per account</b> over Tor. No waiting for apps to integrate anything.
   <br/><br/>
   Built on the Ethereum Foundation's <a href="https://github.com/ethereum/anon-rpc">anon-rpc</a> and <a href="https://github.com/ethereum/tor-js">tor-js</a>.
   <br/>
@@ -17,113 +17,68 @@
 
 ## 1. The problem
 
-Wallets and dapps read mostly **straight from the page** to their data providers (Tenderly,
-Alchemy, their own backends). Every read carries **your IP** and **the addresses you look up**.
-A provider can tie your main wallet, trading wallet and airdrop wallets to **one person**, and
-to **where you are**. That is how holders get de-anonymised, phished and physically targeted.
+Wallets and dapps read **straight from the page** to RPC providers (Alchemy, Infura, drpc, their own backends). Every read carries **your IP** and **the addresses you look up**. Because a handful of providers serve many apps, one of them can tie your main, trading and airdrop wallets to **one person**, and to **where you are**, across every dapp you touch. That is how holders get de-anonymised, phished and physically targeted.
 
-The usual fixes don't solve it:
+The usual fixes don't close it:
 
-- A **VPN** gives all your accounts one IP, so they still look like one person.
-- **Tor Browser** isolates circuits per site, not per account, so every account you use on one
-  dapp still shares an exit, and many providers block Tor outright (Aave's provider blocked all 16
-  of our test reads).
-- **Waiting for the app** to adopt anon-rpc or another privacy standard leaves you exposed until it
-  does, and only a couple of apps have, all opt-in. You carry the risk while you wait.
+- **A VPN** gives all your accounts one IP, so they still look like one person.
+- **Tor Browser** isolates per site, not per account, so accounts you use on the same dapp share an exit, and many providers block Tor outright (Aave's provider blocked all 16 of our test reads).
+- **Waiting for the app** to adopt anon-rpc leaves you exposed until it does, and only a couple have, all opt-in. You carry the risk while you wait.
 
 <p align="center">
-  <img src="assets/the-leak.svg" alt="Today, every account shares one exit, so a provider sees one person" width="820">
+  <img src="assets/the-leak.svg" alt="Three wallets used on Uniswap, Aave and ENS all read from RPC providers that log the same IP, so a provider ties them to one person and one location." width="860">
 </p>
 
 ## 2. The solution
 
-Veil makes the wallets and dapps you **already use** private, with no change to them.
-
-> **The real fix is every app adopting anon-rpc. Until they do, you shouldn't pay with your privacy.**
-> Only a couple of apps have integrated it, all opt-in. Veil flips the model: instead of each app
-> adopting anon-rpc for you, **you adopt it yourself**, turn it on once, and every wallet and dapp you
-> already use gets private reads today, with nothing for them to change.
+Veil makes the wallets and dapps you **already use** private, with no change to them. Turn it on once; every read leaves over Tor, on a circuit that belongs to just that account.
 
 <p align="center">
   <img src="assets/one-route-per-account.svg" alt="One route per account: each account's traffic flows through its own Tor circuit to a different exit" width="820">
 </p>
 
-- **One route per account.** Each account gets its own Tor circuit and exit (an anon-rpc
-  isolation key), so a provider sees unrelated strangers instead of one person.
-- **Re-routes around blocks.** When a provider refuses Tor, standard reads are re-sent through a
-  Tor-friendly provider on the same chain, only after a real block, never blindly.
-- **Never silently direct.** If a read can't be made private, Veil asks you, per site, before any
-  direct connection.
+- **One route per account.** Each account gets its own Tor circuit and exit (an anon-rpc isolation key), so a provider sees unrelated strangers, not one person.
+- **Re-routes around blocks.** When a provider refuses Tor, standard reads are re-sent through a Tor-friendly provider on the same chain, only after a real block, never blindly.
+- **Never silently direct.** If a read can't be made private, Veil asks you, per site, before any direct connection.
 
-The shipping product is the **browser extension** (Chrome / Brave) that makes every dapp read
-private. An optional **desktop app** (in progress, not shipped) gives local tools like `cast` the
-same per-account privacy and pairs with the extension; routing the wallet's own traffic is the next
-step on its roadmap.
-
-**Honest about what it hides:**
+**What it hides, and what it doesn't:**
 
 | | Hidden from providers | Still visible |
 |---|---|---|
-| **Your IP** | yes, on dapp reads and local tools | wallet's own opaque traffic is a planned next step (see Scope); the Tor gateway sees you use Tor, not what for |
-| **Accounts linked** | yes, one route per account for RPC traffic | wallets' own multi-account APIs still link them at the app layer |
+| **Your IP** | yes, on every dapp read | the Tor gateway sees that you use Tor, not what for |
+| **Accounts linked** | yes, one circuit per account | a wallet's own multi-account API can still link them at the app layer |
 | **Addresses you query** | no | providers see them; hiding that needs PIR, a separate problem |
+
+The shipping product is the **browser extension** (Chrome / Brave). A desktop helper gives local tools like `cast` the same per-account reads; routing a wallet's own opaque traffic is on the roadmap (see [Scope](#scope-and-roadmap)).
 
 ## 3. How it works
 
-The extension intercepts a dapp page's JSON-RPC reads, routes each to its account's Tor circuit
-through the anon-rpc harness, and returns the answer. The anon-client code runs **hash-pinned
-and sandboxed** (anon-rpc) with no access to your keys, DOM or cookies. The desktop app runs the
-same harness for local tools like `cast`; routing the wallet's own traffic is the next step (see Scope).
+Veil sits between the page and its RPC provider, with no change to the dapp and no new endpoint: it catches the reads the app already makes and carries each one over Tor. The anon-client code runs **hash-pinned and sandboxed** (anon-rpc), with no access to your keys, DOM or cookies.
 
 <p align="center">
-  <img src="assets/interception.svg" alt="Step 1: Veil catches the read, reads the account, and blinds the request id" width="760">
+  <img src="assets/interception.svg" alt="Veil catches the read, reads the account, and blinds the request id" width="760">
 </p>
 
 <p align="center">
-  <img src="assets/transport.svg" alt="Step 2: the anon-rpc harness (sandboxed hash-pinned tor-js worker) carries the read over Tor, one circuit per account, to the provider" width="880">
+  <img src="assets/transport.svg" alt="The anon-rpc harness (a sandboxed, hash-pinned tor-js worker) carries the read over Tor, one circuit per account, to the provider" width="880">
 </p>
 
-Three rules shape every request:
+**The interception.** At `document_start`, before the page's own scripts run, Veil installs a MAIN-world shim that wraps `window.fetch` and `XMLHttpRequest`. Every dapp read goes through one of those, so a single hook covers **viem, ethers v5/v6 and raw XHR** with no per-library work. For each call Veil:
 
-1. **One route per account.** The account is read from the request, even inside `eth_call` call
-   data, and request ids are blinded so a counter can't stitch routes back together.
-2. **Re-routes around blocks.** Only after a real block, and only for known single-chain RPCs, so
-   it never blindly breaks a multichain gateway.
-3. **Never silently direct.** Any read that can't be made private surfaces a per-site choice.
+1. parses the JSON-RPC body (anything that isn't a JSON-RPC request passes straight through);
+2. finds the account the read is for, from the params or from inside `eth_call` calldata, ignoring the zero address;
+3. picks that account's isolation key and **blinds the request id** (viem numbers requests from one global counter, so untouched ids would let a provider stitch the per-account routes back together);
+4. relays it (MAIN world → ISOLATED relay → background worker → offscreen anon-rpc worker) and returns the provider's reply unchanged.
 
-**Built on anon-rpc.** Veil routes its RPC reads through anon-rpc **by default**. The extension
-runs [`@anon-rpc/browser-extension-harness`](https://www.npmjs.com/package/@anon-rpc/browser-extension-harness) and the helper runs [`@anon-rpc/browser-harness`](https://www.npmjs.com/package/@anon-rpc/browser-harness). With protection on, essentially all of a dapp page's JSON-RPC reads leave through
-anon-rpc. We intentionally **don't hide which addresses you look up** (that needs PIR, a separate
-problem), which is a stated trade-off, not a gap.
+**The transport.** The read is handed to [`@anon-rpc/browser-extension-harness`](https://www.npmjs.com/package/@anon-rpc/browser-extension-harness): a **null-origin, sandboxed iframe** running **tor-js**, a full Tor client in WebAssembly. The worker is fetched at runtime but **hash-pinned on-chain** and verified before it runs. It builds a circuit through a **blind KPS gateway** that relays only encrypted bytes, never your traffic or destination, and reaches the provider from a Tor exit unique to that account.
 
-### How the interception works
+Three rules hold for every request:
 
-At `document_start`, before any of the page's own scripts run, Veil installs a MAIN-world shim that
-wraps `window.fetch` and `XMLHttpRequest`. Every dapp read goes through one of those, so a single hook
-covers viem, ethers v5 and v6, and raw XHR with no per-library integration. For each call Veil:
+1. **One route per account**, with the id blinded so a counter can't re-link routes.
+2. **Re-route only after a real block**, and only for known single-chain RPCs, so a multichain gateway is never blindly broken.
+3. **Never silently direct** - any read that can't be made private surfaces a per-site choice.
 
-1. parses the JSON-RPC body (anything that is not a JSON-RPC request passes straight through, untouched);
-2. finds the account the read is for, from the params or from inside `eth_call` calldata, ignoring the
-   zero address;
-3. picks that account's isolation key and blinds the request id (viem numbers requests with one global
-   counter, so leaving ids as-is would let a provider stitch the per-account routes back together);
-4. relays it through the extension (MAIN world -> ISOLATED-world relay -> background service worker ->
-   offscreen anon-rpc worker) and returns the provider's reply to the page unchanged.
-
-### Scope and what's next
-
-Today Veil makes **dapp reads** private per account (the main leak, since dapps read straight from
-the page) and gives **local tools** (`cast`, scripts) the same per-account reads through the helper.
-With protection on, essentially all of a page's JSON-RPC reads leave through anon-rpc.
-
-The deliberate next step is the **wallet's own opaque HTTPS traffic**, and here too nothing is ever
-silently sent in the clear. An extension cannot see another extension's requests, so when your wallet
-makes its own calls, for example MetaMask fetching your token balances and USD prices from its
-backends (requests that carry your IP and your addresses), Veil's in-page `fetch`/XHR shim never sees
-them. Covering that means routing by host through `chrome.proxy`, which needs a raw-stream path:
-either a capability upstream (the tor-js gateway already supports `CONNECT`; the harness doesn't
-expose it yet) or a local Tor tunnel (hides the IP but can't split per account). That `chrome.proxy`
-hook is built but stays **inert** until one lands.
+We intentionally **don't hide which addresses you look up** (that needs PIR, a separate problem). It's a stated trade-off, not a gap.
 
 <details>
 <summary><b>See the full read path on a real app (ENS), with and without Veil</b></summary>
@@ -131,40 +86,29 @@ hook is built but stays **inert** until one lands.
 <br/>
 
 <p align="center">
-  <img src="assets/ens-flow.svg" alt="The full read path on ENS. Without Veil, drpc (an independent RPC provider) logs your IP and every address, links all your accounts to one person, and joins them across every dapp that uses drpc. With Veil, each account's read is intercepted in the page, routed on its own Tor circuit through a blind KPS gateway to drpc, so the provider sees a different exit per account and no IP; it still sees the addresses queried. Measured: ENS 13 of 14 reads over Tor." width="880">
+  <img src="assets/ens-flow.svg" alt="The full read path on ENS. Without Veil, drpc logs your IP and every address and links your accounts to one person. With Veil, each account's read is routed on its own Tor circuit, so the provider sees a different exit per account and no IP; it still sees the addresses queried. Measured: ENS 13 of 14 reads over Tor." width="880">
 </p>
 
-ENS reads through an independent RPC provider (drpc), which also serves many other dapps, so it is a clean
-example of the cross-dapp linkage Veil breaks. The diagram is honest about the limit: the provider still
-sees the addresses you query, only your IP and the link between your accounts are removed.
+ENS reads through an independent provider (drpc) that also serves many other dapps, so it's a clean example of the cross-dapp linkage Veil breaks. The diagram stays honest about the limit: the provider still sees the addresses you query; only your IP and the link between your accounts are removed.
 
 </details>
 
+### Scope and roadmap
+
+Today Veil makes **dapp reads** private per account (the main leak, since dapps read straight from the page) and gives **local tools** (`cast`, scripts) the same reads through the helper. With protection on, essentially all of a page's JSON-RPC reads leave through anon-rpc.
+
+The deliberate next step is a **wallet's own opaque HTTPS traffic**, for example MetaMask fetching balances and prices from its backends. An extension can't see another extension's requests, so Veil's in-page shim never sees them. Covering that means routing by host through `chrome.proxy`, which needs a raw-stream path (an upstream `CONNECT` the harness doesn't expose yet, or a local Tor tunnel that hides the IP but can't split per account). The `chrome.proxy` hook is built but stays **inert** until one lands, and nothing is ever sent in the clear in the meantime.
+
 ## 4. CROPS
 
-_Censorship-resistant, Open-source, Private, Secure - the properties Veil is built to hold at once._
+_Censorship-resistant, Open-source, Private, Secure._
 
-- **C - Censorship resistant.** There is **no Veil server in the path**. The extension, helper and
-  gateway are all things you run; the Tor gateway is **self-hostable and swappable**, and the
-  Tor-friendly provider list is user-editable. If our gateway or any provider disappears or
-  refuses you, point at another, or run your own, in **one config line**; nothing we operate can
-  cut you off. The anon-client worker is fetched at runtime but **hash-pinned on-chain** and
-  verified before it runs, so no host can swap in different code.
-- **O - Open source.** **MIT.** The extension, helper and app build and run from this repo alone
-  (`pnpm install && node build.mjs`); no hidden service is required to use it.
-- **P - Private.** RPC providers see the addresses you query but **not your IP**, and **cannot link
-  your accounts** (one circuit each). The **gateway relays only encrypted bytes** and never sees
-  your traffic or destination. **No analytics, no telemetry, no accounts.** The honest limits are
-  in the table above.
-- **S - Secure.** Veil **never touches your keys** - it routes reads only; your wallet signs. The
-  anon-client runs in a **null-origin sandboxed iframe** with no access to keys, DOM or cookies.
-  Settings stay on your device (`chrome.storage` / local app). Trust assumptions: the open-source
-  code, the on-chain-hash-pinned worker, and one bootstrap RPC read for the anon-rpc specifier.
+- **C - Censorship resistant.** No Veil server sits in the path. The extension, helper and gateway are all things you run; the gateway is **self-hostable and swappable** and the Tor-friendly provider list is user-editable, so if any of them refuses you, point at another in one config line. The worker is hash-pinned on-chain, so no host can swap in different code.
+- **O - Open source.** **MIT.** Everything builds and runs from this repo alone (`pnpm install && node build.mjs`); no hidden service required.
+- **P - Private.** Providers see the addresses you query but **not your IP**, and **can't link your accounts** (one circuit each). The gateway relays only encrypted bytes. No analytics, no telemetry, no accounts. Honest limits are in the table above.
+- **S - Secure.** Veil **never touches your keys** - it routes reads only; your wallet signs. The anon-client runs in a null-origin sandboxed iframe with no access to keys, DOM or cookies. Settings stay on your device.
 
-No third-party trackers or analytics ship in the client, and Veil handles no keys or personal
-data; everything stays on your device.
-
-## 5. Project structure and setting up locally
+## 5. Project structure and local setup
 
 ```
 veil/
@@ -177,51 +121,38 @@ veil/
 Prereqs: Node 18+ and `pnpm`. The desktop app also needs Rust + Tauri; the real-Tor demo needs a tor-js gateway.
 
 ```bash
-# 1) Browser extension  (to actually route, build with a network - see below)
+# Browser extension (to actually route, build with a network - see below)
 pnpm install
 node build.mjs                 # -> dist/  (load unpacked at chrome://extensions)
 
-# 2) Desktop helper (private localhost RPC for cast / scripts / wallets)
+# Desktop helper (private localhost RPC for cast / scripts)
 cd helper && pnpm install && node helper.mjs      # serves http://127.0.0.1:18545
 
-# 3) Desktop app (optional): spawns the helper, shows status, pairs the extension
+# Desktop app (optional): spawns the helper, shows status, pairs the extension
 cd app/src-tauri && cargo tauri dev
 ```
 
-**Point Veil at a gateway (no rebuild).** The gateway is a runtime setting: install the extension,
-run a gateway, and paste its address into the popup's **Network settings**. To run and watch a
-self-hosted gateway, build [`tor-js-gateway`](https://github.com/ethereum/tor-js) once and copy the
-binary to `~/veil-gateway`, then:
+**Point Veil at a gateway (no rebuild).** The gateway is a runtime setting: install the extension, run a gateway, and paste its address into **Settings → Network**. To run a self-hosted gateway, build [`tor-js-gateway`](https://github.com/ethereum/tor-js) once, copy the binary to `~/veil-gateway`, then:
 
 ```bash
-node tools/gateway.mjs          # start it, show live status, and print the line to paste
+node tools/gateway.mjs          # start it, show live status, print the line to paste
 node tools/gateway.mjs status   # check UP / DOWN anytime
 ```
 
-It prints a line like `127.0.0.1:12298:<certhash>`; paste that into **popup -> Network settings ->
-Gateways -> Save**. The default build points at the EF public demo gateway, which is often down, so
-a fresh install may sit on "Connecting privately…" until you set your own. Veil never falls back to a
-direct connection silently.
+It prints a line like `127.0.0.1:12298:<certhash>`; paste that into **Settings → Network → Gateways → Save**. The default build points at the EF public demo gateway, which is often down, so a fresh install may sit on "Connecting privately…" until you set your own. Veil never falls back to a direct connection silently.
 
-**Baking a network at build time (optional).** Instead of the runtime setting, you can bake it in:
+**Bake a network at build time (optional).**
 
 ```bash
 # real Tor via your gateway:
 VEIL_SPECIFIER=0x700dA3193D35fA54Cd3fBf29B66f2a2A0385659e \
 VEIL_GATEWAYS='["127.0.0.1:12298:<your-gateway-certhash>"]' node build.mjs
+
 # or the passthrough specifier (no Tor, not private) for a deterministic plumbing demo:
 VEIL_SPECIFIER=0x4fd77be300f31c5fe6ab266d35d27750a3478d27 VEIL_GATEWAYS='[]' node build.mjs
 ```
 
-### Run it for a demo
-
-- **Extension:** build with a network chosen (path A or B above, not a bare `node build.mjs`), then
-  open `chrome://extensions`, enable Developer mode, click **Load unpacked**, and pick `dist/`. For a
-  live pitch, use path A with your gateway running, and lead with an app that serves Tor (Lido, ENS,
-  Compound) so the per-account flow is clean; Aave is the one re-route beat (its provider blocks Tor,
-  so Veil re-routes it).
-- **Desktop app:** `cd app/src-tauri && cargo tauri dev` (or build an unsigned bundle and open it
-  with right-click then Open on macOS). Signed installers and store listings are a later, optional step.
+For a live demo, build with your gateway running and lead with an app that serves Tor (Lido, ENS, Compound) so the per-account flow is clean; Aave is the re-route beat, since its provider blocks Tor.
 
 ## License
 
