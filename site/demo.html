@@ -45,6 +45,16 @@
     .fine{color:var(--faint);font-size:12.5px;margin-top:26px;line-height:1.65}
     .fine code{font-family:var(--ff-mono);color:var(--muted)}
     a{color:var(--text)}
+    .steps{ margin:0 0 26px }
+    .status{ display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-family:var(--ff-mono);
+      padding:7px 11px;border:1px solid var(--line);border-radius:9px;color:var(--muted);margin-bottom:16px }
+    .status::before{ content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none }
+    .status.ok{ color:var(--accent);border-color:#30373a } .status.ok::before{ background:var(--accent) }
+    .status.warn{ color:var(--amber);border-color:#53342a } .status.warn::before{ background:var(--amber) }
+    .steps ol{ margin:0;padding-left:20px;color:var(--muted);font-size:14px;line-height:1.75 }
+    .steps ol b{ color:var(--text) }
+    .steps .dl{ display:inline-block;margin-left:7px;font-family:var(--ff);font-size:12px;color:var(--bg);
+      background:var(--accent);border-radius:7px;padding:3px 10px;text-decoration:none;font-weight:600 }
     @media (max-width:520px){ .row{flex-wrap:wrap} .row .k{width:auto} h1{font-size:28px} }
   </style>
 </head>
@@ -53,10 +63,20 @@
     <div class="eyebrow">Veil &middot; live</div>
     <h1>Watch your IP disappear</h1>
     <p class="lede">
-      This page makes the same kind of read a dapp makes: a JSON-RPC request to a server that
-      reports back the IP it saw. Done directly, the server sees your real IP. With Veil on, each of
-      your accounts goes out on its own Tor circuit, so the server sees unrelated strangers, and never you.
+      This page makes the same kind of read a dapp makes: a JSON-RPC request to a server that reports
+      back the IP it saw. <b>The Veil extension intercepts that read and sends it over Tor</b>, one
+      route per account. So a direct read shows your real IP; through Veil, the server sees a different
+      Tor exit for each account, never you. This page is where you point the extension.
     </p>
+
+    <div class="steps">
+      <div class="status" id="extStatus">Checking for the Veil extension&hellip;</div>
+      <ol>
+        <li><b>Install Veil</b> and load it in Chrome.<a class="dl" href="https://github.com/Aman035/veil/releases" target="_blank" rel="noopener">Download</a></li>
+        <li><b>Turn it on</b>, click the Veil toolbar icon until it reads &ldquo;Private &middot; Tor&rdquo;.</li>
+        <li><b>Run the reads</b> below. Do it once with Veil <b>off</b>, once <b>on</b>, to watch your IP change.</li>
+      </ol>
+    </div>
 
     <div class="card">
       <div class="row" data-kind="direct" id="rDirect">
@@ -128,6 +148,15 @@
       $(valId).classList.toggle("set", !!ip);
       $(rowId).classList.toggle("set", !!ip);
     }
+
+    // Live extension detection: inject.js sets window.__veilInjected at
+    // document_start when the extension is loaded on this page.
+    function checkExt() {
+      const el = $("extStatus");
+      if (window.__veilInjected) { el.className = "status ok"; el.textContent = "Veil extension detected on this page"; }
+      else { el.className = "status warn"; el.textContent = "Veil not detected here, install it and reload"; }
+    }
+    checkExt(); setInterval(checkExt, 1200);
 
     // Warm the harness on load so the first click is fast (no cold-start wait on
     // stage). Harmless if Veil is off (just a direct POST that we ignore).
