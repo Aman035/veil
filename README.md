@@ -55,9 +55,10 @@ Veil makes the wallets and dapps you **already use** private, with no change to 
 - **Never silently direct.** If a read can't be made private, Veil asks you, per site, before any
   direct connection.
 
-It ships in two parts: a **browser extension** (Chrome / Brave) that makes every dapp read
-private, and an optional **desktop app** that also covers the wallet's own traffic and local
-tools like `cast`, and pairs with the extension.
+The shipping product is the **browser extension** (Chrome / Brave) that makes every dapp read
+private. An optional **desktop app** (in progress, not shipped) gives local tools like `cast` the
+same per-account privacy and pairs with the extension; routing the wallet's own traffic is the next
+step on its roadmap.
 
 **Honest about what it hides:**
 
@@ -72,7 +73,7 @@ tools like `cast`, and pairs with the extension.
 The extension intercepts a dapp page's JSON-RPC reads, routes each to its account's Tor circuit
 through the anon-rpc harness, and returns the answer. The anon-client code runs **hash-pinned
 and sandboxed** (anon-rpc) with no access to your keys, DOM or cookies. The desktop app runs the
-same harness for the wallet's own traffic and for local tools.
+same harness for local tools like `cast`; routing the wallet's own traffic is the next step (see Scope).
 
 <p align="center">
   <img src="assets/interception.svg" alt="Step 1: Veil catches the read, reads the account, and blinds the request id" width="760">

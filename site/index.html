@@ -463,7 +463,7 @@
             </div>
             <div class="hv">
               <div class="col hide"><div class="ct">Hidden</div><ul><li>Your IP</li><li>Accounts linked</li></ul></div>
-              <div class="col show"><div class="ct">Still visible</div><ul><li>Addresses you query</li><li>That you use Tor</li></ul></div>
+              <div class="col show"><div class="ct">Still visible</div><ul><li>Addresses you query</li></ul></div>
             </div>
           </div>
         </div>
@@ -513,7 +513,7 @@
     <div class="head">
       <span class="eyebrow">Honest about privacy</span>
       <h2>What it hides - and what it doesn't.</h2>
-      <p>Privacy you don't actually have is worse than none. Here's the exact line - the same one we show inside the product.</p>
+      <p>Privacy you don't actually have is worse than none.</p>
     </div>
     <div class="honest-grid">
       <div class="hcol hide">
@@ -527,8 +527,7 @@
         <span class="ht">Still visible</span>
         <ul>
           <li><div class="li-t">The addresses you query</div><div class="li-d">Providers still see which addresses you read. Concealing that requires private information retrieval (PIR), which is beyond the scope of this project.</div></li>
-          <li><div class="li-t">Your wallet's multi-account APIs</div><div class="li-d">Some wallet services request every account in a single call. Veil hides your IP on that traffic, but the accounts remain linked at the application layer.</div></li>
-          <li><div class="li-t">That you use Tor</div><div class="li-d">The Tor gateway can see that you use Tor, but not which sites you visit or what you read.</div></li>
+          <li><div class="li-t">Your wallet's own account calls</div><div class="li-d">Some wallets ask their own backend for all your accounts in one call. Veil removes your IP from it, but that backend still sees your accounts grouped together, a link made inside the wallet, not by the reads Veil routes.</div></li>
         </ul>
       </div>
     </div>
