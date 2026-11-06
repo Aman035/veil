@@ -1,7 +1,7 @@
 // Phase 1b: fallback re-routing after a block.
 //  - A KNOWN single-chain RPC (Tenderly mainnet) that returns 403 must be
 //    re-routed to a Tor-friendly provider and succeed.
-//  - A MULTICHAIN gateway (Uniswap) that returns 403 must stay blocked — never
+//  - A MULTICHAIN gateway (Uniswap) that returns 403 must stay blocked - never
 //    blindly rerouted (E4: blind reroute breaks Uniswap).
 import { chromium } from "playwright";
 import { createServer } from "node:http";
@@ -55,7 +55,7 @@ for (let i = 0; i < 120 && !r; i++) { await sleep(500); r = await page.evaluate(
 
 console.log("=== page results ===");
 console.log(JSON.stringify(r, null, 2));
-const dump = await sw.evaluate(([o]) => ({ tab: self.__unlink.tabs().map(([, s]) => s).find((s) => s.origin === o) }), [origin]);
+const dump = await sw.evaluate(([o]) => ({ tab: self.__veil.tabs().map(([, s]) => s).find((s) => s.origin === o) }), [origin]);
 console.log("=== tab stats ===", JSON.stringify(dump.tab));
 
 const hex = (x) => typeof x === "string" && /^0x[0-9a-f]+$/i.test(x);

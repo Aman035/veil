@@ -1,4 +1,4 @@
-/* Unlink desktop app — dark product world, matching site/index.html.
+/* Veil desktop app - dark product world, matching site/index.html.
    Committed dark by design; every color is an explicit token. */
 :root{
   color-scheme: dark;
@@ -135,7 +135,7 @@ h3,h4{ font-family:var(--ff-display); font-weight:800; letter-spacing:-.025em; l
 .hv .ct{ font-size:10px; letter-spacing:.09em; text-transform:uppercase; margin-bottom:9px; font-family:var(--ff-mono) }
 .hv .hide .ct{ color:var(--accent) } .hv .show .ct{ color:var(--amber) }
 .hv ul{ list-style:none } .hv li{ font-size:12px; color:var(--muted); padding:3px 0; display:flex; gap:7px }
-.hv .hide li::before{ content:"✓"; color:var(--accent) } .hv .show li::before{ content:"—"; color:var(--amber) }
+.hv .hide li::before{ content:"✓"; color:var(--accent) } .hv .show li::before{ content:"-"; color:var(--amber) }
 
 /* ---------- settings ---------- */
 .set-list{ border:1px solid var(--line); border-radius:14px; overflow:hidden; background:rgba(255,255,255,.02) }

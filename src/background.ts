@@ -7,12 +7,12 @@ import { classifyEndpoint, torFriendlyFor } from "./shared/providers";
 import type { TabStats, GlobalStats, SitePolicy } from "./shared/protocol";
 
 // Network is configurable (PRD §11: swappable gateways / specifiers). Defaults
-// to tor-js on mainnet + the EF demo gateway; build with UNLINK_SPECIFIER /
-// UNLINK_GATEWAYS to point elsewhere (e.g. the passthrough specifier for tests).
-declare const __UNLINK_SPECIFIER__: string;
-declare const __UNLINK_GATEWAYS__: string;
-const SPECIFIER = __UNLINK_SPECIFIER__;
-const GATEWAYS: string[] = JSON.parse(__UNLINK_GATEWAYS__);
+// to tor-js on mainnet + the EF demo gateway; build with VEIL_SPECIFIER /
+// VEIL_GATEWAYS to point elsewhere (e.g. the passthrough specifier for tests).
+declare const __VEIL_SPECIFIER__: string;
+declare const __VEIL_GATEWAYS__: string;
+const SPECIFIER = __VEIL_SPECIFIER__;
+const GATEWAYS: string[] = JSON.parse(__VEIL_GATEWAYS__);
 const BOOT_RPC = "https://ethereum-rpc.publicnode.com";
 
 // ---- settings ----
@@ -54,7 +54,8 @@ async function setPolicy(origin: string, policy: SitePolicy): Promise<void> {
 // traffic is covered, and (b) the chrome.proxy target (D2) is only ever armed
 // when the helper is actually present. Absence = any error/timeout = "not
 // installed". The background SW is allowed to fetch loopback via <all_urls>.
-const HELPER_HEALTH = "http://127.0.0.1:18545/__unlink/health";
+const HELPER_HEALTH = "http://127.0.0.1:18545/__veil/health";
+const HELPER_PING = "http://127.0.0.1:18545/__veil/extension-ping"; // announce the extension (real pairing)
 let helperConnected = false;
 let helperInfo: { network?: string; harness?: string } = {};
 
@@ -67,6 +68,7 @@ async function pollHelper(): Promise<boolean> {
     const j: any = await res.json();
     helperConnected = j && j.ok === true;
     helperInfo = helperConnected ? { network: j.network, harness: j.harness } : {};
+    if (helperConnected) fetch(HELPER_PING, { cache: "no-store" }).catch(() => {}); // tell the app we're here
   } catch {
     helperConnected = false;
     helperInfo = {};
@@ -86,14 +88,14 @@ async function pollHelper(): Promise<boolean> {
 // helper is absent, we CLEAR the proxy so nothing is ever silently misrouted.
 //
 // CRITICAL (evidence.md E1): Chrome NEVER proxies loopback addresses. A loopback
-// PROXY target would be ignored and the request would fall back to DIRECT — a
+// PROXY target would be ignored and the request would fall back to DIRECT - a
 // "direct but thinks it's private" path, which CLAUDE.md forbids. So the proxy
 // is armed ONLY when the target is a real NON-loopback host. The placeholder
 // below is loopback, so D2 stays wired-but-inert until the desktop helper ships
 // its real non-loopback proxy endpoint (separate track); replace HELPER_PROXY
 // then and HELPER_PROXY_READY flips true automatically.
-const HELPER_PROXY_HOST = "127.0.0.1"; // PLACEHOLDER — needs the helper's NON-loopback proxy host
-const HELPER_PROXY_PORT = 18546;       // PLACEHOLDER — the helper's proxy port
+const HELPER_PROXY_HOST = "127.0.0.1"; // PLACEHOLDER - needs the helper's NON-loopback proxy host
+const HELPER_PROXY_PORT = 18546;       // PLACEHOLDER - the helper's proxy port
 const HELPER_PROXY = `PROXY ${HELPER_PROXY_HOST}:${HELPER_PROXY_PORT}`;
 function isLoopback(h: string): boolean {
   return h === "localhost" || h === "::1" || h === "127.0.0.1" || h.startsWith("127.");
@@ -284,7 +286,7 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
   // Harness down (not a provider block): fail closed, never go direct, never
   // ask to allow-direct. Matches the popup's "Paused: not private" (PRD §6.3).
   if (harness === "error") {
-    return { ok: false, error: "unlink: paused — the anonymizing network is unavailable (not private)", routeKey: key };
+    return { ok: false, error: "veil: paused - the anonymizing network is unavailable (not private)", routeKey: key };
   }
 
   s.total++; bumpToday(origin);
@@ -305,7 +307,7 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
         if (rr.ok) { s.rerouted++; s.protectedCount++; addRoute(); return { ok: true, status: 200, body: restore(rr.json), routeKey: key, rerouted: true }; }
       }
       s.blocked++;
-      return { ok: false, blocked: true, error: "unlink: provider blocked anonymous access and re-routing failed", routeKey: key };
+      return { ok: false, blocked: true, error: "veil: provider blocked anonymous access and re-routing failed", routeKey: key };
     }
 
     // Not safely re-routable (multichain gateway / custom backend) -> site policy.
@@ -314,15 +316,15 @@ async function routeRpc(url: string, body: unknown, origin: string, tabId: numbe
       // The user explicitly allowed a direct (non-private) connection for this
       // site. The page performs the real native request itself (inject.ts).
       s.direct++;
-      return { ok: false, allowDirect: true, error: "unlink: allowed direct for this site (not private)", routeKey: key };
+      return { ok: false, allowDirect: true, error: "veil: allowed direct for this site (not private)", routeKey: key };
     }
     if (policy === "block") {
       s.blocked++;
-      return { ok: false, blocked: true, error: "unlink: this site's provider blocks anonymous access — kept blocked", routeKey: key };
+      return { ok: false, blocked: true, error: "veil: this site's provider blocks anonymous access - kept blocked", routeKey: key };
     }
     // "ask" (default): tell the page to show the one-time dialog; don't count it
-    // as blocked yet — the retry after the user's choice records the outcome.
-    return { ok: false, blocked: true, needsPolicy: true, error: "unlink: this site's provider blocks anonymous access", routeKey: key };
+    // as blocked yet - the retry after the user's choice records the outcome.
+    return { ok: false, blocked: true, needsPolicy: true, error: "veil: this site's provider blocks anonymous access", routeKey: key };
   } finally {
     keepAlive(false);
   }
@@ -345,7 +347,7 @@ chrome.runtime.onMessage.addListener((msg, sender, respond) => {
   }
   if (msg?.type === "rpc") {
     (async () => {
-      if (!(await isProtected(origin))) { respond({ ok: false, error: "unlink: not protected" }); return; }
+      if (!(await isProtected(origin))) { respond({ ok: false, error: "veil: not protected" }); return; }
       respond(await routeRpc(msg.url, msg.body, origin, tabId));
     })();
     return true;
@@ -413,7 +415,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 });
 
 // Small debug surface (handy in devtools and e2e; no page can reach it).
-(self as any).__unlink = {
+(self as any).__veil = {
   boot: async () => { const t0 = Date.now(); try { await getWorker().ready; return { ok: true, ms: Date.now() - t0 }; } catch (e) { return { ok: false, ms: Date.now() - t0, error: (e as Error)?.message ?? String(e) }; } },
   harness: () => ({ harness, harnessMs }),
   tab: (id: number) => tabStats.get(id),

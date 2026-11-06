@@ -1,11 +1,11 @@
 // MAIN-world interceptor (document_start). Runs in the page's world so it can
 // wrap the page's own fetch/XHR and observe window.ethereum. No chrome APIs
-// here — it talks to the ISOLATED content script via window.postMessage.
+// here - it talks to the ISOLATED content script via window.postMessage.
 import { TAG, type PageToContent, type ContentToPage } from "./shared/protocol";
 
 (() => {
-  if ((window as any).__unlinkInjected) return;
-  (window as any).__unlinkInjected = true;
+  if ((window as any).__veilInjected) return;
+  (window as any).__veilInjected = true;
 
   let state: { enabled: boolean; isProtected: boolean } | null = null;
   let resolveFirstState: (() => void) | null = null;
@@ -56,7 +56,7 @@ import { TAG, type PageToContent, type ContentToPage } from "./shared/protocol";
       pending.set(id, resolve);
       post({ tag: TAG, dir: "p2c", kind: "rpc", id, url, body });
       setTimeout(() => {
-        if (pending.has(id)) { pending.delete(id); resolve({ tag: TAG, dir: "c2p", kind: "rpc-result", id, ok: false, error: "unlink: routing timeout" }); }
+        if (pending.has(id)) { pending.delete(id); resolve({ tag: TAG, dir: "c2p", kind: "rpc-result", id, ok: false, error: "veil: routing timeout" }); }
       }, 45000);
     });
   }
@@ -83,11 +83,11 @@ import { TAG, type PageToContent, type ContentToPage } from "./shared/protocol";
           // request. This is the ONLY sanctioned direct path (PRD §5.3).
           if (res.allowDirect) return nativeFetch(input as any, init);
           // Otherwise fail closed (never silently direct).
-          throw new Error(res.error || "unlink: request blocked (not private)");
+          throw new Error(res.error || "veil: request blocked (not private)");
         }
       }
     } catch (e) {
-      if (e instanceof Error && e.message.startsWith("unlink:")) throw e;
+      if (e instanceof Error && e.message.startsWith("veil:")) throw e;
       // fall through to native on our own bugs rather than breaking the page
     }
     return nativeFetch(input as any, init);
@@ -98,11 +98,11 @@ import { TAG, type PageToContent, type ContentToPage } from "./shared/protocol";
   const open = XHR.prototype.open;
   const send = XHR.prototype.send;
   XHR.prototype.open = function (this: any, m: string, u: string) {
-    this.__unlink = { method: String(m).toUpperCase(), url: String(u) };
+    this.__veil = { method: String(m).toUpperCase(), url: String(u) };
     return open.apply(this, arguments as any);
   };
   XHR.prototype.send = function (this: any, body?: any) {
-    const info = this.__unlink;
+    const info = this.__veil;
     const bodyText = typeof body === "string" ? body : "";
     if (info && info.method === "POST" && /^https?:/i.test(info.url) && looksLikeRpc(bodyText)) {
       const xhr = this;
@@ -128,7 +128,7 @@ import { TAG, type PageToContent, type ContentToPage } from "./shared/protocol";
 
   // --- observe the wallet's accounts (reliable account source) ---
   function wrapProvider(p: any) {
-    if (!p || p.__unlinkWrapped || typeof p.request !== "function") return p;
+    if (!p || p.__veilWrapped || typeof p.request !== "function") return p;
     const orig = p.request.bind(p);
     p.request = async (args: any) => {
       const out = await orig(args);
@@ -139,7 +139,7 @@ import { TAG, type PageToContent, type ContentToPage } from "./shared/protocol";
       } catch {}
       return out;
     };
-    p.__unlinkWrapped = true;
+    p.__veilWrapped = true;
     return p;
   }
   try {

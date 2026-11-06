@@ -63,7 +63,7 @@ const okBalOther = hex(results?.balanceOther?.result);
 const idsRestored = results?.balanceAcct?.id === 101 && results?.block?.id === 102 && results?.balanceOther?.id === 103;
 
 const tabId = await page.evaluate(() => 0).catch(() => 0); // not used; read via SW
-const dump = await sw.evaluate(([o]) => ({ tabs: self.__unlink.tabs(), today: self.__unlink.today(), accounts: self.__unlink.accounts(o), harness: self.__unlink.harness() }), [origin]);
+const dump = await sw.evaluate(([o]) => ({ tabs: self.__veil.tabs(), today: self.__veil.today(), accounts: self.__veil.accounts(o), harness: self.__veil.harness() }), [origin]);
 console.log("\n=== extension state ===");
 console.log(JSON.stringify(dump, null, 2));
 

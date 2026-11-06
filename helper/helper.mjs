@@ -1,4 +1,4 @@
-// Unlink desktop helper (phase 2 skeleton) — requirement D3.
+// Veil desktop helper (phase 2 skeleton) - requirement D3.
 //
 // Exposes a localhost JSON-RPC endpoint (default http://127.0.0.1:18545) that
 // routes every request through the EF anon-rpc browser harness running tor-js
@@ -7,7 +7,7 @@
 // ids are blinded before they leave, and restored on the way back.
 //
 // Why a browser engine: the EF Node harness can't run tor-js (QuickJS has no
-// WebAssembly — evidence.md E5 / PRD D1). The proven path (E5) is the EF
+// WebAssembly - evidence.md E5 / PRD D1). The proven path (E5) is the EF
 // browser harness in a hidden Chromium, which is what this launches.
 //
 // Config (env vars, all optional):
@@ -18,7 +18,7 @@
 //   HELPER_HOST        listen host                 (default: 127.0.0.1)
 //   HELPER_PORT        listen port                 (default: 18545)
 //   HELPER_ACCOUNTS    comma-separated addresses to seed as known accounts
-//                      (a wallet-oracle analog; default: none — learn from reads)
+//                      (a wallet-oracle analog; default: none - learn from reads)
 //   HELPER_READY_TIMEOUT_MS  fail if the harness isn't ready in time
 //                      (default: 90000; the boot path itself has no timeout)
 //
@@ -121,11 +121,11 @@ function blind(parsed) {
 
 // --- control API state (read-only dashboard feed) ----------------------------
 // The desktop app reads these over the SAME local server. Everything here is a
-// view of traffic the helper has already routed — no new network behaviour.
+// view of traffic the helper has already routed - no new network behaviour.
 //
-// SECURITY NOTE: /__unlink/health and /__unlink/status are READ-ONLY and safe to
+// SECURITY NOTE: /__veil/health and /__veil/status are READ-ONLY and safe to
 // serve with CORS `*`. Any future MUTATION route (toggle protection, switch
-// network, forget an account) MUST require a per-session bearer token — a web
+// network, forget an account) MUST require a per-session bearer token - a web
 // page on any origin can reach 127.0.0.1, so a mutation must never trust the
 // Origin/CORS alone. GET status/health leak only local, non-secret counters.
 let harnessState = "booting"; // "booting" | "ready" | "error"
@@ -140,7 +140,7 @@ function sendJson(res, code, obj) {
   res.writeHead(code, { "content-type": "application/json", ...CORS }).end(JSON.stringify(obj));
 }
 // Track, per account seen, its last route key (exitIp stays null under
-// passthrough — the harness doesn't surface the exit under tor-js yet either).
+// passthrough - the harness doesn't surface the exit under tor-js yet either).
 function recordAccount(normAddr, key) {
   let a = accounts.get(normAddr);
   if (!a) {
@@ -150,12 +150,16 @@ function recordAccount(normAddr, key) {
   a.routeKey = key;
   a.requests++;
 }
+// Real extension pairing: the browser extension pings /__veil/extension-ping
+// on its poll; we consider it "paired" if seen within the last 30s.
+let lastExtensionPing = 0;
 function statusBody() {
   return {
     ok: true,
     connected: harnessState === "ready",
     network: networkLabel,
     harness: harnessState,
+    extensionPaired: Date.now() - lastExtensionPing < 30000,
     accounts: [...accounts.values()].map((a) => ({
       label: a.label, address: a.address, routeKey: a.routeKey, exitIp: a.exitIp ?? null, status: a.status,
     })),
@@ -215,7 +219,7 @@ async function main() {
   // The localhost server (D3). It serves BOTH the JSON-RPC POST at "/" and the
   // read-only control API the desktop app polls. It starts listening BEFORE the
   // harness boots, so the app can show "booting" (and never a silent direct
-  // fallback — JSON-RPC POSTs fail visibly with 503 until the harness is ready).
+  // fallback - JSON-RPC POSTs fail visibly with 503 until the harness is ready).
   rpcServer = createServer((req, res) => {
     const path = (req.url || "/").split("?")[0];
 
@@ -225,12 +229,18 @@ async function main() {
       return;
     }
     // Read-only control routes (safe with CORS *; see SECURITY NOTE above).
-    if (req.method === "GET" && path === "/__unlink/health") {
+    if (req.method === "GET" && path === "/__veil/health") {
       sendJson(res, 200, { ok: true, network: networkLabel, harness: harnessState });
       return;
     }
-    if (req.method === "GET" && path === "/__unlink/status") {
+    if (req.method === "GET" && path === "/__veil/status") {
       sendJson(res, 200, statusBody());
+      return;
+    }
+    // The extension announces itself here each poll - a real pairing signal.
+    if (req.method === "GET" && path === "/__veil/extension-ping") {
+      lastExtensionPing = Date.now();
+      sendJson(res, 200, { ok: true });
       return;
     }
 
@@ -252,7 +262,7 @@ async function main() {
       // 1) learn accounts from this request (balance/nonce name the user)
       known.observe(parsed);
       // 2) pick the per-account isolation key (ignores the zero address; finds
-      //    the user's address inside eth_call calldata) — E9 heuristic.
+      //    the user's address inside eth_call calldata) - E9 heuristic.
       const key = routing.routeKeyForBody(parsed, known.set);
       // control-API counters: record the account's last route + bump totals
       todayRequests++;
@@ -274,7 +284,7 @@ async function main() {
         log(`${method}  key=${key}  ${status}  ${Date.now() - t}ms`);
         res.writeHead(status || 200, { "content-type": "application/json", ...CORS }).end(outText);
       } catch (e) {
-        // Fail visibly — never fall back to a direct connection.
+        // Fail visibly - never fall back to a direct connection.
         reqLog.push({ method: Array.isArray(parsed) ? "batch" : parsed?.method, key, error: String(e), ms: Date.now() - t });
         log("request failed:", String(e));
         res.writeHead(502, { "content-type": "application/json", ...CORS })
@@ -283,7 +293,7 @@ async function main() {
     });
   });
   await new Promise((r) => rpcServer.listen(cfg.port, cfg.host, r));
-  log(`control API on http://${cfg.host}:${cfg.port}/__unlink/health  (and /status)`);
+  log(`control API on http://${cfg.host}:${cfg.port}/__veil/health  (and /status)`);
   log(`private JSON-RPC on http://${cfg.host}:${cfg.port}  (harness booting…)`);
 
   // Now boot the harness. The server already answers health/status as "booting".
@@ -301,7 +311,7 @@ async function main() {
     ]);
     harnessState = "ready";
     log(`harness ready in ${readyMs} ms`);
-    log("ready — point cast/wallets at the endpoint above. Ctrl-C to stop.");
+    log("ready - point cast/wallets at the endpoint above. Ctrl-C to stop.");
   } catch (e) {
     harnessState = "error";
     throw new Error(`harness boot failed: ${e.message}`);

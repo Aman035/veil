@@ -1,4 +1,4 @@
-// Generate Unlink toolbar icons (16/32/128 PNG) with no image deps.
+// Generate Veil toolbar icons (16/32/128 PNG) with no image deps.
 // A rounded brand-gradient tile with a broken ring (un-link) mark.
 import { deflateSync } from "node:zlib";
 import { writeFileSync, mkdirSync } from "node:fs";

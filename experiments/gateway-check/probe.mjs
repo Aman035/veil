@@ -3,7 +3,7 @@
 // Gateway KPS address: 152.236.3.22:12298:uEiCH0VdbhryzJcMtCfB0vLA4sOvHdQ4hq5w7CopcwU59bQ
 // KPS in a browser harness dials over WebRTC; WebRTC data channels run DTLS
 // over UDP (ICE host candidate) or, as a fallback, ICE-TCP. So a *closed* TCP
-// port is suggestive but NOT definitive — the listener may be UDP-only. We
+// port is suggestive but NOT definitive - the listener may be UDP-only. We
 // therefore probe TCP (definitive when OPEN), and UDP (best-effort: a reply or
 // ICMP-unreachable is informative; silence is inconclusive). publicnode is the
 // control: if it is reachable and the gateway is not, the network path is fine.

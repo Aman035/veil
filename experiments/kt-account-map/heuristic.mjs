@@ -8,7 +8,7 @@
 //    EIP-6963). It can also LEARN addresses from balance/nonce queries.
 //  - A request maps to an account if a KNOWN account address appears in its
 //    params or inside eth_call calldata. We only ever match known addresses,
-//    never "extract" one — so shared infra (routers, tokens, spenders) in
+//    never "extract" one - so shared infra (routers, tokens, spenders) in
 //    calldata can't create a false link.
 //  - The zero address is ignored (a mis-keyed eth_call `from` is 0x000…; E5).
 //  - No known account present -> the shared NEUTRAL route.

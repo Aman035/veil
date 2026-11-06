@@ -5,7 +5,7 @@
 // The helper is faked by a tiny local HTTP server serving the health endpoint
 // (with CORS), per the helper contract. If 127.0.0.1:18545 is busy in the test
 // env, we fall back to driving helperConnected through the background debug
-// surface (self.__unlink) so the assertion still exercises the real render path.
+// surface (self.__veil) so the assertion still exercises the real render path.
 import { chromium } from "playwright";
 import { createServer } from "node:http";
 import { fileURLToPath } from "node:url";
@@ -24,11 +24,11 @@ function healthServer() {
         "access-control-allow-methods": "GET,OPTIONS",
       };
       if (req.method === "OPTIONS") { res.writeHead(204, cors); return res.end(); }
-      if (req.url === "/__unlink/health") {
+      if (req.url === "/__veil/health") {
         res.writeHead(200, { ...cors, "content-type": "application/json" });
         return res.end(JSON.stringify({ ok: true, network: "tor", harness: "ready" }));
       }
-      if (req.url === "/__unlink/status") {
+      if (req.url === "/__veil/status") {
         res.writeHead(200, { ...cors, "content-type": "application/json" });
         return res.end(JSON.stringify({ ok: true, network: "tor", harness: "ready", requests: 0 }));
       }
@@ -64,12 +64,12 @@ async function readWalletState() {
 // --- A: helper present -> "protected" ---
 let detected = false;
 if (realHelper) {
-  for (let i = 0; i < 20 && !detected; i++) { detected = await sw.evaluate(() => self.__unlink.pokeHelper()); if (!detected) await sleep(250); }
+  for (let i = 0; i < 20 && !detected; i++) { detected = await sw.evaluate(() => self.__veil.pokeHelper()); if (!detected) await sleep(250); }
 } else {
   // fallback: there's no real health server, so simulate the connected state.
-  await sw.evaluate(() => { /* flip via debug surface */ self.__unlink.routeWallet(false); });
+  await sw.evaluate(() => { /* flip via debug surface */ self.__veil.routeWallet(false); });
   // No health server means pollHelper can't connect; mark the test's intent clearly.
-  detected = await sw.evaluate(() => self.__unlink.pokeHelper());
+  detected = await sw.evaluate(() => self.__veil.pokeHelper());
 }
 const a = await readWalletState();
 await a.pop.screenshot({ path: here + "popup-helper.png" });
@@ -77,7 +77,7 @@ await a.pop.screenshot({ path: here + "popup-helper.png" });
 // --- B: helper absent -> "not covered" ---
 if (helper) { helper.close(); helper = null; await sleep(300); }
 let goneDetected = true;
-for (let i = 0; i < 20 && goneDetected; i++) { goneDetected = await sw.evaluate(() => self.__unlink.pokeHelper()); if (goneDetected) await sleep(250); }
+for (let i = 0; i < 20 && goneDetected; i++) { goneDetected = await sw.evaluate(() => self.__veil.pokeHelper()); if (goneDetected) await sleep(250); }
 const b = await readWalletState();
 
 console.log("\n=== results ===");
@@ -99,7 +99,7 @@ if (!realHelper) {
   delete checks["helper health endpoint detected by background"];
   delete checks["popup shows 'Wallet traffic: protected' when helper present"];
   delete checks["wallet row marked helper=on when present"];
-  console.log("(ran in fallback mode: 'present' assertions skipped — port 18545 was busy)");
+  console.log("(ran in fallback mode: 'present' assertions skipped - port 18545 was busy)");
 }
 
 let pass = true;

@@ -2,12 +2,12 @@
 //
 // Rendered by the ISOLATED-world content script into a Shadow DOM host so the
 // page's own CSS can't touch it. No native alert()/confirm() (those are
-// forbidden — they'd break extension messaging). Keyboard-accessible, dark and
+// forbidden - they'd break extension messaging). Keyboard-accessible, dark and
 // on-brand (palette mirrors popup.css). Resolves to the user's choice.
 
 import type { SitePolicy } from "./protocol";
 
-const HOST_ID = "__unlink_policy_host__";
+const HOST_ID = "__veil_policy_host__";
 
 // Palette lifted from popup.css so the dialog matches the popup exactly.
 const CSS = `
@@ -95,20 +95,20 @@ export function showPolicyDialog(dappHost: string): Promise<SitePolicy> {
       <div class="card" part="card">
         <div class="head">
           <span class="mark" aria-hidden="true"></span>
-          <span class="brand">Unlink</span>
+          <span class="brand">Veil</span>
           <span class="tag">Privacy choice</span>
         </div>
         <p class="title" id="ul-title"><b>${escapeHtml(dappHost)}</b>'s data provider blocks anonymous access.</p>
         <p class="body" id="ul-body">
           We can't route this request privately and can't safely re-route it.
           You can allow a <span class="warn">direct (non-private)</span> connection for this
-          site, which reveals your IP to its provider — or keep it blocked.
+          site, which reveals your IP to its provider - or keep it blocked.
         </p>
         <div class="row">
           <button class="keep" data-choice="block" type="button">Keep blocked</button>
           <button class="direct" data-choice="allow-direct" type="button">Allow direct for this site</button>
         </div>
-        <p class="note">We remember your choice for ${escapeHtml(dappHost)}. Change it anytime in the Unlink popup.</p>
+        <p class="note">We remember your choice for ${escapeHtml(dappHost)}. Change it anytime in the Veil popup.</p>
       </div>
     `;
 

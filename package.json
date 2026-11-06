@@ -1,9 +1,9 @@
 {
-  "name": "unlink-extension",
+  "name": "veil-extension",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Unlink — private by default for the wallets and dapps you already use. MV3 extension (Chrome/Brave MVP).",
+  "description": "Veil - private by default for the wallets and dapps you already use. MV3 extension (Chrome/Brave MVP).",
   "license": "MIT",
   "scripts": {
     "build": "node build.mjs",

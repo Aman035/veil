@@ -8,7 +8,7 @@
 //     extension learns them from each tab's wallet connection). This is the
 //     real product condition.
 //   LEARNED-ONLY: router starts blank and only learns from balance/nonce reads
-//     in the stream (no wallet oracle) — a lower bound.
+//     in the stream (no wallet oracle) - a lower bound.
 //
 // Metrics:
 //   false link  = a request keyed to a single account X whose ground-truth

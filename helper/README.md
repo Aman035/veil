@@ -1,9 +1,9 @@
-# Unlink desktop helper (phase 2 skeleton)
+# Veil desktop helper (phase 2 skeleton)
 
 Protects the wallet's own traffic and local tools (Foundry `cast`, scripts) by
 exposing a **localhost JSON-RPC endpoint** that routes every request through the
 EF anon-rpc browser harness running **tor-js**, with **one Tor circuit per
-account**. This is PRD §7.2 (D1–D4). Only the localhost JSON-RPC endpoint (D3)
+account**. This is PRD §7.2 (D1-D4). Only the localhost JSON-RPC endpoint (D3)
 and the embedded harness (D1) are implemented here; the `chrome.proxy` target
 (D2) and HTTPS handling (D4) are designed below, not yet built.
 
@@ -21,7 +21,7 @@ constructs an `AnonRpcWorker`, and calls its anonymized `fetch` from Node via
 ```sh
 pnpm install          # inside helper/ only (never at the repo root)
 pnpm start            # node helper.mjs  -> http://127.0.0.1:18545
-pnpm test             # node test.mjs — starts helper, runs cast, tears down
+pnpm test             # node test.mjs - starts helper, runs cast, tears down
 ```
 
 Then point any tool at it:
@@ -36,25 +36,25 @@ Chromium cleanly.
 ### Control API (read-only, for the desktop app)
 
 The **same** server on `127.0.0.1:18545` also serves a small read-only control
-API the Unlink desktop app polls. Every response carries `Access-Control-Allow-Origin: *`
+API the Veil desktop app polls. Every response carries `Access-Control-Allow-Origin: *`
 and `OPTIONS` is answered for preflight. The JSON-RPC `POST /` is unchanged.
 
 | Route | Returns |
 |---|---|
-| `GET /__unlink/health` | `{ ok, network:"tor"\|"passthrough", harness:"booting"\|"ready"\|"error" }` |
-| `GET /__unlink/status` | `{ ok, connected, network, harness, accounts:[{label, address, routeKey, exitIp, status}], todayRequests, sites, upstream }` |
+| `GET /__veil/health` | `{ ok, network:"tor"\|"passthrough", harness:"booting"\|"ready"\|"error" }` |
+| `GET /__veil/status` | `{ ok, connected, network, harness, accounts:[{label, address, routeKey, exitIp, status}], todayRequests, sites, upstream }` |
 
 `accounts` are derived from traffic the helper has already routed: for each
 account seen it tracks the last `routeKey` (from `src/shared/routing`). `exitIp`
 is `null` under passthrough (the harness doesn't surface the Tor exit yet).
-`HELPER_ACCOUNTS` seeds rows up front — entries may be a bare address or
+`HELPER_ACCOUNTS` seeds rows up front - entries may be a bare address or
 `Label=0xaddr`. The server starts listening **before** the harness boots, so the
 app can show a `booting` state; JSON-RPC POSTs return `503` (fail visibly, never
 a silent direct connection) until `harness` is `ready`.
 
 > **Security:** `health`/`status` are read-only and safe with CORS `*`. Any
 > future *mutation* route (toggle protection, switch network) MUST require a
-> per-session bearer token — a web page on any origin can reach `127.0.0.1`, so
+> per-session bearer token - a web page on any origin can reach `127.0.0.1`, so
 > a mutation must never trust the Origin alone.
 
 ### Configuration (env vars)
@@ -90,13 +90,13 @@ cast / wallet RPC                     headless Chromium (Playwright)
 
 Per incoming JSON-RPC request, `helper.mjs`:
 
-1. **learns accounts** — `KnownAccounts.observe()` picks up the user's address
+1. **learns accounts** - `KnownAccounts.observe()` picks up the user's address
    from `eth_getBalance` / `eth_getTransactionCount` params (ignoring the zero
    address);
-2. **picks the isolation key** — `routeKeyForBody()` returns `acct:<addr>` when
+2. **picks the isolation key** - `routeKeyForBody()` returns `acct:<addr>` when
    a known account is mentioned (including inside `eth_call` **calldata**),
    `neutral` otherwise, `mixed:…` for ambiguous multi-account calls;
-3. **blinds the JSON-RPC id** — replaces the caller's id (viem uses one global
+3. **blinds the JSON-RPC id** - replaces the caller's id (viem uses one global
    counter) with a fresh random id, restores the original on the response;
 4. **forwards** the body through the harness anon-fetch under that key and
    returns the result.
@@ -111,7 +111,7 @@ One key per account, so one account's traffic shares a Tor circuit/exit and two
 accounts never do (PRD §5.2). The address is matched only against **known** user
 addresses, so shared infrastructure appearing in calldata (a router, a token)
 can't create a false link (E9: 0 false links). This also sidesteps the E5 bug
-where `eth_call` was mis-keyed to the zero address — the `from` field is often
+where `eth_call` was mis-keyed to the zero address - the `from` field is often
 `0x0`, but the real account is inside the calldata and that is what we match.
 
 Without a wallet oracle the helper learns accounts from balance/nonce reads
@@ -128,16 +128,16 @@ sent outside the harness (CLAUDE.md, PRD G4).
 
 ---
 
-## D2 — `chrome.proxy` target (design only, not implemented)
+## D2 - `chrome.proxy` target (design only, not implemented)
 
-**Goal:** also protect the wallet extension's own traffic, which the Unlink
+**Goal:** also protect the wallet extension's own traffic, which the Veil
 browser extension cannot read or rewrite (`webRequest`/DNR see nothing of
-another extension's requests — evidence.md E1), but *can* route by host.
+another extension's requests - evidence.md E1), but *can* route by host.
 
 **Plan:**
 
 - The extension sets a PAC script via `chrome.proxy` that sends **wallet RPC
-  and crypto API hosts** (MetaMask's RPC + its 20+ API hosts — E6; Rabby;
+  and crypto API hosts** (MetaMask's RPC + its 20+ API hosts - E6; Rabby;
   common public RPCs) to a local proxy the helper runs, and everything else
   `DIRECT`. E1 measured `chrome.proxy` successfully routing another extension's
   requests 5/5.
@@ -152,7 +152,7 @@ another extension's requests — evidence.md E1), but *can* route by host.
 - The extension shows the user exactly which hosts are proxied vs direct; no
   host is proxied silently and none falls back to direct silently.
 
-## D4 — HTTPS handling (design only, not implemented)
+## D4 - HTTPS handling (design only, not implemented)
 
 The helper gets raw TLS bytes on CONNECT, not JSON-RPC. Two tiers, chosen by
 host:
@@ -160,7 +160,7 @@ host:
 1. **Tunnel as-is (default for non-RPC hosts).** Forward the encrypted stream
    through anon-fetch/Tor without decrypting. This **hides the IP** from the
    destination (the main win for wallet API hosts like price, gas, token,
-   security-alerts — E6) but gives **no per-account splitting**, because the
+   security-alerts - E6) but gives **no per-account splitting**, because the
    bodies can't be read. All of that host's traffic shares one route. Honest
    framing per PRD §8: IP hidden, linkage via the provider's own multi-account
    APIs (e.g. MetaMask's `multiaccount/balances`) **not** hidden.
@@ -173,7 +173,7 @@ host:
 2. **Terminate + per-account split (only where bodies can be read).** For known
    single-chain JSON-RPC hosts we control the trust story for, the helper can
    terminate TLS **locally** (a locally-generated CA the user installs, MITM of
-   *our own* forwarded traffic only — never of third-party sites the user
+   *our own* forwarded traffic only - never of third-party sites the user
    didn't opt in to), read the JSON-RPC body, apply the same per-account
    routing + id blinding + fallback-after-block as the extension (PRD §5.3),
    and re-originate the request over Tor. Per-account splitting happens **only**

@@ -22,6 +22,6 @@ experiments/kt-account-map/captured.json
 tests/*.png
 _probe.mjs
 
-# internal / dev-only — kept local, not published
+# internal / dev-only - kept local, not published
 CLAUDE.md
 docs/

@@ -1,13 +1,13 @@
-// Unlink desktop app — dashboard logic.
+// Veil desktop app - dashboard logic.
 //
 // Works two ways with no build step:
 //   1. Inside the Tauri window (the Rust shell spawns the helper, then loads this).
 //   2. Opened as a plain page (file://.../app/ui/index.html) against a helper you
-//      started yourself — handy for testing without compiling Tauri.
+//      started yourself - handy for testing without compiling Tauri.
 //
 // It only ever READS the helper's local control API:
-//   GET http://127.0.0.1:18545/__unlink/health
-//   GET http://127.0.0.1:18545/__unlink/status
+//   GET http://127.0.0.1:18545/__veil/health
+//   GET http://127.0.0.1:18545/__veil/status
 // (Override the base with ?api=http://host:port for testing.)
 
 const API = new URLSearchParams(location.search).get("api") || "http://127.0.0.1:18545";
@@ -20,9 +20,8 @@ const $$ = (sel) => document.querySelectorAll(sel);
 function lsGet(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : v; } catch { return d; } }
 function lsSet(k, v) { try { localStorage.setItem(k, v); } catch {} }
 
-let protectionOn = lsGet("unlink.protection", "1") === "1";
-let extPaired = lsGet("unlink.extPaired", "0") === "1";
-let engineReadySeen = false;
+let protectionOn = lsGet("veil.protection", "1") === "1";
+let extPaired = lsGet("veil.extPaired", "0") === "1";
 
 // ---- view switching ----
 $$(".snav li").forEach((li) => {
@@ -33,7 +32,7 @@ $$(".snav li").forEach((li) => {
   });
 });
 
-// ---- toggles (local/intent only — no mutation route exists; a real one would
+// ---- toggles (local/intent only - no mutation route exists; a real one would
 //      need a token-gated POST to the helper, per its SECURITY NOTE) ----
 function wireSwitch(el, get, set) {
   if (!el) return;
@@ -45,7 +44,7 @@ function wireSwitch(el, get, set) {
 }
 wireSwitch($("#protSwitch"),
   () => protectionOn,
-  (v) => { protectionOn = v; lsSet("unlink.protection", v ? "1" : "0"); renderFrom(lastStatus); });
+  (v) => { protectionOn = v; lsSet("veil.protection", v ? "1" : "0"); renderFrom(lastStatus); });
 wireSwitch($("#loginSwitch"), () => false, () => {}); // placeholder (coming soon)
 
 $("#addBtn")?.addEventListener("click", () => {
@@ -53,10 +52,10 @@ $("#addBtn")?.addEventListener("click", () => {
   // preview there's nowhere to navigate, so just surface the pairing path.
   $("#extStep").textContent = "Opening the Chrome Web Store…";
 });
-$("#pairedBtn")?.addEventListener("click", () => { extPaired = true; lsSet("unlink.extPaired", "1"); renderPairing(); });
+$("#pairedBtn")?.addEventListener("click", () => { extPaired = true; lsSet("veil.extPaired", "1"); renderPairing(); });
 
 // ---- tiny helpers ----
-const trunc = (a) => (a && a.length > 12 ? a.slice(0, 6) + "…" + a.slice(-4) : a || "—");
+const trunc = (a) => (a && a.length > 12 ? a.slice(0, 6) + "…" + a.slice(-4) : a || "-");
 function avatar(addr) {
   let h = 0; for (const c of (addr || "")) h = (h * 31 + c.charCodeAt(0)) >>> 0;
   const a = h % 360, b = (a + 70) % 360, c = (a + 200) % 360;
@@ -81,7 +80,7 @@ function renderPairing() {
 
   if (!s) {
     engineCard.className = "pcard pair err"; engineIc.innerHTML = '<span class="cross">!</span>';
-    $("#engineStep").textContent = "Not running — start the helper";
+    $("#engineStep").textContent = "Not running - start the helper";
   } else if (s.harness === "ready") {
     engineCard.className = "pcard pair done"; engineIc.innerHTML = '<span class="check">✓</span>';
     $("#engineStep").textContent = `Connected · ${s.network}`;
@@ -93,11 +92,11 @@ function renderPairing() {
     $("#engineStep").textContent = "Starting the privacy engine…";
   }
 
-  // Extension step. There is no real extension↔helper handshake in this build,
-  // so pairing is confirmed either by the user ("I've added the extension") or,
-  // for the demo, auto-advanced shortly after the engine is ready. A production
-  // build would flip this on a token-authenticated ping from the extension.
-  if (extPaired) {
+  // Extension step - real pairing. The helper reports extensionPaired=true when
+  // the browser extension has pinged it within the last 30s. The manual button
+  // is only a fallback for the plain-page preview (no extension running).
+  const paired = (s && s.extensionPaired) || extPaired;
+  if (paired) {
     extCard.className = "pcard pair done"; extIc.innerHTML = '<span class="check">✓</span>';
     $("#extStep").textContent = "Paired";
     $("#extFoot").textContent = "Paired · protecting this browser";
@@ -138,12 +137,12 @@ function renderFrom(s) {
   } else if (ready && s.network === "tor") {
     statePill.className = "state"; stateText.textContent = "Private · Tor";
     $("#protHead").textContent = "Protection on";
-    $("#protSub").textContent = "Your wallet, dapps and local tools leave through Tor — one route per account.";
+    $("#protSub").textContent = "Your wallet, dapps and local tools leave through Tor - one route per account.";
     $("#walletState").textContent = "protected";
   } else if (ready) {
     statePill.className = "state off"; stateText.textContent = "Passthrough · no privacy";
     $("#protHead").textContent = "Protection on (passthrough)";
-    $("#protSub").textContent = "Plumbing is live but the gateway is down — traffic is NOT private. Tests only.";
+    $("#protSub").textContent = "Plumbing is live but the gateway is down - traffic is NOT private. Tests only.";
     $("#walletState").textContent = "passthrough";
   } else {
     statePill.className = "state off"; stateText.textContent = s.harness === "error" ? "Engine error" : "Starting…";
@@ -164,7 +163,7 @@ function renderFrom(s) {
           <span class="av" style="background:${avatar(a.address)}"></span>
           <div class="n"><div class="nn">${esc(a.label)}</div><div class="ad">${esc(trunc(a.address))}</div></div>
         </div>
-        <div class="route" title="${esc(a.routeKey)} → ${esc(a.exitIp || "—")}">${esc(shortKey(a.routeKey))} <span class="ex">→ ${esc(a.exitIp || "—")}</span></div>
+        <div class="route" title="${esc(a.routeKey)} → ${esc(a.exitIp || "-")}">${esc(shortKey(a.routeKey))} <span class="ex">→ ${esc(a.exitIp || "-")}</span></div>
         <div class="ok">${esc(a.status || "private")}</div>
       </div>`).join("");
   }
@@ -172,17 +171,12 @@ function renderFrom(s) {
   // tiles
   $("#todayReq").textContent = s.todayRequests ?? 0;
   $("#todaySites").textContent = s.sites ?? 0;
-  try { $("#upstreamHost").textContent = new URL(s.upstream).host; } catch { $("#upstreamHost").textContent = s.upstream || "—"; }
+  try { $("#upstreamHost").textContent = new URL(s.upstream).host; } catch { $("#upstreamHost").textContent = s.upstream || "-"; }
 
   // settings
-  $("#setNetwork").textContent = s.network || "—";
+  $("#setNetwork").textContent = s.network || "-";
   $("#setApi").textContent = API.replace(/^https?:\/\//, "");
 
-  // demo auto-pair once the engine is ready (see note in renderPairing)
-  if (s.harness === "ready" && !engineReadySeen) {
-    engineReadySeen = true;
-    if (!extPaired) setTimeout(() => { extPaired = true; lsSet("unlink.extPaired", "1"); renderPairing(); }, 1500);
-  }
   renderPairing();
 }
 
@@ -192,7 +186,7 @@ const shortKey = (k) => (k && k.startsWith("acct:") ? "acct:" + k.slice(5, 11) :
 // ---- polling ----
 async function poll() {
   try {
-    const r = await fetch(API + "/__unlink/status", { cache: "no-store" });
+    const r = await fetch(API + "/__veil/status", { cache: "no-store" });
     renderFrom(await r.json());
   } catch {
     renderFrom(null);

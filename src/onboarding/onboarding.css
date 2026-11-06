@@ -86,7 +86,7 @@ body {
 .col li:first-child { border-top: 0; }
 .col li b { font-size: 13.5px; font-weight: 620; }
 .col-hidden li b::before { content: "✓ "; color: var(--accent); }
-.col-visible li b::before { content: "— "; color: var(--amber); }
+.col-visible li b::before { content: "- "; color: var(--amber); }
 .col li span { font-size: 12px; line-height: 1.5; color: var(--muted); }
 
 /* footer */

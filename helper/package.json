@@ -1,9 +1,9 @@
 {
-  "name": "unlink-helper",
+  "name": "veil-helper",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Unlink desktop helper (phase 2 skeleton): a localhost JSON-RPC endpoint that routes through the EF anon-rpc browser harness (tor-js), with per-account isolation keys.",
+  "description": "Veil desktop helper (phase 2 skeleton): a localhost JSON-RPC endpoint that routes through the EF anon-rpc browser harness (tor-js), with per-account isolation keys.",
   "license": "MIT",
   "scripts": {
     "start": "node helper.mjs",

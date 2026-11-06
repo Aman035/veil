@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Unlink</title>
+<title>Veil</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-  /* Layout: dark product world — layered emerald mesh + film grain, glass surfaces
+  /* Layout: dark product world - layered emerald mesh + film grain, glass surfaces
      with gradient hairlines, bento grids, real product mockups as the centerpiece.
      Committed dark by design; every color is an explicit token. */
   :root{
@@ -197,7 +197,7 @@
   .hv .ct{ font-size:9px; letter-spacing:.09em; text-transform:uppercase; margin-bottom:8px; font-family:var(--ff-mono) }
   .hv .hide .ct{ color:var(--accent) } .hv .show .ct{ color:var(--amber) }
   .hv li{ list-style:none; font-size:10.5px; color:var(--muted); padding:3px 0; display:flex; gap:6px }
-  .hv .hide li::before{ content:"✓"; color:var(--accent) } .hv .show li::before{ content:"—"; color:var(--amber) }
+  .hv .hide li::before{ content:"✓"; color:var(--accent) } .hv .show li::before{ content:"-"; color:var(--amber) }
 
   .dlg-stage{ position:relative; min-height:296px; display:grid; place-items:center; padding:16px;
     background:repeating-linear-gradient(135deg, rgba(255,255,255,.02) 0 11px, transparent 11px 22px), rgba(10,14,19,.7) }
@@ -268,7 +268,7 @@
   .hcol .li-t{ font-weight:600; font-size:15.5px; display:flex; gap:10px; align-items:baseline; font-family:var(--ff-display) }
   .hcol .li-d{ color:var(--muted); font-size:13.5px; margin-top:4px; padding-left:24px; line-height:1.5 }
   .hcol.hide .li-t::before{ content:"✓"; color:var(--accent); font-weight:700 }
-  .hcol.show .li-t::before{ content:"—"; color:var(--amber); font-weight:700 }
+  .hcol.show .li-t::before{ content:"-"; color:var(--amber); font-weight:700 }
 
   /* ---------- cta / footer ---------- */
   .cta .wrap{ position:relative }
@@ -288,7 +288,7 @@
 
 <nav class="nav navbar">
   <div class="wrap">
-    <div class="brand"><span class="mark"></span> Unlink</div>
+    <div class="brand"><span class="mark"></span> Veil</div>
     <div class="nav-links">
       <a href="#how">How it works</a>
       <a href="#screens">Screens</a>
@@ -308,9 +308,9 @@
     <div>
       <span class="badge"><span class="dot"></span> Built on the Ethereum Foundation's <b>anon-rpc</b> + Tor</span>
       <h1>Your wallets, <span class="g">private</span> by default.</h1>
-      <p class="lede">Unlink routes your crypto traffic through Tor — <b>one route per account</b> — so the providers your apps talk to can't see your IP or tell your accounts apart. And it keeps dapps working even when their providers block Tor.</p>
+      <p class="lede">Veil routes your crypto traffic through Tor - <b>one route per account</b> - so the providers your apps talk to can't see your IP or tell your accounts apart. And it keeps dapps working even when their providers block Tor.</p>
       <div class="hero-cta">
-        <button class="btn btn-primary">Add to Chrome — free</button>
+        <button class="btn btn-primary">Add to Chrome - free</button>
         <button class="btn btn-ghost">Get the desktop app</button>
       </div>
       <div class="hero-note"><span class="dot"></span> No account · no telemetry · open source · Chrome &amp; Brave</div>
@@ -324,7 +324,7 @@
         <div class="popup" id="heroPopup" data-off="0">
           <div class="pp">
             <div class="pp-top">
-              <div class="pp-brand"><span class="mark"></span> Unlink</div>
+              <div class="pp-brand"><span class="mark"></span> Veil</div>
               <div class="switch" id="heroSwitch" role="switch" aria-checked="true" tabindex="0" aria-label="Toggle protection"><span class="knob"></span></div>
             </div>
             <div class="pp-status"><span class="dot" id="heroDot"></span> <span id="heroStatus">Private · Tor</span> <span class="sub" id="heroSub">ready in 1s</span></div>
@@ -378,7 +378,7 @@
             <div class="acct-row verdict">A, B, C → one person</div>
           </div>
           <div class="rbox good">
-            <h4>Unlink <span class="tag">route / account</span></h4>
+            <h4>Veil <span class="tag">route / account</span></h4>
             <div class="acct-row"><span>acct:0x28c6…</span><span class="arrow">→</span><span class="exit">171.25.193.78</span></div>
             <div class="acct-row"><span>acct:0xd8dA…</span><span class="arrow">→</span><span class="exit">45.9.168.92</span></div>
             <div class="acct-row"><span class="mut">neutral</span><span class="arrow">→</span><span class="exit">185.220.101.98</span></div>
@@ -389,23 +389,23 @@
       <!-- stat -->
       <div class="cell span2">
         <div class="stat">0/16 → works</div>
-        <p style="margin-top:10px">Aave's provider rejects Tor outright. Unlink re-routes standard reads to a Tor-friendly provider on the same chain — <b style="color:var(--text)">only after a real block</b>, never blindly.</p>
+        <p style="margin-top:10px">Aave's provider rejects Tor outright. Veil re-routes standard reads to a Tor-friendly provider on the same chain - <b style="color:var(--text)">only after a real block</b>, never blindly.</p>
       </div>
       <!-- features -->
       <div class="cell span2">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
         <h3>A route per account</h3>
-        <p>Unlink reads the account from the request — even inside the call data — and gives it its own circuit. Request IDs are blinded so a counter can't stitch routes back together.</p>
+        <p>Veil reads the account from the request - even inside the call data - and gives it its own circuit. Request IDs are blinded so a counter can't stitch routes back together.</p>
       </div>
       <div class="cell span2">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 018-8 8 8 0 017 4"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 01-8 8 8 8 0 01-7-4"/><path d="M4 20v-4h4"/></svg></div>
         <h3>Works through blocks</h3>
-        <p>When a provider refuses Tor, Unlink re-sends the read through a Tor-friendly provider on the same chain. Your apps keep working — privately.</p>
+        <p>When a provider refuses Tor, Veil re-sends the read through a Tor-friendly provider on the same chain. Your apps keep working - privately.</p>
       </div>
       <div class="cell span2">
         <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
         <h3>Never silently direct</h3>
-        <p>If a read can't be made private, Unlink asks you — per site — before any direct connection. Nothing leaks while Tor connects.</p>
+        <p>If a read can't be made private, Veil asks you - per site - before any direct connection. Nothing leaks while Tor connects.</p>
       </div>
     </div>
   </div>
@@ -417,16 +417,16 @@
     <div class="head">
       <span class="eyebrow">See it work</span>
       <h2>One toggle. Everything else is designed, not left to errors.</h2>
-      <p>The extension is the part most people see — a single switch, a clear popup, and honest moments when a site fights back.</p>
+      <p>The extension is the part most people see - a single switch, a clear popup, and honest moments when a site fights back.</p>
     </div>
     <div class="screens">
       <div class="screen">
         <div class="frame">
-          <div class="chrome"><span class="r"></span><span class="y"></span><span class="g"></span><span class="u">Welcome to Unlink</span></div>
+          <div class="chrome"><span class="r"></span><span class="y"></span><span class="g"></span><span class="u">Welcome to Veil</span></div>
           <div class="onb">
             <span class="mark" style="width:30px;height:30px;margin:0 auto 12px"></span>
             <h3>Private by default</h3>
-            <p>One route per account over Tor. Re-routes around providers that block it — and never falls back to direct without asking.</p>
+            <p>One route per account over Tor. Re-routes around providers that block it - and never falls back to direct without asking.</p>
             <div class="onb-toggle">
               <div><div class="t">Protection is on</div><div class="s">Dapp reads leave through Tor</div></div>
               <div class="switch"><span class="knob"></span></div>
@@ -437,14 +437,14 @@
             </div>
           </div>
         </div>
-        <div class="cap"><b>First run.</b> Honest about what's hidden and what isn't — before you turn it on.</div>
+        <div class="cap"><b>First run.</b> Honest about what's hidden and what isn't - before you turn it on.</div>
       </div>
 
       <div class="screen">
         <div class="frame">
           <div class="chrome"><span class="r"></span><span class="y"></span><span class="g"></span><span class="u">app.uniswap.org</span></div>
           <div class="pp">
-            <div class="pp-top"><div class="pp-brand"><span class="mark"></span> Unlink</div><div class="switch"><span class="knob"></span></div></div>
+            <div class="pp-top"><div class="pp-brand"><span class="mark"></span> Veil</div><div class="switch"><span class="knob"></span></div></div>
             <div class="pp-status"><span class="dot"></span> Private · Tor <span class="sub">ready in 1s</span></div>
             <div class="pcard">
               <div class="lbl">This tab</div><div class="host">app.uniswap.org</div>
@@ -462,16 +462,16 @@
           <div class="chrome"><span class="r"></span><span class="y"></span><span class="g"></span><span class="u">app.aave.com</span></div>
           <div class="dlg-stage">
             <div class="dlg">
-              <div class="dlg-top"><div class="l"><span class="mark"></span> Unlink</div><div class="r">PRIVACY CHOICE</div></div>
+              <div class="dlg-top"><div class="l"><span class="mark"></span> Veil</div><div class="r">PRIVACY CHOICE</div></div>
               <h3><span class="hh">app.aave.com</span>'s data provider blocks anonymous access.</h3>
-              <p>We can't route this request privately and can't safely re-route it. You can allow a <b>direct (non-private)</b> connection for this site — or keep it blocked.</p>
+              <p>We can't route this request privately and can't safely re-route it. You can allow a <b>direct (non-private)</b> connection for this site - or keep it blocked.</p>
               <div class="dlg-btn dlg-keep">Keep blocked</div>
               <div class="dlg-btn dlg-allow">Allow direct for this site</div>
               <small>We remember your choice. Change it anytime in the popup.</small>
             </div>
           </div>
         </div>
-        <div class="cap"><b>When a site fights back.</b> The only path to a direct connection — your explicit, per-site choice.</div>
+        <div class="cap"><b>When a site fights back.</b> The only path to a direct connection - your explicit, per-site choice.</div>
       </div>
     </div>
   </div>
@@ -483,13 +483,13 @@
     <div class="head">
       <span class="eyebrow">Desktop app · for everyone</span>
       <h2>The friendly app that protects your wallet too.</h2>
-      <p>The extension makes dapps private. The desktop app covers what a browser extension can't reach — your <b>wallet's own traffic</b> and local tools like <span class="mono">cast</span> — and sets up both halves in one install. No terminal, no config.</p>
+      <p>The extension makes dapps private. The desktop app covers what a browser extension can't reach - your <b>wallet's own traffic</b> and local tools like <span class="mono">cast</span> - and sets up both halves in one install. No terminal, no config.</p>
     </div>
 
     <div class="appwin">
       <div class="titlebar">
         <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-        <div class="tt">Unlink</div>
+        <div class="tt">Veil</div>
         <div class="conn"><span class="dot"></span> Tor connected · 3 circuits</div>
       </div>
       <div class="appbody">
@@ -504,7 +504,7 @@
         </aside>
         <main class="appmain">
           <div class="mh"><h3>Protection on</h3><span class="state"><span class="dot"></span> Private · Tor</span></div>
-          <div class="msub">Your wallet, dapps and local tools leave through Tor — one route per account.</div>
+          <div class="msub">Your wallet, dapps and local tools leave through Tor - one route per account.</div>
           <div class="acct-card">
             <div class="ah"><span>Account</span><span>Route</span><span style="text-align:right">Status</span></div>
             <div class="ar">
@@ -522,16 +522,16 @@
           </div>
           <div class="tiles">
             <div class="tile"><div class="tl">Wallet traffic</div><div class="tv">MetaMask · <span class="mono">protected</span></div><div class="td">Its RPC and API hosts routed through Tor via the local proxy.</div></div>
-            <div class="tile"><div class="tl">Local RPC endpoint</div><div class="tv"><span class="mono">127.0.0.1:18545</span></div><div class="td">Point <span class="mono">cast</span>, scripts or a wallet's custom RPC here — private, per account.</div></div>
+            <div class="tile"><div class="tl">Local RPC endpoint</div><div class="tv"><span class="mono">127.0.0.1:18545</span></div><div class="td">Point <span class="mono">cast</span>, scripts or a wallet's custom RPC here - private, per account.</div></div>
           </div>
         </main>
       </div>
     </div>
 
     <div class="steps">
-      <div class="step"><span class="num">01</span><h4>Install &amp; open</h4><p>One download. The app starts the privacy engine and connects to Tor in the background — the menu-bar icon turns green.</p></div>
+      <div class="step"><span class="num">01</span><h4>Install &amp; open</h4><p>One download. The app starts the privacy engine and connects to Tor in the background - the menu-bar icon turns green.</p></div>
       <div class="step"><span class="num">02</span><h4>Add the extension</h4><p>The app walks you through adding the browser extension and pairs with it automatically. One flow sets up both halves.</p></div>
-      <div class="step"><span class="num">03</span><h4>Use your apps as usual</h4><p>Nothing to configure. Your dapps, wallet and tools just go private — each account on its own route.</p></div>
+      <div class="step"><span class="num">03</span><h4>Use your apps as usual</h4><p>Nothing to configure. Your dapps, wallet and tools just go private - each account on its own route.</p></div>
     </div>
   </div>
 </section>
@@ -541,23 +541,23 @@
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">Honest about privacy</span>
-      <h2>What it hides — and what it doesn't.</h2>
-      <p>Privacy you don't actually have is worse than none. Here's the exact line — the same one we show inside the product.</p>
+      <h2>What it hides - and what it doesn't.</h2>
+      <p>Privacy you don't actually have is worse than none. Here's the exact line - the same one we show inside the product.</p>
     </div>
     <div class="honest-grid">
       <div class="hcol hide">
         <span class="ht">Hidden from providers</span>
         <ul>
-          <li><div class="li-t">Your IP address</div><div class="li-d">On every dapp read — and on your wallet's own traffic with the desktop app.</div></li>
+          <li><div class="li-t">Your IP address</div><div class="li-d">On every dapp read - and on your wallet's own traffic with the desktop app.</div></li>
           <li><div class="li-t">That your accounts belong together</div><div class="li-d">For RPC traffic, each account gets its own route, so providers see unrelated strangers.</div></li>
         </ul>
       </div>
       <div class="hcol show">
         <span class="ht">Still visible</span>
         <ul>
-          <li><div class="li-t">Which addresses you look up</div><div class="li-d">Providers still see the addresses you query. Hiding that needs PIR — a different project.</div></li>
+          <li><div class="li-t">Which addresses you look up</div><div class="li-d">Providers still see the addresses you query. Hiding that needs PIR - a different project.</div></li>
           <li><div class="li-t">Your wallet's multi-account APIs</div><div class="li-d">Some wallet services take all your accounts in one request. We hide the IP; the app can split them (off by default).</div></li>
-          <li><div class="li-t">That you use Tor</div><div class="li-d">The Tor gateway sees you use it — not what for.</div></li>
+          <li><div class="li-t">That you use Tor</div><div class="li-d">The Tor gateway sees you use it - not what for.</div></li>
         </ul>
       </div>
     </div>
@@ -581,9 +581,9 @@
 <footer>
   <div class="wrap">
     <div class="foot-note"><span class="dot"></span> No accounts. No telemetry. Network code is sandboxed and hash-pinned on-chain.</div>
-    <div class="brand" style="font-size:15px"><span class="mark"></span> Unlink</div>
+    <div class="brand" style="font-size:15px"><span class="mark"></span> Veil</div>
   </div>
-  <div class="wrap"><p class="disc">Unlink is independent software built on the Ethereum Foundation's anon-rpc and tor-js. Measurements — provider behaviour over Tor, per-account exits, re-routing — come from the project's own tests. “Add to Chrome” is illustrative in this preview.</p></div>
+  <div class="wrap"><p class="disc">Veil is independent software built on the Ethereum Foundation's anon-rpc and tor-js. Measurements - provider behaviour over Tor, per-account exits, re-routing - come from the project's own tests. “Add to Chrome” is illustrative in this preview.</p></div>
 </footer>
 
 <script>

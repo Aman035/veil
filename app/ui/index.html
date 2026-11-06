@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Unlink</title>
+<title>Veil</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -14,7 +14,7 @@
   <!-- window chrome -->
   <div class="titlebar" data-tauri-drag-region>
     <div class="lights"><span class="r"></span><span class="y"></span><span class="g"></span></div>
-    <div class="tt"><span class="mark"></span> Unlink</div>
+    <div class="tt"><span class="mark"></span> Veil</div>
     <div class="conn" id="connPill"><span class="dot"></span> <span id="connText">Connecting…</span></div>
   </div>
 
@@ -47,7 +47,7 @@
           <h3 id="protHead">Protection on</h3>
           <span class="state" id="statePill"><span class="dot"></span> <span id="stateText">Private · Tor</span></span>
         </div>
-        <div class="msub" id="protSub">Your wallet, dapps and local tools leave through the privacy engine — one route per account.</div>
+        <div class="msub" id="protSub">Your wallet, dapps and local tools leave through the privacy engine - one route per account.</div>
 
         <div class="acct-card">
           <div class="ah"><span>Account</span><span>Route → Exit</span><span style="text-align:right">Status</span></div>
@@ -65,7 +65,7 @@
           <div class="tile">
             <div class="tl">Local RPC endpoint</div>
             <div class="tv"><span class="mono">127.0.0.1:18545</span></div>
-            <div class="td">Point <span class="mono">cast</span>, scripts or a wallet's custom RPC here — private, per account.</div>
+            <div class="td">Point <span class="mono">cast</span>, scripts or a wallet's custom RPC here - private, per account.</div>
           </div>
           <div class="tile">
             <div class="tl">Today</div>
@@ -74,7 +74,7 @@
           </div>
           <div class="tile">
             <div class="tl">Upstream</div>
-            <div class="tv"><span class="mono" id="upstreamHost">—</span></div>
+            <div class="tv"><span class="mono" id="upstreamHost">-</span></div>
             <div class="td">Where reads are forwarded after leaving the engine.</div>
           </div>
         </div>
@@ -83,7 +83,7 @@
       <!-- ====== SETUP / ONBOARDING VIEW ====== -->
       <section class="view" data-view="setup">
         <div class="mh"><h3>Add the browser extension</h3></div>
-        <div class="msub">The app runs the privacy engine. The extension does the in-page part — catching each dapp's reads. One flow pairs both halves.</div>
+        <div class="msub">The app runs the privacy engine. The extension does the in-page part - catching each dapp's reads. One flow pairs both halves.</div>
 
         <div class="pair-grid">
           <div class="pcard pair">
@@ -124,12 +124,12 @@
       <!-- ====== SETTINGS VIEW ====== -->
       <section class="view" data-view="settings">
         <div class="mh"><h3>Settings</h3></div>
-        <div class="msub">Minimal for now — the engine is configured by the app when it launches.</div>
+        <div class="msub">Minimal for now - the engine is configured by the app when it launches.</div>
 
         <div class="set-list">
           <div class="set-row">
             <div><div class="set-t">Network</div><div class="set-d">The anonymous network the engine routes through.</div></div>
-            <div class="set-val mono" id="setNetwork">—</div>
+            <div class="set-val mono" id="setNetwork">-</div>
           </div>
           <div class="set-row">
             <div><div class="set-t">Local RPC</div><div class="set-d">Endpoint for <span class="mono">cast</span>, scripts and custom wallet RPCs.</div></div>
@@ -141,7 +141,7 @@
           </div>
           <div class="set-row">
             <div><div class="set-t">Engine status endpoint</div><div class="set-d">The local control API the app reads.</div></div>
-            <div class="set-val mono" id="setApi">—</div>
+            <div class="set-val mono" id="setApi">-</div>
           </div>
         </div>
       </section>

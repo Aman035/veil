@@ -1,15 +1,15 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Unlink",
+  "productName": "Veil",
   "version": "0.1.0",
-  "identifier": "org.unlink.desktop",
+  "identifier": "org.veil.desktop",
   "build": {
     "frontendDist": "../ui"
   },
   "app": {
     "windows": [
       {
-        "title": "Unlink",
+        "title": "Veil",
         "width": 940,
         "height": 660,
         "minWidth": 720,

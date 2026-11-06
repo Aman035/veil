@@ -41,7 +41,7 @@ const g = self as unknown as {
   anonGet: (url: string, isolationKey?: string) => Promise<unknown>;
 };
 
-// GET through the worker — used to read the Tor exit IP per isolation key,
+// GET through the worker - used to read the Tor exit IP per isolation key,
 // proving different keys get different circuits/exits.
 g.anonGet = async (url: string, isolationKey?: string) => {
   const w = getWorker();

@@ -38,7 +38,7 @@ window.addEventListener("message", async (ev: MessageEvent) => {
         res = await chrome.runtime.sendMessage({ type: "rpc", url: d.url, body: d.body, origin });
       }
     } catch (e) {
-      res = { ok: false, error: "unlink: background unavailable" };
+      res = { ok: false, error: "veil: background unavailable" };
     }
     toPage({ tag: TAG, dir: "c2p", kind: "rpc-result", id: d.id, ok: res.ok, status: res.status, body: res.body, error: res.error, allowDirect: res.allowDirect });
   }

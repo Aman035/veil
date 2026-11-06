@@ -3,7 +3,7 @@
 // MAIN world (inject) <-> ISOLATED world (content): window.postMessage, tagged.
 // ISOLATED world (content) <-> background: chrome.runtime messaging.
 
-export const TAG = "__unlink__";
+export const TAG = "__veil__";
 
 // Per-site policy for the case a provider blocks anonymous access and the
 // request can't be safely re-routed (PRD §5.3). "ask" is the default.
@@ -74,7 +74,7 @@ export type GlobalStats = {
   // health endpoint answered. routeWalletTraffic: the user opted in to point
   // chrome.proxy at the helper for wallet/crypto hosts. walletProxyActive: the
   // proxy is actually armed right now (needs helper present + a real non-loopback
-  // helper proxy endpoint — see background.ts HELPER_PROXY).
+  // helper proxy endpoint - see background.ts HELPER_PROXY).
   helperConnected: boolean;
   routeWalletTraffic: boolean;
   walletProxyActive: boolean;

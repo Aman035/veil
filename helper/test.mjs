@@ -1,7 +1,7 @@
 // End-to-end test for the desktop helper (D3).
 //
 // Starts helper.mjs as a child process with the PASSTHROUGH specifier (the EF
-// tor-js demo gateway is currently down, so real tor-js boot would hang — see
+// tor-js demo gateway is currently down, so real tor-js boot would hang - see
 // PRD §11 / evidence.md E11). Passthrough exercises the whole plumbing
 // deterministically: id blinding, per-account isolation keying, forward
 // through the harness, response restore. Then it runs real Foundry `cast`

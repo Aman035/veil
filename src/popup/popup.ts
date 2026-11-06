@@ -99,9 +99,9 @@ function renderHelper(g: GlobalStats) {
   if (!g.helperConnected) {
     routeWalletNote.textContent = "Needs the desktop app to be running.";
   } else if (g.routeWalletTraffic && g.walletProxyActive) {
-    routeWalletNote.textContent = "Active — wallet RPC & API hosts go through the helper.";
+    routeWalletNote.textContent = "Active - wallet RPC & API hosts go through the helper.";
   } else if (g.routeWalletTraffic && !g.walletProxyActive) {
-    routeWalletNote.textContent = "Wired — activates once the desktop app ships its proxy endpoint.";
+    routeWalletNote.textContent = "Wired - activates once the desktop app ships its proxy endpoint.";
   } else {
     routeWalletNote.textContent = "Route wallet RPC & API hosts through the helper (experimental).";
   }

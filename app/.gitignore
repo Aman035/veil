@@ -2,5 +2,5 @@
 src-tauri/target/
 src-tauri/Cargo.lock
 src-tauri/gen/
-# dev render screenshots — not product
+# dev render screenshots - not product
 ui-preview*.png

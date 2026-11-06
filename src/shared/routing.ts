@@ -1,4 +1,4 @@
-// Account-mapping heuristic — validated in Phase 0 KT#3 (evidence.md E9).
+// Account-mapping heuristic - validated in Phase 0 KT#3 (evidence.md E9).
 // Assigns each JSON-RPC request to a routing key so one account's traffic
 // shares a Tor circuit and two accounts never do.
 

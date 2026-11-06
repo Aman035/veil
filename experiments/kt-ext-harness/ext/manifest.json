@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "unlink kt-ext-harness",
+  "name": "veil kt-ext-harness",
   "version": "0.0.1",
   "description": "Phase 0 kill test: EF extension harness + tor-js inside our own MV3 extension.",
 

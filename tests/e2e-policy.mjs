@@ -1,5 +1,5 @@
 // Phase 1c: per-site policy for a NON-reroutable blocked provider (a multichain
-// gateway — Uniswap-shaped, E4). The provider serves the normal browser request
+// gateway - Uniswap-shaped, E4). The provider serves the normal browser request
 // but blocks the anonymized one (which strips identifying headers), exactly the
 // real condition. We assert:
 //   A. policy "block"        -> the page request fails closed (nothing direct).
@@ -19,7 +19,7 @@ const dist = here + "../dist";
 // The multichain gateway. It returns a valid JSON-RPC result ONLY to requests
 // that carry the browser's own header (the direct path); the anonymized path
 // (headers stripped by the extension) gets 403, as Tor exits do in the wild.
-const MARKER = "x-unlink-browser-session";
+const MARKER = "x-veil-browser-session";
 const provider = createServer((req, res) => {
   const cors = {
     "access-control-allow-origin": "*",
@@ -84,7 +84,7 @@ async function runPage(origin) {
   for (let i = 0; i < 120 && !r; i++) { await sleep(500); r = await page.evaluate(() => (window.__done ? window.__r : null)).catch(() => null); }
   return { page, r };
 }
-const tabStatFor = (o) => sw.evaluate(([x]) => self.__unlink.tabs().map(([, s]) => s).find((s) => s.origin === x) ?? null, [o]);
+const tabStatFor = (o) => sw.evaluate(([x]) => self.__veil.tabs().map(([, s]) => s).find((s) => s.origin === x) ?? null, [o]);
 
 // --- A: block ---
 const a = await runPage(A.origin);
@@ -108,7 +108,7 @@ if (dialogShown) {
 }
 let cr = null;
 for (let i = 0; i < 60 && !cr; i++) { await sleep(500); cr = await cPage.evaluate(() => (window.__done ? window.__r : null)).catch(() => null); }
-const cPolicy = await sw.evaluate(([x]) => self.__unlink.policy(x), [C.origin]);
+const cPolicy = await sw.evaluate(([x]) => self.__veil.policy(x), [C.origin]);
 const cStat = await tabStatFor(C.origin);
 
 // --- onboarding screenshot ---

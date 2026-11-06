@@ -1,14 +1,14 @@
 [package]
-name = "unlink-app"
+name = "veil-app"
 version = "0.1.0"
-description = "Unlink desktop app — runs the privacy engine and shows status."
+description = "Veil desktop app - runs the privacy engine and shows status."
 edition = "2021"
 rust-version = "1.77"
 license = "MIT"
 
 # Keep the binary name stable for the Tauri CLI.
 [[bin]]
-name = "unlink-app"
+name = "veil-app"
 path = "src/main.rs"
 
 [build-dependencies]
