@@ -155,7 +155,7 @@ veil/
 Prereqs: Node 18+ and `pnpm`. The desktop app also needs Rust + Tauri; the real-Tor demo needs a tor-js gateway.
 
 ```bash
-# 1) Browser extension
+# 1) Browser extension  (to actually route, build with a network - see below)
 pnpm install
 node build.mjs                 # -> dist/  (load unpacked at chrome://extensions)
 
@@ -166,8 +166,13 @@ cd helper && pnpm install && node helper.mjs      # serves http://127.0.0.1:1854
 cd app/src-tauri && cargo tauri dev
 ```
 
-**Real Tor via a self-hosted gateway.** The network is swappable (gateway and worker are config,
-not code). Build [`tor-js-gateway`](https://github.com/ethereum/tor-js), run it, then build the extension against it:
+**Choose a network at build time.** The gateway and worker are config, not code, baked in by
+`build.mjs`. A bare `node build.mjs` uses a built-in default gateway that is **not guaranteed to be
+up** (public demo gateways come and go), and the extension will sit on "Connecting privately…" if it
+can't reach one. For anything you rely on, always build with one of the two explicit paths below.
+
+**A) Real Tor via a self-hosted gateway** (the path to demo). Build
+[`tor-js-gateway`](https://github.com/ethereum/tor-js), run it, then build the extension against it:
 
 ```bash
 VEIL_SPECIFIER=0x700dA3193D35fA54Cd3fBf29B66f2a2A0385659e \
@@ -175,13 +180,22 @@ VEIL_GATEWAYS='["127.0.0.1:12298:<your-gateway-certhash>"]' \
 node build.mjs
 ```
 
-Without a gateway, build with the `passthrough` specifier (`0x4fd77be300f31c5fe6ab266d35d27750a3478d27`,
-empty gateways) for a deterministic, non-private plumbing demo.
+The gateway prints its `<your-gateway-certhash>` on startup. Keep it running while you demo.
+
+**B) No gateway, deterministic plumbing demo.** Build with the `passthrough` specifier (no Tor, not
+private, labelled as such) when you just want to show the interception and routing pipeline:
+
+```bash
+VEIL_SPECIFIER=0x4fd77be300f31c5fe6ab266d35d27750a3478d27 VEIL_GATEWAYS='[]' node build.mjs
+```
 
 ### Run it for a demo (no store or developer account needed)
 
-- **Extension:** `node build.mjs`, then open `chrome://extensions`, enable Developer mode, click
-  **Load unpacked**, and pick `dist/`.
+- **Extension:** build with a network chosen (path A or B above, not a bare `node build.mjs`), then
+  open `chrome://extensions`, enable Developer mode, click **Load unpacked**, and pick `dist/`. For a
+  live pitch, use path A with your gateway running, and lead with an app that serves Tor (Lido, ENS,
+  Compound) so the per-account flow is clean; Aave is the one re-route beat (its provider blocks Tor,
+  so Veil re-routes it).
 - **Desktop app:** `cd app/src-tauri && cargo tauri dev` (or build an unsigned bundle and open it
   with right-click then Open on macOS). Signed installers and store listings are a later, optional
   step; you don't need a Chrome Web Store or Apple Developer account to run or demo Veil.
