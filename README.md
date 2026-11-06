@@ -28,6 +28,8 @@ The usual fixes don't solve it:
 - **Tor Browser** isolates circuits per site, not per account, so every account you use on one
   dapp still shares an exit, and many providers block Tor outright (Aave's provider blocked all 16
   of our test reads).
+- **Waiting for the app** to adopt anon-rpc or another privacy standard leaves you exposed until it
+  does, and only a couple of apps have, all opt-in. You carry the risk while you wait.
 
 <p align="center">
   <img src="assets/the-leak.svg" alt="Today, every account shares one exit, so a provider sees one person" width="820">
