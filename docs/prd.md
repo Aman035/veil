@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| Status | Approved & building, 6 Nov 2026. Phase 0 ✅, Phase 1 (extension MVP) ✅, Phase 2 (helper) skeleton ✅ (D1+D3). Validated on passthrough; real-Tor demo blocked on the EF gateway outage (self-host path in `gateway-notes.md`). |
+| Status | Approved & building, 6 Nov 2026. Phase 0 ✅, Phase 1 (extension MVP) ✅, Phase 2: D1+D3 ✅, desktop app (Tauri) + app↔extension pairing ✅, D2 wired (inert pending non-loopback helper proxy), D4 design-only. Landing site in `site/`. Validated on passthrough (28 e2e + helper + app); real-Tor pending a gateway (self-host path in `gateway-notes.md`). Remaining: helper proxy endpoint (arms D2/D4), real-Tor validation, packaging/store (Phase 3). |
 | Owner | Aman |
 | Built on | EF anon-rpc (sandboxed, hash-pinned network clients) and tor-js |
 | Evidence | Every claim marked *(measured)* is in [`evidence.md`](evidence.md) |
