@@ -69,8 +69,8 @@
       Tor exit for each account, never you. This page is where you point the extension.
     </p>
 
-    <div class="steps">
-      <div class="status" id="extStatus">Checking for the Veil extension&hellip;</div>
+    <div class="status" id="extStatus">Checking for the Veil extension&hellip;</div>
+    <div class="steps" id="steps">
       <ol>
         <li><b>Install Veil</b> and load it in Chrome.<a class="dl" href="https://github.com/Aman035/veil/releases" target="_blank" rel="noopener">Download</a></li>
         <li><b>Turn it on</b>, click the Veil toolbar icon until it reads &ldquo;Private &middot; Tor&rdquo;.</li>
@@ -103,9 +103,9 @@
 
     <p class="fine">
       Needs the Veil extension installed and on (and, on this build, your local gateway running). With
-      Veil off or not installed, all three rows show the same real IP, that is the leak Veil removes.
-      The reads go to a public IP echo (<code>httpbin.org/anything</code>); swap <code>ECHO</code> in this
-      page for your own endpoint if you prefer. Addresses queried are still visible to providers by design;
+      Veil off or not installed you see only your real IP, that is the leak; turn Veil on and the
+      per-account Tor routes appear. The reads go to an IP echo (<code>demo-echo/</code>), overridable
+      with <code>?echo=&lt;url&gt;</code>. Addresses queried are still visible to providers by design;
       Veil removes your IP and the link between your accounts, not the addresses.
       &nbsp;<a href="./">Back to Veil</a>
     </p>
@@ -149,46 +149,68 @@
       $(rowId).classList.toggle("set", !!ip);
     }
 
-    // Live extension detection: inject.js sets window.__veilInjected at
-    // document_start when the extension is loaded on this page.
-    function checkExt() {
-      const el = $("extStatus");
-      if (window.__veilInjected) { el.className = "status ok"; el.textContent = "Veil extension detected on this page"; }
-      else { el.className = "status warn"; el.textContent = "Veil not detected here, install it and reload"; }
-    }
-    checkExt(); setInterval(checkExt, 1200);
+    // --- Detect Veil's real state on this page --------------------------------
+    // inject.js sets window.__veilInjected when loaded; the content script answers
+    // a "hello" with { enabled, isProtected }. State: none | off | on.
+    const TAG = "__veil__";
+    let veilState = "none"; // none = not installed, off = installed but not protecting, on = routing
 
-    // Warm the harness on load so the first click is fast (no cold-start wait on
-    // stage). Harmless if Veil is off (just a direct POST that we ignore).
-    veilIp(ACCT_A).catch(() => {});
+    window.addEventListener("message", (ev) => {
+      if (ev.source !== window) return;
+      const d = ev.data;
+      if (!d || d.tag !== TAG || d.dir !== "c2p" || d.kind !== "state") return;
+      setVeil(d.enabled && d.isProtected ? "on" : "off");
+    });
+
+    function probeVeil() {
+      if (!window.__veilInjected) { setVeil("none"); return; }
+      window.postMessage({ tag: TAG, dir: "p2c", kind: "hello" }, "*"); // ask for exact on/off
+      if (veilState === "none") setVeil("off"); // present, awaiting precise state
+    }
+    function setVeil(s) { veilState = s; renderState(); }
+
+    function renderState() {
+      const on = veilState === "on";
+      $("steps").style.display = veilState === "none" ? "" : "none"; // install steps only when absent
+      $("rA").style.display = on ? "" : "none";                       // per-account rows only when routing
+      $("rB").style.display = on ? "" : "none";
+      const el = $("extStatus");
+      if (on) { el.className = "status ok"; el.textContent = "Veil is on, reads go over Tor, one route per account"; }
+      else if (veilState === "off") { el.className = "status warn"; el.textContent = "Veil is installed but off, turn it on to route over Tor"; }
+      else { el.className = "status warn"; el.textContent = "Veil not detected, install it to route reads over Tor"; }
+      $("run").textContent = on ? "Run the reads" : "Check my IP";
+    }
+    probeVeil(); setInterval(probeVeil, 1500);
+
+    // Warm the harness on load only when Veil is on, so the first click is fast.
+    setTimeout(() => { if (veilState === "on") veilIp(ACCT_A).catch(() => {}); }, 900);
 
     $("run").addEventListener("click", async () => {
+      const on = veilState === "on";
       const btn = $("run"), verdict = $("verdict");
-      btn.disabled = true; verdict.className = "verdict"; verdict.textContent = "reading (first read over Tor can take ~20s)…";
-      for (const v of ["vDirect", "vA", "vB"]) { $(v).textContent = "…"; $(v).classList.remove("set"); }
+      btn.disabled = true; verdict.className = "verdict";
+      verdict.textContent = on ? "reading (first read over Tor can take ~20s)…" : "reading…";
+      for (const v of (on ? ["vDirect", "vA", "vB"] : ["vDirect"])) { $(v).textContent = "…"; $(v).classList.remove("set"); }
       try {
         const direct = await directIp();
         setRow("rDirect", "vDirect", direct);
-        const a = await veilIp(ACCT_A);
-        setRow("rA", "vA", a);
-        const b = await veilIp(ACCT_B);
-        setRow("rB", "vB", b);
-
+        if (!on) {
+          verdict.className = "verdict off";
+          verdict.textContent = veilState === "off"
+            ? "This is your real IP. Turn Veil on and run again to hide it."
+            : "This is your real IP, every provider sees it. Install Veil, turn it on, and run again.";
+          return;
+        }
+        const a = await veilIp(ACCT_A); setRow("rA", "vA", a);
+        const b = await veilIp(ACCT_B); setRow("rB", "vB", b);
         const hidden = a && b && a !== direct && b !== direct;
         const perAccount = a && b && a !== b;
-        if (hidden && perAccount) {
-          verdict.className = "verdict on";
-          verdict.textContent = "Veil is on. Your real IP never left, and each account exited somewhere different.";
-        } else if (hidden) {
-          verdict.className = "verdict on";
-          verdict.textContent = "Veil is on. Your real IP never left.";
-        } else {
-          verdict.className = "verdict off";
-          verdict.textContent = "Not protected: the server saw your real IP. Install Veil, turn it on, and run again.";
-        }
+        if (hidden && perAccount) { verdict.className = "verdict on"; verdict.textContent = "Veil is on. Your real IP never left, and each account exited somewhere different."; }
+        else if (hidden) { verdict.className = "verdict on"; verdict.textContent = "Veil is on. Your real IP never left."; }
+        else { verdict.className = "verdict off"; verdict.textContent = "The reads did not route, is the gateway running?"; }
       } catch (e) {
         verdict.className = "verdict off";
-        verdict.textContent = "The IP echo did not respond. Check your connection, or swap ECHO for another endpoint.";
+        verdict.textContent = "The IP echo did not respond. Set up the echo (demo-echo/), or use the recorded clip.";
       } finally {
         btn.disabled = false;
       }
