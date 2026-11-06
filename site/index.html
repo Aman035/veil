@@ -141,6 +141,8 @@
   .facts b{ font-variant-numeric:tabular-nums }
   .facts .rr{ color:var(--accent) } .facts .mut{ color:var(--muted) }
   .pp-foot{ font-size:11px; color:var(--faint); padding:11px 2px 2px; line-height:1.45 } .pp-foot b{ color:var(--muted) }
+  .pp-links{ display:flex; gap:8px; margin-top:11px }
+  .pp-links span{ flex:1; text-align:center; font-size:12px; font-weight:600; color:var(--muted); background:rgba(255,255,255,.025); border:1px solid var(--line); border-radius:8px; padding:8px }
   .today{ display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted) } .today b{ color:var(--text) }
 
   /* ---------- trust strip ---------- */
@@ -180,6 +182,14 @@
   /* route diagram inside bento */
   .routes-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:4px }
   @media (max-width:620px){ .routes-grid{ grid-template-columns:1fr } }
+  .how-steps{ list-style:none; display:grid; gap:14px; margin:28px 0 0; max-width:780px; padding:0 }
+  .how-steps li{ display:flex; gap:16px; background:rgba(255,255,255,.025); border:1px solid var(--line); border-radius:14px; padding:18px 20px }
+  .how-steps .hn{ flex:none; width:30px; height:30px; border-radius:9px; display:grid; place-items:center; font-family:var(--ff-display); font-weight:700; font-size:15px; color:var(--accent); background:rgba(255,255,255,.04); border:1px solid var(--line) }
+  .how-steps h3{ font-size:16px; font-weight:650; margin:3px 0 6px; font-family:var(--ff-display) }
+  .how-steps p{ font-size:14px; line-height:1.62; color:var(--muted); margin:0 }
+  .how-steps p b{ color:var(--text); font-weight:600 }
+  .how-steps p .mut{ color:var(--faint) }
+  .how-steps code{ font-family:var(--ff-mono,ui-monospace,monospace); font-size:12.5px; color:var(--text); background:rgba(255,255,255,.05); padding:1px 5px; border-radius:5px }
   .rbox{ border:1px solid var(--line-2); border-radius:14px; padding:16px; background:rgba(8,11,15,.6) }
   .rbox h4{ font-family:var(--ff-display); font-size:13px; color:var(--muted); font-weight:600; margin-bottom:14px; display:flex; align-items:center; gap:8px }
   .tag{ margin-left:auto; font-size:10.5px; font-family:var(--ff-mono) }
@@ -392,66 +402,13 @@
   </div>
 </section>
 
-<section id="how">
-  <div class="wrap">
-    <div class="head">
-      <span class="eyebrow">How it works</span>
-      <h2>One route per account. Re-routes around blocks. Never silently direct.</h2>
-      <p>Each account gets its own Tor circuit and exit, so a provider sees <b>three strangers</b> instead of one person. Account-agnostic reads share a neutral route.</p>
-    </div>
-
-    <div class="bento">
-      <!-- big: route diagram -->
-      <div class="cell span4">
-        <div class="routes-grid">
-          <div class="rbox bad">
-            <h4>VPN / Tor Browser <span class="tag">1 exit</span></h4>
-            <div class="acct-row"><span>account A</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
-            <div class="acct-row"><span>account B</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
-            <div class="acct-row"><span>account C</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
-            <div class="acct-row verdict">A, B, C → one person</div>
-          </div>
-          <div class="rbox good">
-            <h4>Veil <span class="tag">route / account</span></h4>
-            <div class="acct-row"><span>acct:0x28c6…</span><span class="arrow">→</span><span class="exit">171.25.193.78</span></div>
-            <div class="acct-row"><span>acct:0xd8dA…</span><span class="arrow">→</span><span class="exit">45.9.168.92</span></div>
-            <div class="acct-row"><span class="mut">neutral</span><span class="arrow">→</span><span class="exit">185.220.101.98</span></div>
-            <div class="acct-row verdict">three strangers</div>
-          </div>
-        </div>
-      </div>
-      <!-- stat -->
-      <div class="cell span2">
-        <div class="stat">0/16 → works</div>
-        <p style="margin-top:10px">Aave's provider rejects Tor outright. Veil re-routes standard reads to a Tor-friendly provider on the same chain - <b style="color:var(--text)">only after a real block</b>, never blindly.</p>
-      </div>
-      <!-- features -->
-      <div class="cell span2">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
-        <h3>A route per account</h3>
-        <p>Veil reads the account from the request - even inside the call data - and gives it its own circuit. Request IDs are blinded so a counter can't stitch routes back together.</p>
-      </div>
-      <div class="cell span2">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 018-8 8 8 0 017 4"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 01-8 8 8 8 0 01-7-4"/><path d="M4 20v-4h4"/></svg></div>
-        <h3>Works through blocks</h3>
-        <p>When a provider refuses Tor, Veil re-sends the read through a Tor-friendly provider on the same chain. Your apps keep working - privately.</p>
-      </div>
-      <div class="cell span2">
-        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/><path d="M9 12l2 2 4-4"/></svg></div>
-        <h3>Never silently direct</h3>
-        <p>If a read can't be made private, Veil asks you - per site - before any direct connection. Nothing leaks while Tor connects.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- SCREENS -->
 <section id="screens">
   <div class="wrap">
     <div class="head">
       <span class="eyebrow">See it work</span>
       <h2>One toggle. Everything else is designed, not left to errors.</h2>
-      <p>The extension is the part most people see - a single switch, a clear popup, and honest moments when a site fights back.</p>
+      <p>The extension is the part most people see: a single switch, a popup that shows exactly what each tab protected, a live feed of every read it carries over Tor, and an honest prompt when a site fights back.</p>
     </div>
     <div class="screens">
       <div class="screen">
@@ -476,16 +433,16 @@
 
       <div class="screen">
         <div class="frame">
-          <div class="chrome"><span class="r"></span><span class="y"></span><span class="g"></span><span class="u">app.uniswap.org</span></div>
+          <div class="chrome"><span class="r"></span><span class="y"></span><span class="g"></span><span class="u">stake.lido.fi</span></div>
           <div class="pp">
             <div class="pp-top"><div class="pp-brand"><span class="mark"></span> Veil</div><div class="switch"><span class="knob"></span></div></div>
             <div class="pp-status"><span class="dot"></span> Private · Tor <span class="sub">ready in 1s</span></div>
             <div class="pcard">
-              <div class="lbl">This tab</div><div class="host">app.uniswap.org</div>
-              <ul class="facts"><li><b>19</b> requests protected</li><li class="mut">2 accounts on 2 separate routes · 1 shared</li><li class="rr">↻ re-routed (safe)</li></ul>
+              <div class="lbl">This tab</div><div class="host">stake.lido.fi</div>
+              <ul class="facts"><li><b>21</b> requests protected</li><li class="mut">2 accounts on 2 separate routes · 1 shared</li></ul>
             </div>
             <div class="pcard"><div class="today"><span>Today</span><span><b>1,284</b> req · <b>9</b> sites</span></div></div>
-            <div class="pp-foot">Still visible: <b>the addresses you look up</b>.</div>
+            <div class="pp-links"><span>Live activity</span><span>Settings</span></div>
           </div>
         </div>
         <div class="cap"><b>Everyday.</b> Per-tab: what's protected, how many separate routes, what got re-routed.</div>
@@ -538,7 +495,72 @@
   </div>
 </section>
 
-<!-- CTA -->
+<!-- HOW IT WORKS (heavy; last) -->
+<section id="how">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">How it works</span>
+      <h2>One intercept, a circuit per account, nothing silently direct.</h2>
+      <p>Veil sits between the page and its RPC provider. No change to the dapp, no new endpoint - it catches the reads the app already makes and carries each one over Tor, hash-pinned and sandboxed.</p>
+    </div>
+
+    <ol class="how-steps">
+      <li>
+        <div class="hn">1</div>
+        <div class="hc">
+          <h3>Catch the read in the page</h3>
+          <p>At <code>document_start</code>, before the dapp's own scripts run, Veil wraps <code>window.fetch</code> and <code>XMLHttpRequest</code>. Every JSON-RPC read goes through one of those, so a single hook covers <b>viem, ethers v5/v6 and raw XHR</b> with no per-app integration. <span class="mut">Known gap: Web Worker fetch and WebSockets aren't wrapped yet.</span></p>
+        </div>
+      </li>
+      <li>
+        <div class="hn">2</div>
+        <div class="hc">
+          <h3>Key it to one account, blind the id</h3>
+          <p>Veil reads which account the request is for - from the params, or from inside <code>eth_call</code> calldata, ignoring the zero address - and gives it an anon-rpc <b>isolation key</b>. The same account always rides the same Tor circuit; two accounts never share one. The JSON-RPC <code>id</code> is <b>blinded</b> (viem numbers requests from one global counter) so a provider can't stitch routes back together by id.</p>
+        </div>
+      </li>
+      <li>
+        <div class="hn">3</div>
+        <div class="hc">
+          <h3>Send it over Tor, sandboxed</h3>
+          <p>The read is handed to the anon-rpc harness: a <b>null-origin, sandboxed iframe</b> running <b>tor-js</b>, a full Tor client compiled to WebAssembly. Its code is fetched at runtime but <b>hash-pinned on-chain</b> and verified before it runs, with no access to your keys, DOM or cookies. It builds a circuit through a <b>blind KPS gateway</b> that relays only encrypted bytes - never your traffic or destination - and reaches the provider from a Tor exit unique to that account.</p>
+        </div>
+      </li>
+      <li>
+        <div class="hn">4</div>
+        <div class="hc">
+          <h3>Re-route around a block, only after a real one</h3>
+          <p>If a provider refuses Tor (Aave's blocked all 16 of our test reads), Veil re-sends standard reads to a <b>Tor-friendly provider on the same chain</b> - but only <b>after a real block</b>, and only for endpoints it knows are a single standard RPC. A multichain gateway is never blindly re-routed (that would break it); it falls to your per-site choice.</p>
+        </div>
+      </li>
+      <li>
+        <div class="hn">5</div>
+        <div class="hc">
+          <h3>Never silently direct</h3>
+          <p>A read that can't be made private is <b>blocked, or asks you</b> - per site - before any direct connection. Nothing leaves in the clear, and nothing leaks while the first circuit is still building.</p>
+        </div>
+      </li>
+    </ol>
+
+    <div class="routes-grid" style="margin-top:28px">
+      <div class="rbox bad">
+        <h4>VPN / Tor Browser <span class="tag">one exit</span></h4>
+        <div class="acct-row"><span>account A</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
+        <div class="acct-row"><span>account B</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
+        <div class="acct-row"><span>account C</span><span class="arrow">→</span><span class="exit">203.0.113.7</span></div>
+        <div class="acct-row verdict">A, B, C → one person</div>
+      </div>
+      <div class="rbox good">
+        <h4>Veil <span class="tag">a circuit per account</span></h4>
+        <div class="acct-row"><span>acct:0x28c6…</span><span class="arrow">→</span><span class="exit">171.25.193.78</span></div>
+        <div class="acct-row"><span>acct:0xd8dA…</span><span class="arrow">→</span><span class="exit">45.9.168.92</span></div>
+        <div class="acct-row"><span class="mut">neutral</span><span class="arrow">→</span><span class="exit">185.220.101.98</span></div>
+        <div class="acct-row verdict">three strangers</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
   <div class="wrap">
     <div class="brand" style="font-size:15px"><span class="mark"></span> Veil</div>
