@@ -10,7 +10,7 @@
   <br/><br/>
   Built on the Ethereum Foundation's <a href="https://github.com/ethereum/anon-rpc">anon-rpc</a> and <a href="https://github.com/ethereum/tor-js">tor-js</a>.
   <br/>
-  <b>🌐 <a href="https://aman035.github.io/veil/">aman035.github.io/veil</a></b>
+  <b>🌐 <a href="https://aman035.github.io/veil/">Live demo</a></b>
 </p>
 
 ---
