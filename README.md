@@ -138,19 +138,6 @@ node tools/gateway.mjs status   # check UP / DOWN anytime
 
 It prints a line like `127.0.0.1:12298:<certhash>`; paste that into **Settings → Network → Gateways → Save**. The default build points at the EF public demo gateway, which is often down, so a fresh install may sit on "Connecting privately…" until you set your own. Veil never falls back to a direct connection silently.
 
-**Bake a network at build time (optional).**
-
-```bash
-# real Tor via your gateway:
-VEIL_SPECIFIER=0x700dA3193D35fA54Cd3fBf29B66f2a2A0385659e \
-VEIL_GATEWAYS='["127.0.0.1:12298:<your-gateway-certhash>"]' node build.mjs
-
-# or the passthrough specifier (no Tor, not private) for a deterministic plumbing demo:
-VEIL_SPECIFIER=0x4fd77be300f31c5fe6ab266d35d27750a3478d27 VEIL_GATEWAYS='[]' node build.mjs
-```
-
-For a live demo, build with your gateway running and lead with an app that serves Tor (Lido, ENS, Compound) so the per-account flow is clean; Aave is the re-route beat, since its provider blocks Tor.
-
 ## License
 
 [MIT](LICENSE). Built on the Ethereum Foundation's
