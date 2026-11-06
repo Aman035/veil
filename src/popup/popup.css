@@ -26,12 +26,8 @@ body { width: 340px; background: var(--bg); color: var(--text); -webkit-font-smo
 .name { font-size: 15px; font-weight: 650; letter-spacing: .2px; }
 .mark {
   width: 18px; height: 18px; border-radius: 6px;
-  background: var(--accent);
-  position: relative; transition: background .4s ease;
+  background: url(/logo.svg) center/contain no-repeat;
 }
-.app[data-state="off"] .mark { background: #2b323c; }
-.app[data-state="connecting"] .mark,
-.app[data-state="error"] .mark { background: var(--amber); }
 
 /* switch */
 .switch {

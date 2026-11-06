@@ -29,6 +29,7 @@ const builds = [
 
 async function copyStatic() {
   cpSync(here + "src/manifest.json", dist + "manifest.json");
+  cpSync(here + "assets/logo.svg", dist + "logo.svg");
   cpSync(here + "src/popup/popup.html", dist + "popup/popup.html");
   cpSync(here + "src/popup/popup.css", dist + "popup/popup.css");
   mkdirSync(dist + "onboarding", { recursive: true });
