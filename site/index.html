@@ -122,7 +122,7 @@
   @media (max-width:560px){ .float-chip{ display:none } }
 
   /* ---------- hero routing diagram ---------- */
-  .hero-diagram{ width:100%; max-width:470px; margin-inline:auto }
+  .hero-diagram{ width:100%; max-width:510px; margin-inline:auto }
   .hd-svg{ width:100%; height:auto; display:block; overflow:visible }
   .hd-lane{ fill:none; stroke:var(--line-2,var(--line)); stroke-width:1.5 }
   .hd-flow{ fill:none; stroke:var(--accent); stroke-width:1.6; stroke-dasharray:2 10; stroke-linecap:round; animation:hdflow 1.4s linear infinite }
@@ -351,10 +351,10 @@
   <div class="wrap">
     <div class="brand"><span class="mark"></span> Veil</div>
     <div class="nav-links">
-      <a href="#how">How it works</a>
+      <a href="#yours">Why it's different</a>
       <a href="#screens">Screens</a>
       <a href="#honest">What it hides</a>
-      <a href="demo.html">Try it live</a>
+      <a href="#how">How it works</a>
     </div>
     <div class="nav-right">
       <a class="gh-link" href="https://github.com/Aman035/veil" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub">
@@ -380,52 +380,52 @@
 
     <div class="hero-visual">
       <div class="hero-diagram">
-        <svg class="hd-svg" viewBox="0 0 440 340" role="img" aria-label="One circuit per account: the same wallet reaches providers as three unrelated Tor exits">
-          <text class="hd-h" x="70" y="20" text-anchor="middle">YOUR ACCOUNTS</text>
-          <text class="hd-h" x="337" y="20" text-anchor="middle">WHAT PROVIDERS SEE</text>
+        <svg class="hd-svg" viewBox="0 0 490 360" role="img" aria-label="One circuit per account: the same wallet reaches providers as three unrelated Tor exits">
+          <text class="hd-h" x="53" y="30" text-anchor="middle">YOUR ACCOUNTS</text>
+          <text class="hd-h" x="411" y="30" text-anchor="middle">WHAT PROVIDERS SEE</text>
 
           <!-- static lanes -->
-          <path class="hd-lane" d="M122,72 C140,72 132,170 146,170"/>
-          <path class="hd-lane" d="M122,170 L146,170"/>
-          <path class="hd-lane" d="M122,268 C140,268 132,170 146,170"/>
-          <path class="hd-lane" d="M238,170 C256,170 250,72 262,72"/>
-          <path class="hd-lane" d="M238,170 L262,170"/>
-          <path class="hd-lane" d="M238,170 C256,170 250,268 262,268"/>
+          <path class="hd-lane" d="M102,80 C142,80 131,180 171,180"/>
+          <path class="hd-lane" d="M102,180 L171,180"/>
+          <path class="hd-lane" d="M102,280 C142,280 131,180 171,180"/>
+          <path class="hd-lane" d="M267,180 C307,180 296,80 336,80"/>
+          <path class="hd-lane" d="M267,180 L336,180"/>
+          <path class="hd-lane" d="M267,180 C307,180 296,280 336,280"/>
           <!-- animated packets -->
-          <path class="hd-flow" style="animation-delay:-.1s" d="M122,72 C140,72 132,170 146,170"/>
-          <path class="hd-flow" style="animation-delay:-.5s" d="M122,170 L146,170"/>
-          <path class="hd-flow" style="animation-delay:-.9s" d="M122,268 C140,268 132,170 146,170"/>
-          <path class="hd-flow" style="animation-delay:-.3s" d="M238,170 C256,170 250,72 262,72"/>
-          <path class="hd-flow" style="animation-delay:-.7s" d="M238,170 L262,170"/>
-          <path class="hd-flow" style="animation-delay:-1.1s" d="M238,170 C256,170 250,268 262,268"/>
+          <path class="hd-flow" style="animation-delay:-.1s" d="M102,80 C142,80 131,180 171,180"/>
+          <path class="hd-flow" style="animation-delay:-.5s" d="M102,180 L171,180"/>
+          <path class="hd-flow" style="animation-delay:-.9s" d="M102,280 C142,280 131,180 171,180"/>
+          <path class="hd-flow" style="animation-delay:-.3s" d="M267,180 C307,180 296,80 336,80"/>
+          <path class="hd-flow" style="animation-delay:-.7s" d="M267,180 L336,180"/>
+          <path class="hd-flow" style="animation-delay:-1.1s" d="M267,180 C307,180 296,280 336,280"/>
 
           <!-- account pills -->
           <g>
-            <rect class="hd-pill" x="18" y="53" width="104" height="38" rx="11"/>
-            <text class="hd-mono" x="70" y="76" text-anchor="middle">0x a1b2…</text>
-            <rect class="hd-pill" x="18" y="151" width="104" height="38" rx="11"/>
-            <text class="hd-mono" x="70" y="174" text-anchor="middle">0x c3d4…</text>
-            <rect class="hd-pill" x="18" y="249" width="104" height="38" rx="11"/>
-            <text class="hd-mono" x="70" y="272" text-anchor="middle">0x e5f6…</text>
+            <rect class="hd-pill" x="4" y="60" width="98" height="40" rx="12"/>
+            <text class="hd-mono" x="53" y="85" text-anchor="middle">0x a1b2…</text>
+            <rect class="hd-pill" x="4" y="160" width="98" height="40" rx="12"/>
+            <text class="hd-mono" x="53" y="185" text-anchor="middle">0x c3d4…</text>
+            <rect class="hd-pill" x="4" y="260" width="98" height="40" rx="12"/>
+            <text class="hd-mono" x="53" y="285" text-anchor="middle">0x e5f6…</text>
           </g>
 
           <!-- Veil core -->
-          <rect class="hd-core" x="146" y="124" width="92" height="92" rx="22"/>
-          <image href="logo.svg" x="180" y="138" width="24" height="24"/>
-          <text class="hd-k" x="192" y="182" text-anchor="middle">Veil</text>
-          <text class="hd-h" x="192" y="200" text-anchor="middle" style="font-size:8px">ANON-RPC · TOR</text>
+          <rect class="hd-core" x="171" y="132" width="96" height="96" rx="24"/>
+          <image href="logo.svg" x="207" y="150" width="24" height="24"/>
+          <text class="hd-k" x="219" y="196" text-anchor="middle">Veil</text>
+          <text class="hd-h" x="219" y="214" text-anchor="middle" style="font-size:8px">ANON-RPC · TOR</text>
 
           <!-- exit pills -->
           <g>
-            <rect class="hd-pill" x="262" y="49" width="150" height="46" rx="12"/>
-            <text class="hd-accent" x="337" y="70" text-anchor="middle" style="font:500 12px var(--ff-mono)">185.220.101.63</text>
-            <text class="hd-h" x="337" y="85" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
-            <rect class="hd-pill" x="262" y="147" width="150" height="46" rx="12"/>
-            <text class="hd-accent" x="337" y="168" text-anchor="middle" style="font:500 12px var(--ff-mono)">185.220.101.108</text>
-            <text class="hd-h" x="337" y="183" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
-            <rect class="hd-pill" x="262" y="245" width="150" height="46" rx="12"/>
-            <text class="hd-accent" x="337" y="266" text-anchor="middle" style="font:500 12px var(--ff-mono)">23.129.64.217</text>
-            <text class="hd-h" x="337" y="281" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
+            <rect class="hd-pill" x="336" y="56" width="150" height="48" rx="13"/>
+            <text class="hd-accent" x="411" y="77" text-anchor="middle" style="font:500 12.5px var(--ff-mono)">185.220.101.63</text>
+            <text class="hd-h" x="411" y="93" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
+            <rect class="hd-pill" x="336" y="156" width="150" height="48" rx="13"/>
+            <text class="hd-accent" x="411" y="177" text-anchor="middle" style="font:500 12.5px var(--ff-mono)">185.220.101.108</text>
+            <text class="hd-h" x="411" y="193" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
+            <rect class="hd-pill" x="336" y="256" width="150" height="48" rx="13"/>
+            <text class="hd-accent" x="411" y="277" text-anchor="middle" style="font:500 12.5px var(--ff-mono)">23.129.64.217</text>
+            <text class="hd-h" x="411" y="293" text-anchor="middle" style="font-size:8.5px">UNRELATED VISITOR</text>
           </g>
         </svg>
         <p class="hd-cap"><b>One circuit per account</b>, over anon-rpc and Tor. The same wallet reaches providers as three unrelated visitors, so they can't link your accounts or see your IP.</p>
