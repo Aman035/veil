@@ -41,6 +41,20 @@ function renderDetail(e: Entry): string {
 let lastId = 0;
 let tor = 0;
 
+// Clear the feed: wipe the background's buffer, then reset this view.
+const clearEl = document.getElementById("clear") as HTMLButtonElement | null;
+clearEl?.addEventListener("click", async () => {
+  clearEl.disabled = true;
+  try { await chrome.runtime.sendMessage({ type: "veil:clear-activity" }); } catch { /* ignore */ }
+  tor = 0;
+  listEl.innerHTML = "";
+  countEl.textContent = "0";
+  routes.clear();
+  renderRoutes();
+  emptyEl.style.display = "";
+  clearEl.disabled = false;
+});
+
 // Per-route Tor exit, probed by the extension over each account's circuit.
 const routesEl = $("routes");
 const routes = new Map<string, string | null>();

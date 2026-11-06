@@ -469,6 +469,12 @@ chrome.runtime.onMessage.addListener((msg, sender, respond) => {
     respond({ activity, harness, enabled: undefined });
     return true;
   }
+  if (msg?.type === "veil:clear-activity") {
+    activity.length = 0;
+    routeExits.clear();
+    respond({ ok: true });
+    return true;
+  }
   if (msg?.type === "veil:exits") {
     (async () => {
       const keys: string[] = Array.isArray(msg.keys) ? msg.keys.slice(0, 8) : [];
